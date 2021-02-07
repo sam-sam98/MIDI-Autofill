@@ -1,0 +1,17 @@
+{
+  "name": "magenta-trials",
+  "version": "1.0.0",
+  "description": "Testing magenta for MIDI-Autofill",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@magenta/music": "^1.21.0",
+    "@tensorflow/tfjs-node": "^3.0.0",
+    "dayjs": "^1.10.4"
+  }
+}
