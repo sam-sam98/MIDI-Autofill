@@ -1,6 +1,7 @@
 require('@tensorflow/tfjs-node');
 const { performance } = require('perf_hooks');
 const mrnn = require('@magenta/music/node/music_rnn');
+const mvae = require('@magenta/music/node/music_vae');
 const core = require('@magenta/music/node/core');
 const dayjs = require('dayjs');
 const fs = require('fs');
@@ -26,12 +27,10 @@ TWINKLE_TWINKLE = {
     totalTime: 8
 };
 
-let rnn = new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn')
 
-rnn.initialize();
-
-const rnn_steps = 20;
+const rnn_steps = 40;
 const rnn_temperature = 1.5;
+const vae_temperature = 1.5;
 
 let quantized = core.sequences.quantizeNoteSequence(TWINKLE_TWINKLE, 4);
 console.log(quantized.notes);
@@ -44,17 +43,38 @@ function saveNotes(noteSequence) {
     fs.writeFileSync(outFilePath, Buffer.from(bytes));
 }
 
-async function runModel() {
+async function runRNNModel() {
+    console.log("Running RNN Model...")
+    let rnn = new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn');
+    rnn.initialize();
     let startTime = performance.now();
     let newSequence = await rnn.continueSequence(quantized, rnn_steps, rnn_temperature);
     let deltaTime = (performance.now() - startTime) / 1000.0;
     console.log('It took ' + deltaTime + ' seconds to autofill');
+    let melody = core.sequences.concatenate([quantized, newSequence]);
     console.log(newSequence.notes);
-    saveNotes(newSequence);
+    saveNotes(melody);
+}
+
+async function runVAEModel() {
+    console.log("Running VAE Model...")
+    let vae = new mvae.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_small_q2');
+    await vae.initialize();
+    let startTime = performance.now();
+    let newSequence = await vae.sample(1, vae_temperature);
+    let deltaTime = (performance.now() - startTime) / 1000.0;
+    console.log('It took ' + deltaTime + ' seconds to generate a new sequence');
+    console.log(newSequence[0].notes);
+    saveNotes(newSequence[0]);
+}
+
+async function runModels() {
+    await runRNNModel();
+    await runVAEModel();
 }
 
 try {
-    runModel();
+    runModels();
 } catch {
     console.log('Uh oh');
 }
