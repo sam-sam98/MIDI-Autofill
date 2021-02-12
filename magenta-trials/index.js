@@ -32,7 +32,20 @@ const rnn_steps = 40;
 const rnn_temperature = 1.5;
 const vae_temperature = 1.5;
 
-let quantized = core.sequences.quantizeNoteSequence(TWINKLE_TWINKLE, 4);
+const DUPLICATIONS = 200;
+
+let sequences = [];
+
+for (let i = 0; i < DUPLICATIONS; i++) {
+    sequences.push(TWINKLE_TWINKLE);
+}
+
+let large_twinkle_twinkle = core.sequences.concatenate(sequences);
+
+console.log(large_twinkle_twinkle);
+
+let quantized = core.sequences.quantizeNoteSequence(large_twinkle_twinkle, 4);
+
 console.log(quantized.notes);
 
 function saveNotes(noteSequence) {
