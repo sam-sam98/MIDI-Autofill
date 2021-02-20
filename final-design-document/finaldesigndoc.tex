@@ -1,0 +1,59 @@
+\documentclass[titlepage, 12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{blindtext}
+\usepackage[style=authoryear, backend=biber]{biblatex}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[letterpaper, margin=1in, left=1.5in]{geometry}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+\title{MIDI Autofill}
+\author[1]{Samantha Del Rosario}
+\author[1]{Mason Ashbridge}
+\author[1]{Jorge D. Fochezato}
+\author[2]{Eric Franklin}
+\author[2]{Brian Smith}
+\affil[1]{CS Group 14}
+\affil[2]{ECE Group 27}
+
+\date{Spring 2021}
+
+\addbibresource{references.bib}
+
+\begin{document}
+
+\pagenumbering{roman}
+
+\patchcmd{\titlepage}
+{\thispagestyle{empty}}
+{\thispagestyle{plain}}
+{}
+{}
+
+\maketitle
+
+\newpage
+\setcounter{page}{2}
+\tableofcontents
+\newpage
+
+\pagenumbering{arabic}
+
+\input{executivesummary.tex}
+\input{specifications.tex}
+\input{research.tex}
+
+\newpage
+\printbibliography
+
+\end{document}
