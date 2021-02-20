@@ -32,11 +32,22 @@
 
 \begin{document}
 
+\pagenumbering{roman}
+
+\patchcmd{\titlepage}
+{\thispagestyle{empty}}
+{\thispagestyle{plain}}
+{}
+{}
+
 \maketitle
 
 \newpage
+\setcounter{page}{2}
 \tableofcontents
 \newpage
+
+\pagenumbering{arabic}
 
 \input{executivesummary.tex}
 \input{specifications.tex}
