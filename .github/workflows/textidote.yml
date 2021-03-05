@@ -1,5 +1,8 @@
 name: Lint LaTeX document
-on: [push]
+on:
+    push:
+        paths:
+            - '**.tex'
 jobs:
     lint_latex:
         runs-on: ubuntu-latest
