@@ -13,6 +13,7 @@
 \blindtext
 
 \subsection{Embedded Controller Comparisons}
+\label{sec:embedded_controllers}
 
 \blindtext
 
@@ -20,10 +21,85 @@
 
 \blindtext
 
-\subsection{Raspberry PI Implementation Details}
+\subsection{Raspberry Pi Implementation Details}
 
-\blindtext
+As mentioned in \nameref{sec:embedded_controllers}, the Raspberry Pi is mini-computer
+which can also function as an embedded controller. The model we're interested in is the
+the Raspberry Pi 4B. This Raspberry Pi model uses the ARM64 architecture. It can run
+numerous ARM64 based Linux distros. The advantage here is the software and tooling that is
+available for us to run in a Linux environment. After an analysis of other solutions, we
+have decided that the Raspberry Pi is the best fit for our project. To that end, we have
+researched how the Raspberry Pi can be configured for use in our project.
+
+\subsubsection{Operating System Choice}
+
+The first configuration choice that needs to be made is the operating system. A Raspberry
+Pi out of the box has no operating system. An image must be flashed to an SD card to make
+the Raspberry Pi useful. Raspberry Pi's typically run some form of Linux. There are a
+number of choices available, as there are many flavors of Linux that can run on the ARM64
+architecture. Some common choices for Raspberry Pi include Raspberry Pi OS (formerly known
+as Raspian), Arch Linux ARM, and dietpi. Each OS has its advantages and drawbacks, and it
+is important for us to select a distro that is well suited for our use case.
+
+The most common operating system used for Raspberry Pi is Raspberry Pi OS. This is a
+specially tailored version of Debian for the Raspberry Pi. This is a common choice for any
+general purpose usage the Pi. It can be used like a normal desktop computer when a mouse,
+keyboard, and monitor are plugged in. This is a "batteries included" distro that includes
+many things we will never use. The bloatware from this distro can hinder performance and
+waste SD card space. There is a lightweight alternative known as Raspberry Pi OS Lite.
+This version does not include any desktop environment.
+
+DietPi is similar to Raspberry Pi OS Lite in that it aims to be a lightweight distro.
+DietPi's website claims to be even lighter than Raspberry Pi Os Lite. It occupies 589 Mb
+on the SD card, while Raspberry Pi OS occupies 1424 MB. There are a number of other system
+optimizations in place to improve general performance. After boot, there are only 11 total
+processes, versus 18 total processes running on Raspberry PI OS.
+
+There are also specialized distros that are only meant to do one specific thing. Examples
+include RetroPIE, which is used to run retro video games, or OpenMediaVault, which is used
+to turn the device into a networked storage device. This is similar to what we want our
+operating system to do. Our use case for the Raspberry Pi is to run one specialized
+application that we ourselves develop. It should boot straight into our application with
+no other UI from the operating system. The best solution for us is to have a custom distro
+just for running our application. Developing a Linux distro from scratch is a difficult
+process that is out of the scope of this project. But what we can do is modify an existing
+distro to suite our needs.
+
+\subsubsection{Operating System Configuration}
+\label{sec:research:subsec:os_config}
+
+The operating system will need to be configured for our use-case. We need to get the
+operating system to boot a single GUI application, our DAW, without displaying any other
+UI from the desktop environment (DE). There may be more applications separate from the DAW
+that will run in the background which also must be started immediately after boot. The
+operating system will need to be configured to not permit any networking out of security
+and privacy concerns.
+
+To only display a single application, we need to configure the graphics system in our
+distro. Graphics in Linux are done through the X Window System. In modern apps, X is
+mostly agnostic to the UI, and is used for providing UI toolkits a method for accessing
+bitmaps to windows. X can be configured in a variety of ways. The way we intend to
+configure X is to host a single fullscreen application for our DAW. This can be done
+through the \url{.xinitrc} file. This file specifies which commands to run whenever the X
+server is started. By simply including the command to run our application in there, we
+will have an single window at startup.
+
+Networking can disabled through the \url{/etc/network/interfaces} config file. This config
+file is used to declare all networking interfaces, and the interfaces can be removed by
+simply removing all lines declaring a networking interface in that file.
+
+\subsubsection{Packer}
+
+A solution we found for customizing an existing Linux distro is Packer. Packer is a
+utility that can take an existing operating system image, modify it, and produce a new
+image. Modification is done through provisioners, which exist to perform steps, such as
+copying files, running shell commands, setting permissions, etc. Packer relies on builders
+to carry out the tasks laid out in a configuration file. The builder we will use is called
+packer-builder-arm, which builds ARM images and is suitable for a Raspberry PI.
+
+We can use our own Packer config file to setup all the tasks described in
+\nameref{sec:research:subsec:os_config}. For example, we can use the file provisioner to
+copy the \url{.xinitrc} file to the home directory, which is used to configure X11 for our
+application.
 
 \subsection{Keyboard Design}
-
-\blindtext
