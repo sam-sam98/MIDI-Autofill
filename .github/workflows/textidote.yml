@@ -11,7 +11,7 @@ jobs:
               id: lint
               with:
                   root_file: final-design-document/finaldesigndoc.tex
-                  args: --check en
+                  args: --check en --remove-macros blindtext
             - name: Upload TeXtidote report
               uses: actions/upload-artifact@v2
               with:
