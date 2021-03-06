@@ -1,6 +1,6 @@
 name: Lint LaTeX document
 on:
-    push:
+    pull_request:
         paths:
             - '**.tex'
 jobs:
