@@ -53,7 +53,7 @@ DietPi is similar to Raspberry Pi OS Lite in that it aims to be a lightweight di
 DietPi's website claims to be even lighter than Raspberry Pi Os Lite. It occupies 589 Mb
 on the SD card, while Raspberry Pi OS occupies 1424 MB. There are a number of other system
 optimizations in place to improve general performance. After boot, there are only 11 total
-processes, versus 18 total processes running on Raspberry PI OS.
+processes, versus 18 total processes running on Raspberry Pi OS.
 
 There are also specialized distros that are only meant to do one specific thing. Examples
 include RetroPIE, which is used to run retro video games, or OpenMediaVault, which is used
@@ -95,7 +95,7 @@ utility that can take an existing operating system image, modify it, and produce
 image. Modification is done through provisioners, which exist to perform steps, such as
 copying files, running shell commands, setting permissions, etc. Packer relies on builders
 to carry out the tasks laid out in a configuration file. The builder we will use is called
-packer-builder-arm, which builds ARM images and is suitable for a Raspberry PI.
+packer-builder-arm, which builds ARM images and is suitable for a Raspberry Pi.
 
 We can use our own Packer config file to setup all the tasks described in
 \nameref{sec:research:subsec:os_config}. For example, we can use the file provisioner to
