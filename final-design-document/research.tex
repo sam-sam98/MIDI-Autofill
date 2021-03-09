@@ -102,4 +102,20 @@ We can use our own Packer config file to setup all the tasks described in
 copy the \url{.xinitrc} file to the home directory, which is used to configure X11 for our
 application.
 
+\subsubsection{Performance}
+
+Performance is always a concern when dealing with constrained embedded hardware. The
+Raspberry Pi fares better than microcontrollers you would find in a typical MIDI
+controller, but is still performance constrained. Our device needs to be able to run a
+machine learning model and a UI application, both of which are computationally expensive
+tasks.
+
+\paragraph{Magenta}
+
+Although we may not end up using Magenta, it serves as a good baseline for measuring
+performance of music generating AI. Magenta ships with two machine learning models:
+MusicRNN and MusicVAE.
+
+\paragraph{}
+
 \subsection{Keyboard Design}
