@@ -112,13 +112,23 @@ tasks.
 
 \paragraph{Magenta}
 
-Although we may not end up using Magenta, it serves as a good baseline for measuring
-performance of music generating AI. Magenta ships with two machine learning models:
-MusicRNN and MusicVAE.
+Magenta serves as a good baseline for measuring performance of music generating AI.
+Magenta ships with two machine learning models: MusicRNN and MusicVAE. We have performance
+tested both of these in a demo program on the Raspberry Pi 4B.
 
-MusicRNN with the provided pretrained models has shown good performance when autofilling
-simple melodies, below the 5 second threshold we set in our goals. Initial tests involved
-running an autofill on Twinkle, twinkle little star. We are showing about 4 seconds to
-generate 5 seconds worth of music. This is without any optimization attempts.
+The demo program we constructed uses Magenta with JavaScript. We use the Tensorflow node
+backend for good CPU performance with Node. When executed, the program initializes both
+machine learning models, using checkpoints hosted on Google's servers. The program
+measures the time passed in seconds for initialization and music generation time.
+
+The MusicRNN model with the provided pretrained checkpoints has shown good performance
+when autofilling simple melodies, below the 5 second threshold we set in our goals.
+Initial tests involved running an autofill on Twinkle, Twinkle, Little Star. We are
+showing about 4 seconds to generate 5 seconds worth of music. This is without any
+optimization attempts.
+
+The MusicVAE model does not continue sequences, but can either generate an entirely new
+melody or interpolating between two sequences. In our test, we have generated a new melody
+rather than interpolate. We are able to generate 5 seconds of music in around 2.5 seconds.
 
 \subsection{Keyboard Design}
