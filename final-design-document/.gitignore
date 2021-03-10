@@ -279,3 +279,7 @@ TSWLatexianTemp*
 # option is specified. Footnotes are the stored in a file with suffix Notes.bib.
 # Uncomment the next line to have this generated file ignored.
 #*Notes.bib
+
+# Don't include our PDF, but still allow other pdfs in case we need to embed PDF
+# figures
+finaldesigndoc.pdf
