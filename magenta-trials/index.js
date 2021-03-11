@@ -5,6 +5,7 @@ const mvae = require('@magenta/music/node/music_vae');
 const core = require('@magenta/music/node/core');
 const dayjs = require('dayjs');
 const fs = require('fs');
+const b = require('benny');
 
 
 TWINKLE_TWINKLE = {
@@ -44,10 +45,6 @@ let large_twinkle_twinkle = core.sequences.concatenate(sequences);
 
 console.log(large_twinkle_twinkle);
 
-let quantized = core.sequences.quantizeNoteSequence(large_twinkle_twinkle, 4);
-
-console.log(quantized.notes);
-
 function saveNotes(noteSequence) {
     noteSequence.notes.forEach(note => note.velocity = 100);
     const outFilePath = 'data/output-' + dayjs().format('YYYYMMDDHHmmss') + '.mid';
@@ -56,38 +53,103 @@ function saveNotes(noteSequence) {
     fs.writeFileSync(outFilePath, Buffer.from(bytes));
 }
 
-async function runRNNModel() {
-    console.log("Running RNN Model...")
-    let rnn = new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn');
-    rnn.initialize();
-    let startTime = performance.now();
-    let newSequence = await rnn.continueSequence(quantized, rnn_steps, rnn_temperature);
-    let deltaTime = (performance.now() - startTime) / 1000.0;
-    console.log('It took ' + deltaTime + ' seconds to autofill');
-    let melody = core.sequences.concatenate([quantized, newSequence]);
-    console.log(newSequence.notes);
-    saveNotes(melody);
+function randomizeQuantizedSequence(numNotes, duration, quantization, range) {
+    let notes = [];
+    let [lowNote, highNote] = range;
+    for (let i = 0; i < numNotes; i++) {
+        let startTime = Math.random() * duration;
+        let endTime = startTime + Math.random() * (duration - startTime);
+        notes.push({
+            pitch: lowNote + Math.floor(Math.random() * (highNote - lowNote)),
+            startTime: startTime,
+            endTime: endTime,
+        });
+    }
+    let sequence = {
+        notes: notes,
+        totalTime: duration,
+    };
+    console.log(sequence);
+    return core.sequences.quantizeNoteSequence(sequence, quantization);
 }
 
-async function runVAEModel() {
-    console.log("Running VAE Model...")
-    let vae = new mvae.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_small_q2');
-    await vae.initialize();
-    let startTime = performance.now();
-    let newSequence = await vae.sample(1, vae_temperature);
-    let deltaTime = (performance.now() - startTime) / 1000.0;
-    console.log('It took ' + deltaTime + ' seconds to generate a new sequence');
-    console.log(newSequence[0].notes);
-    saveNotes(newSequence[0]);
+function runRnnSuite(name, model, range) {
+    return b.suite(name,
+        b.add('TwinkleTwinkle', async () => {
+            let twinkle = core.sequences.quantizeNoteSequence(TWINKLE_TWINKLE, 4);
+            await model.continueSequence(twinkle, rnn_steps, rnn_temperature);
+            return async () => {
+                await model.continueSequence(twinkle, rnn_steps, rnn_temperature);
+            };
+        }),
+        b.add('Random 10 notes', async () => {
+            let randomNotes = randomizeQuantizedSequence(10, 8, 4, range);
+            return async () => {
+                await model.continueSequence(randomNotes, rnn_steps, rnn_temperature);
+            };
+        }),
+        b.add('Random 100 notes', async () => {
+            let randomNotes = randomizeQuantizedSequence(100, 8, 4, range);
+            return async () => {
+                await model.continueSequence(randomNotes, rnn_steps, rnn_temperature);
+            };
+        }),
+        b.add('Random 1000 notes', async () => {
+            let randomNotes = randomizeQuantizedSequence(1000, 8, 4, range);
+            return async () => {
+                await model.continueSequence(randomNotes, rnn_steps, rnn_temperature);
+            };
+        }),
+        b.save({
+            file: name,
+            folder: 'benchmarks',
+            details: true,
+            format: 'csv'
+        }),
+    );
 }
 
-async function runModels() {
-    await runRNNModel();
-    await runVAEModel();
-}
+runRnnSuite(
+    'basic_rnn',
+    new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn'),
+    [48, 84]
+);
+runRnnSuite(
+    'melody_rnn',
+    new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn'),
+    [0, 127]
+);
+runRnnSuite(
+    'drum_kit_rnn',
+    new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/drum_kit_rnn'),
+    [0, 8]
+);
 
-try {
-    runModels();
-} catch {
-    console.log('Uh oh');
-}
+(async () => {
+    let mel_4bar_small_q2 = new mvae.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_small_q2');
+    await mel_4bar_small_q2.initialize();
+
+    b.suite('MusicVAE',
+        b.add('10 Samples', async () => {
+            return async () => {
+                await mel_4bar_small_q2.sample(10, vae_temperature)
+            };
+        }),
+        b.add('100 Samples', async () => {
+            return async () => {
+                await mel_4bar_small_q2.sample(100, vae_temperature)
+            };
+        }),
+        b.add('1000 Samples', async () => {
+            return async () => {
+                await mel_4bar_small_q2.sample(1000, vae_temperature)
+            };
+        }),
+        b.save({
+            file: 'musicvae',
+            folder: 'benchmarks',
+            details: true,
+            format: 'csv'
+        }),
+    );
+})();
