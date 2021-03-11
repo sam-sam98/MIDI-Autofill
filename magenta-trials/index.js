@@ -109,27 +109,27 @@ function runRnnSuite(name, model, range) {
     );
 }
 
-runRnnSuite(
-    'basic_rnn',
-    new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn'),
-    [48, 84]
-);
-runRnnSuite(
-    'melody_rnn',
-    new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn'),
-    [0, 127]
-);
-runRnnSuite(
-    'drum_kit_rnn',
-    new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/drum_kit_rnn'),
-    [0, 8]
-);
-
 (async () => {
+    await runRnnSuite(
+        'basic_rnn',
+        new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn'),
+        [48, 84]
+    );
+    await runRnnSuite(
+        'melody_rnn',
+        new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn'),
+        [0, 127]
+    );
+    await runRnnSuite(
+        'drum_kit_rnn',
+        new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/drum_kit_rnn'),
+        [0, 8]
+    );
+
     let mel_4bar_small_q2 = new mvae.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_small_q2');
     await mel_4bar_small_q2.initialize();
 
-    b.suite('MusicVAE',
+    await b.suite('MusicVAE',
         b.add('10 Samples', async () => {
             return async () => {
                 await mel_4bar_small_q2.sample(10, vae_temperature)
