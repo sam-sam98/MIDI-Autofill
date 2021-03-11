@@ -12,7 +12,8 @@
   "dependencies": {
     "@magenta/music": "^1.21.0",
     "@tensorflow/tfjs-node": "^3.0.0",
-    "dayjs": "^1.10.4"
+    "dayjs": "^1.10.4",
+    "papaparse": "^5.3.0"
   },
   "devDependencies": {
     "benny": "^3.6.15"
