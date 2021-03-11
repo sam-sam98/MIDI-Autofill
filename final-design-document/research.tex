@@ -114,21 +114,40 @@ tasks.
 
 Magenta serves as a good baseline for measuring performance of music generating AI.
 Magenta ships with two machine learning models: MusicRNN and MusicVAE. We have performance
-tested both of these in a demo program on the Raspberry Pi 4B.
+tested both of these in a demo benchmark program on the Raspberry Pi 4B.
 
-The demo program we constructed uses Magenta with JavaScript. We use the Tensorflow node
-backend for good CPU performance with Node. When executed, the program initializes both
-machine learning models, using checkpoints hosted on Google's servers. The program
+The benchmark program we constructed uses Magenta with JavaScript. We use the Tensorflow
+node backend for good CPU performance with Node. When executed, the program initializes
+both machine learning models, using checkpoints hosted on Google's servers. The program
 measures the time passed in seconds for initialization and music generation time.
 
 The MusicRNN model with the provided pretrained checkpoints has shown good performance
-when autofilling simple melodies, below the 5 second threshold we set in our goals.
-Initial tests involved running an autofill on Twinkle, Twinkle, Little Star. We are
-showing about 4 seconds to generate 5 seconds worth of music. This is without any
-optimization attempts.
+overall when autofilling simple and random melodies, below the 5 second threshold we set
+in our goals.
 
-The MusicVAE model does not continue sequences, but can either generate an entirely new
-melody or interpolating between two sequences. In our test, we have generated a new melody
-rather than interpolate. We are able to generate 5 seconds of music in around 2.5 seconds.
+\begin{minipage}{\linewidth}
+    \captionof{table}{Magenta Benchmark Times (in seconds)}
+    \begin{adjustbox}{width=\textwidth}
+        \begin{tabular}{@{}llllllllllllllll@{}|}
+            \toprule[1.5pt]
+            Model    & Checkpoint                 & Benchmark         & Samples & Min    & Max    & Mean   & Std. Dev \\ \midrule
+            MusicRNN & \url{basic\_rnn}           & TwinkleTwinkle    & 8       & 1.380  & 1.473  & 1.432  & 0.032    \\
+                     &                            & Random 10 notes   & 8       & 1.342  & 1.421  & 1.390  & 0.023    \\
+                     &                            & Random 100 notes  & 8       & 1.352  & 1.461  & 1.402  & 0.040    \\
+                     &                            & Random 1000 notes & 8       & 1.359  & 1.455  & 1.398  & 0.031    \\ \midrule
+                     & \url{melody\_rnn}          & TwinkleTwinkle    & 8       & 1.446  & 1.506  & 1.469  & 0.022    \\
+                     &                            & Random 10 notes   & 8       & 1.405  & 1.469  & 1.433  & 0.023    \\
+                     &                            & Random 100 notes  & 8       & 1.403  & 1.482  & 1.431  & 0.025    \\
+                     &                            & Random 1000 notes & 8       & 1.441  & 1.501  & 1.467  & 0.023    \\ \midrule
+                     & \url{drum\_kit\_rnn}       & TwinkleTwinkle    & 7       & 2.377  & 2.622  & 2.453  & 0.086    \\
+                     &                            & Random 10 notes   & 7       & 2.311  & 2.434  & 2.374  & 0.045    \\
+                     &                            & Random 100 notes  & 7       & 2.314  & 2.459  & 2.360  & 0.047    \\
+                     &                            & Random 1000 notes & 7       & 2.305  & 2.421  & 2.352  & 0.047    \\ \midrule
+            MusicVAE & \url{mel\_4bar\_small\_q2} & 10 Samples        & 9       & 1.022  & 1.247  & 1.100  & 0.093    \\
+                     &                            & 100 Samples       & 6       & 2.705  & 2.796  & 2.741  & 0.033    \\
+                     &                            & 1000 Samples      & 5       & 16.147 & 17.705 & 16.793 & 0.682    \\ \bottomrule[1.5pt]
+        \end{tabular}
+    \end{adjustbox}
+\end{minipage}
 
 \subsection{Keyboard Design}
