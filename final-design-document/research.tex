@@ -259,4 +259,21 @@ The MusicRNN model with the provided pretrained checkpoints has shown good perfo
 overall when autofilling simple and random melodies, below the 5 second threshold we set
 in our goals.
 
+\paragraph{UI} Before spending development time on a browser based DAW, it is important to
+verify that Raspberry Pi can even run a browser based DAW with acceptable performance.
+Since we have not developed the DAW at this point, we have tested an existing web based
+MIDI editor in the Raspberry Pi.
+
+We used an online MIDI editor called signal (\url{https://signal.vercel.app/}) to get a
+subjective feel for the performance. The test was ran in the chromium web browser on
+Raspberry Pi OS. The performance was acceptable, with a couple things feeling a bit slow
+Dragging around notes had a small but noticeable latency between the mouse cursor's
+movement and the notes position. There was a small but perceptible amount of time between
+double clicking to insert a note and the note showing up on screen.
+
+It should be noted that this app was not explicitly designed to be run on such constrained
+hardware. Based on our findings here we are confident that we can develop a browser based
+app that has exceptional performance on the Raspberry Pi.
+
+
 \subsection{Keyboard Design}
