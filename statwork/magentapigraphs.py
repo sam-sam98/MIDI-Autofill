@@ -62,7 +62,9 @@ fig = px.line(duration,
               labels={
                   'x': 'Input melody duration (seconds)',
                   'mean': 'Autocomplete time (seconds)'
-              })
+              },
+              width=500,
+              height=400)
 fig = fig.for_each_trace(lambda t: t.update(name=t.name.replace("=", ": ")))
 fig.update_layout(font_family="Helvetica")
 fig.write_image('perfwrtduration.pdf')
@@ -74,7 +76,9 @@ fig = px.line(steps,
               labels={
                   'x': 'Generation steps',
                   'mean': 'Autocomplete time (seconds)'
-              })
+              },
+              width=500,
+              height=400)
 fig.update_layout(font_family="Helvetica")
 fig = fig.for_each_trace(lambda t: t.update(name=t.name.replace("=", ": ")))
 fig.write_image("perfwrtsteps.pdf")
@@ -86,7 +90,9 @@ fig = px.line(notes,
               labels={
                   'x': 'Number of input notes',
                   'mean': 'Generation time (seconds)'
-              })
+              },
+              width=500,
+              height=400)
 fig.update_layout(font_family="Helvetica")
 fig = fig.for_each_trace(lambda t: t.update(name=t.name.replace("=", ": ")))
 fig.write_image("perfwrtnotes.pdf")
