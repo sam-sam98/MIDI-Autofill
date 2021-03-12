@@ -28,6 +28,13 @@ length of the corresponding timing clock data. Additionally, some DAWs show the 
 note by the color of the bar - most commonly, red denotes high velocity while blue/violet
 denotes low velocity.
 
+\begin{figure}[h!]
+  \centering
+  \includegraphics{PianoRoll.png}
+  \caption{Example of a piano roll display}
+  \label{fig:piano}
+\end{figure}
+
 The most basic ways a DAW can alter a MIDI are by adding, deleting, and editing notes on the
 piano roll; users can change the timing, pitch, and/or velocity of any note. DAWs can also
 quantize notes, meaning they will automatically shift the timing of the notes so that every
@@ -51,6 +58,13 @@ being played while a white pixel would show a note being played at maximum veloc
 These images could then be fed into a Convolutional Neural Network (CNN) which would
 replicate the visual patterns and thereby output an image that can be converted back into
 a MIDI of a completed melody.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{MIDIsample.png}
+  \caption{Example of a visualized MIDI file}
+  \label{fig:visualization}
+\end{figure}
 
 This approach was originally considered for its advantages over a more direct MIDI-based
 AI. For starters, when conducting some test trials, it was found that the PNG
@@ -96,6 +110,13 @@ one pixel at a time: row by row, and left to right in each row. This enforces th
 is dependent upon only those above and to the left of itself. Using this unique relationship,
 PixelCNN has a unique use-case in predicting the bottom half of an image after processing the
 top half as input.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{PixelMask.png}
+  \caption{PixelCNN's unique mask prevents the AI from peeking ahead}
+  \label{fig:mask}
+\end{figure}
 
 This made PixelCNN a particularly appropriate candidate for our computer vision model because
 completing an image after processing the first half is exactly the mechanic we planned to use

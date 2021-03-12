@@ -17,6 +17,6 @@ aspects of this human/computer collaboration on the computer side. Using Machine
 we can train the computer to recognize music patterns and structures such that it could
 generate a comprehensive melody at the press of a button.
 ## Diagrams
-![Overall Structure](Keyboard.png)
-![Autofill Structure](Autofill.png)
-![DAW Structure](DAW.png)
+![Overall Structure](final-design-document/Keyboard.png)
+![Autofill Structure](final-design-document/Autofill.png)
+![DAW Structure](final-design-document/DAW.png)
