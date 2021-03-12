@@ -1,0 +1,14 @@
+{
+    "latex-workshop.latex.autoBuild.run": "onSave",
+    "[latex]": {
+        "editor.rulers": [
+            90,
+        ]
+    },
+    "cSpell.words": [
+        "Raspbian",
+        "distro",
+        "distros",
+        "toolkits"
+    ]
+}
