@@ -15,6 +15,7 @@ Between these two features we can determine pitch, timing, and expression - the 
 components of a note which determine whether or not it is melodic in context.
 
 \subsubsection{DAW}
+\label{sec:daw}
 
 DAW stands for Digital Audio Workstation. DAWs are the software that provide an interface
 through which users can alter the contents of a MIDI or other audio file. Because our DAW is
@@ -122,7 +123,22 @@ file into a piano roll visualization which is rotated 90 degrees clockwise.
 
 \subsection{DAW Frontend Technologies}
 
-\blindtext
+We are looking to use a browser-based frontend Design. This approach is ideal for its ease of
+implementing a user interface as well as its cross-platform compatibility. Should we decide to
+Make the software even more portable by isolating it from the MIDI controller, it will be viewable
+on any device that can run a browser. And because of the computational limits of the MIDI
+controller, any modern device that is suited for a browser will inherently be able to run the
+MIDI autofill software as well.
+
+Our first consideration was React. Considering our group's familiarity with JavaScript as well as
+HTML and similar markup languages, it would be easier to work with. However, we ultimately opted to
+use Flutter. Flutter's default stylization is sleek and fits in well with the modern aesthetic of
+technology. Plus, its widgets allow for more polish on a UI that also has more niche functionality.
+
+As mentioned in \nameref{sec:daw}, the primary aspect of the UI will be the piano roll display.
+The frontend will be responsible for reading the MIDI messages and converting the note ON/OFF and
+timing clock features into the position and dimensions of an arbitrary number of UI elements -
+each representing a note which can be edited.
 
 \subsection{Raspberry Pi}
 
