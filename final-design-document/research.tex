@@ -1,12 +1,115 @@
 \section{Research}
 
+\subsection{Music Technology}
+
+\subsubsection{MIDI}
+
+MIDI stands for Musical Instrument Digital Interface, and it is used to communicate music
+to computers in separate parts. MIDI files themselves do not contain any audio. Instead, they
+send system and channel messages. Each message describes several features, but in this project
+we are primarily concerned with note ON/OFF and the timing clock. The note ON/OFF tells which
+notes are playing during a certain event and at what velocity. The timing clock keeps track of
+when each event is scheduled to occur.
+
+Between these two features we can determine pitch, timing, and expression - the three
+components of a note which determine whether or not it is melodic in context.
+
+\subsubsection{DAW}
+
+DAW stands for Digital Audio Workstation. DAWs are the software that provide an interface
+through which users can alter the contents of a MIDI or other audio file. Because our DAW is
+to be isolated to a MIDI controller, it  will only contain functions concerning MIDI data.
+When dealing with MIDIs, DAWs visualize audio in a piano roll display. The foundation of the
+piano roll is a set of rows, each one representing a piano key and its corresponding note.
+The horizontal axis represents the timing clock data. For each note that plays in the MIDI, the
+piano roll displays a colored bar located in the row of the corresponding note and spanning the
+length of the corresponding timing clock data. Additionally, some DAWs show the velocity of the
+note by the color of the bar - most commonly, red denotes high velocity while blue/violet
+denotes low velocity.
+
+The most basic ways a DAW can alter a MIDI are by adding, deleting, and editing notes on the
+piano roll; users can change the timing, pitch, and/or velocity of any note. DAWs can also
+quantize notes, meaning they will automatically shift the timing of the notes so that every
+note begins on some specified fraction of the tempo (most commonly a thirty-second note).
+This function is especially useful in adjusting for human errors in timing when writing MIDIs
+with a MIDI controller. Better timing makes it easier to synchronize with other tracks that might
+end up in the same audio file.
+
+
 \subsection{AI}
 
-\blindtext
+Our original concept for the AI model took a computer vision approach. To begin we would
+have had to develop a script which could convert between MIDI data and a PNG
+visualization. This image would be similar in structure to what might show on the piano
+roll display of a DAW. Each pixel along the vertical axis would represent a key on the
+MIDI controller, and each pixel along the horizontal axis would represent some small
+fraction of a beat - hypothetically the length of a sixty-forth note, as this is the
+shortest common time interval in music. The hue of each pixel would denote the velocity
+of the note being played at that time and pitch - a black pixel would mean no note is
+being played while a white pixel would show a note being played at maximum velocity.
+These images could then be fed into a Convolutional Neural Network (CNN) which would
+replicate the visual patterns and thereby output an image that can be converted back into
+a MIDI of a completed melody.
+
+This approach was originally considered for its advantages over a more direct MIDI-based
+AI. For starters, when conducting some test trials, it was found that the PNG
+visualizations are about a quarter the file size of the original MIDIs they were converted
+from. This, in conjunction with the comparatively easy calculations of a CNN on a
+simplistic bitmap, suggested that a computer vision model would be fast to train.
+
+Additionally, patterns in music are much easier to recognize through visualization than
+through note data. Much of the music theory that determines whether a note is melodic in
+context is generalized in that it works according to intervals as opposed to discrete
+relationships between specific notes. MIDI files don't provide any information about scales
+or chords; they simply list which notes were played. It might take an AI a good bit of
+to recognize that the interval between C and E is the same as the interval between F and A -
+and even longer still to determine which intervals are musically dissonant or not, and in
+which contexts. When music is visualized, however, it can generalize the same way it does in
+abstract theory. Melodic intervals appear visually the same, regardless of the root note. So
+rather than having to learn separately that C pairs well with E and F pairs well with A, it
+can generalize that any note will pair well with the note that is four semitones (or in the
+AI's case, four pixels) above it, known in music theory as the major third.
+
+The computer vision model was also favored for its level of technical skill. As students, we
+have been exposed to the concept of CNNs but have not yet had the opportunity to apply
+them. This model felt appropriate for our skill level because it is centered around a
+technique we already understand, but it also implements that technique to a degree we have
+never attempted before.
 
 \subsubsection{PixelCNN}
 
-\blindtext
+For the computer vision model, our lead candidate was PixelCNN. Like a standard CNN,
+PixelCNN processes its image inputs an alternating series of masked convolution and pooling.
+The "masks" used in the convolution layer are square matrices, and each element of the matrix
+is a numerical value that denotes the weight of that element. These masks are iterated over the
+input image, convolving with the brightness of the pixels under the mask. In colored images,
+the process is repeated once for each color channel: red, green, and blue. Depending on the
+configuration of the weights in the matrix, different masks can be used to identify different
+visual patterns. Each convolution with each mask outputs a two-dimensional array of values
+called a feature map. The feature maps are then put through an activation function, which
+modifies the values in the feature map to exaggerate the separation between values above a
+certain threshold and  values below it.
+
+Unlike a standard CNN, however, PixelCNN specifically uses masks that only allows it to read
+one pixel at a time: row by row, and left to right in each row. This enforces that each pixel
+is dependent upon only those above and to the left of itself. Using this unique relationship,
+PixelCNN has a unique use-case in predicting the bottom half of an image after processing the
+top half as input.
+
+This made PixelCNN a particularly appropriate candidate for our computer vision model because
+completing an image after processing the first half is exactly the mechanic we planned to use
+to achieve the melody autofill. All we would have to do is rotate the input image such that
+the time axis propagates top to bottom as opposed to left to right. Additionally, the
+dependencies that PixelCNN establishes simulate dependencies in music really well. Whether or
+not a note is melodic depends on its context - specifically, the notes that came before it in
+time as well as the other notes being played at the same time. Adjusting the axes, PixelCNN's
+dependency upon all pixels above equates to the current note being dependent on all notes
+that were played before it. As for its left to right dependency, chords are typically built
+upward from the root - which, when rotated, would be left to right.
+
+Our main challenge in the use of PixelCNN would be the collection and preprocessing of
+training data. For this model to work for our purposes, we would have to convert each MIDI
+file into a piano roll visualization which is rotated 90 degrees clockwise.
 
 \subsubsection{Magenta}
 
