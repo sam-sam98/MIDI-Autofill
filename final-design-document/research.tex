@@ -30,9 +30,9 @@ denotes low velocity.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics{PianoRoll.png}
+  \includegraphics{image/PianoRoll.png}
   \caption{Example of a piano roll display}
-  \label{fig:piano}
+  \label{fig:piano_roll}
 \end{figure}
 
 The most basic ways a DAW can alter a MIDI are by adding, deleting, and editing notes on the
@@ -61,9 +61,9 @@ a MIDI of a completed melody.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics{MIDIsample.png}
+  \includegraphics{image/MIDIsample.png}
   \caption{Example of a visualized MIDI file}
-  \label{fig:visualization}
+  \label{fig:midi_sample}
 \end{figure}
 
 This approach was originally considered for its advantages over a more direct MIDI-based
@@ -113,9 +113,9 @@ top half as input.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics{PixelMask.png}
+  \includegraphics{image/PixelMask.png}
   \caption{PixelCNN's unique mask prevents the AI from peeking ahead}
-  \label{fig:mask}
+  \label{fig:pixel_mask}
 \end{figure}
 
 This made PixelCNN a particularly appropriate candidate for our computer vision model because
@@ -156,14 +156,14 @@ HTML and similar markup languages, it would be easier to work with. However, we 
 use Flutter. Flutter's default stylization is sleek and fits in well with the modern aesthetic of
 technology. Plus, its widgets allow for more polish on a UI that also has more niche functionality.
 
-As mentioned in \nameref{sec:daw}, the primary aspect of the UI will be the piano roll display.
+As mentioned in \textbf{\ref{sec:daw} \nameref{sec:daw}}, the primary aspect of the UI will be the piano roll display.
 The frontend will be responsible for reading the MIDI messages and converting the note ON/OFF and
 timing clock features into the position and dimensions of an arbitrary number of UI elements -
 each representing a note which can be edited.
 
 \subsection{Raspberry Pi}
 
-As mentioned in \nameref{sec:embedded_controllers}, the Raspberry Pi is mini-computer
+As mentioned in \textbf{\ref{sec:embedded_controllers} \nameref{sec:embedded_controllers}}, the Raspberry Pi is mini-computer
 which can also function as an embedded controller. The model we're interested in is the
 Raspberry Pi 4B. This Raspberry Pi model uses the ARM64 architecture. It can run numerous
 ARM64 based Linux distros. The advantage here is the software and tooling that is
