@@ -114,11 +114,12 @@ function randomizeQuantizedSequence(numNotes, duration, quantization, range) {
     return core.sequences.quantizeNoteSequence(sequence, quantization);
 }
 
-function randomNoteCases(model, noteRange, durations, steps, sizes) {
+//`${size} notes ${step} steps ${duration} duration`
+function randomNoteCases(model, noteRange, durations, steps, sizes, formatStringCallback) {
     return durations.map((duration) => {
         return steps.map((step) => {
             return sizes.map((size) => {
-                return b.add(`${size} notes ${step} steps ${duration} duration`, async () => {
+                return b.add(formatStringCallback(duration, step, size), async () => {
                     let randomNotes = randomizeQuantizedSequence(size, duration, 4, noteRange);
                     return async () => {
                         await model.continueSequence(randomNotes, step, rnn_temperature);
@@ -147,7 +148,11 @@ function twinkleRepetitions(model, repetitions, steps) {
     }).flat(Infinity);
 }
 
+const range = (start, stop, step = 1) =>
+    Array(Math.ceil((stop - start) / step)).fill(start).map((x, y) => x + y * step)
+
 async function runRnnSuite(name, model, range) {
+    const formatter = (duration, size, step) => `${size} notes ${step} steps ${duration} duration`;
     await model.initialize();
     return b.suite(name,
         b.add('Twinkle', async () => {
@@ -158,9 +163,9 @@ async function runRnnSuite(name, model, range) {
                 await model.continueSequence(twinkle, rnn_steps, rnn_temperature);
             };
         }),
-        ...randomNoteCases(model, range, [8, 16, 32, 64, 128], [16], [16]), // Increasing duration
-        ...randomNoteCases(model, range, [8], [16, 32, 64, 128], [16]), // Increasing generation steps
-        ...randomNoteCases(model, range, [8], [16], [16, 32, 64, 128]), // Increasing random note size
+        ...randomNoteCases(model, range, [8, 16, 32, 64, 128], [16], [16], formatter), // Increasing duration
+        ...randomNoteCases(model, range, [8], [16, 32, 64, 128], [16], formatter), // Increasing generation steps
+        ...randomNoteCases(model, range, [8], [16], [16, 32, 64, 128], formatter), // Increasing random note size
         ...twinkleRepetitions(model, [2, 4, 8], [32]),
         b.save({
             file: name,
@@ -171,8 +176,26 @@ async function runRnnSuite(name, model, range) {
     );
 }
 
+async function linearIncreaseSuite(name, model, noteRange) {
+    await model.initialize();
+    return b.suite(name,
+        ...randomNoteCases(model, noteRange, range(10, 100, 5), [10], [10], (duration, _size, _step) => `Duration ${duration}`), // Increasing duration
+        ...randomNoteCases(model, noteRange, [10], range(10, 100, 5), [16], (_duration, step, _size) => `Steps ${step}`), // Increasing steps
+        ...randomNoteCases(model, noteRange, [10], [10], range(100, 2000, 100), (_duration, _step, size) => `Notes ${size}`), // Increasing notes
+        b.cycle(event => {
+            console.log(`Completed ${event.name}: Mean time: ${event.details.mean}`);
+        }),
+        b.save({
+            file: name,
+            folder: 'benchmarks',
+            details: true,
+            format: 'csv'
+        }),
+    );
+}
+
 // Write a summary of each suite to benchmarks/summary.csv
-async function createSummaryCSV(modelCheckpoints) {
+async function createSummaryCSV(outFilename, modelCheckpoints) {
     const papaPromise = (importFile) => new Promise((resolve, reject) => {
         const file = fs.createReadStream(importFile);
         Papa.parse(file, {
@@ -227,62 +250,87 @@ async function createSummaryCSV(modelCheckpoints) {
     console.log(JSON.stringify(summaryData, undefined, 2));
     console.log(outCsv);
 
-    fs.writeFileSync('benchmarks/summary.csv', outCsv);
+    fs.writeFileSync(`benchmarks/${outFilename}.csv`, outCsv);
 }
 
-(async () => {
-    await runRnnSuite(
-        'basic_rnn',
-        new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn'),
-        [48, 84]
-    );
-    await runRnnSuite(
-        'melody_rnn',
-        new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn'),
-        [0, 127]
-    );
-    await runRnnSuite(
-        'drum_kit_rnn',
-        new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/drum_kit_rnn'),
-        [0, 8]
-    );
+let linearMode = process.argv.includes('--linear');
 
-    let mel_4bar_small_q2 = new mvae.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_small_q2');
-    await mel_4bar_small_q2.initialize();
+if (linearMode) {
+    (async () => {
+        await linearIncreaseSuite(
+            'linear_basic_rnn',
+            new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn'),
+            [48, 84]
+        );
+        await linearIncreaseSuite(
+            'linear_melody_rnn',
+            new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn'),
+            [0, 127]
+        );
+        await linearIncreaseSuite(
+            'linear_drum_kit_rnn',
+            new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/drum_kit_rnn'),
+            [0, 8]
+        );
+        await createSummaryCSV('linear',
+            [{
+                model: 'MusicRNN',
+                checkpoints: ['linear_basic_rnn', 'linear_melody_rnn', 'linear_drum_kit_rnn']
+            }]);
+    })();
+} else {
+    (async () => {
+        await runRnnSuite(
+            'basic_rnn',
+            new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn'),
+            [48, 84]
+        );
+        await runRnnSuite(
+            'melody_rnn',
+            new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn'),
+            [0, 127]
+        );
+        await runRnnSuite(
+            'drum_kit_rnn',
+            new mrnn.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/drum_kit_rnn'),
+            [0, 8]
+        );
 
-    await b.suite('musicvae',
-        b.add('10 Samples', async () => {
-            return async () => {
-                await mel_4bar_small_q2.sample(10, vae_temperature)
-            };
-        }),
-        b.add('100 Samples', async () => {
-            return async () => {
-                await mel_4bar_small_q2.sample(100, vae_temperature)
-            };
-        }),
-        b.add('1000 Samples', async () => {
-            return async () => {
-                await mel_4bar_small_q2.sample(1000, vae_temperature)
-            };
-        }),
-        b.save({
-            file: 'mel_4bar_small_q2',
-            folder: 'benchmarks',
-            details: true,
-            format: 'csv'
-        }),
-    );
+        let mel_4bar_small_q2 = new mvae.MusicVAE('https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_4bar_small_q2');
+        await mel_4bar_small_q2.initialize();
 
-    await createSummaryCSV(
-        [{
+        await b.suite('musicvae',
+            b.add('10 Samples', async () => {
+                return async () => {
+                    await mel_4bar_small_q2.sample(10, vae_temperature)
+                };
+            }),
+            b.add('100 Samples', async () => {
+                return async () => {
+                    await mel_4bar_small_q2.sample(100, vae_temperature)
+                };
+            }),
+            b.add('1000 Samples', async () => {
+                return async () => {
+                    await mel_4bar_small_q2.sample(1000, vae_temperature)
+                };
+            }),
+            b.save({
+                file: 'mel_4bar_small_q2',
+                folder: 'benchmarks',
+                details: true,
+                format: 'csv'
+            }),
+        );
+
+        await createSummaryCSV('summary' [{
                 model: 'MusicRNN',
                 checkpoints: ['basic_rnn', 'melody_rnn', 'drum_kit_rnn']
             },
             {
                 model: 'MusicVAE',
                 checkpoints: ['mel_4bar_small_q2']
-            },
-        ]
-    );
-})();
+            }
+        ]);
+    })();
+}
