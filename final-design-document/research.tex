@@ -273,12 +273,54 @@ tested both of these in a demo benchmark program on the Raspberry Pi 4B.
 
 The benchmark program we constructed uses Magenta with JavaScript. We use the Tensorflow
 node backend for good CPU performance with Node. When executed, the program initializes
-both machine learning models, using checkpoints hosted on Google's servers. The program
-measures the time passed in seconds for initialization and music generation time.
+both machine learning models, using checkpoints hosted on Google's servers. The benchmarks
+use a JavaScript benchmarking framework called Benny to run several test cases with
+magenta, sampling each one several time and providing statistics such as the min, max,
+and mean time, as well as the standard deviation.
 
-The MusicRNN model with the provided pretrained checkpoints has shown good performance
-overall when autofilling simple and random melodies, below the 5 second threshold we set
-in our goals.
+We have created two benchmarking suites: a generalized one to gauge overall performance
+(see \nameref{appendix:magenta_benchmark}) and a linear suite to find out what factors
+affect performance the most.
+
+In the generalized suite, the MusicRNN model with the provided pretrained checkpoints has
+shown good performance overall when autofilling simple and random melodies, well below the
+5 second threshold in general with a few edge cases that exceed 5 seconds.
+
+In order to figure out how to keep the generation time under our threshold of 5 seconds,
+we need to know what parameters affect generation time. That is where our linear benchmark
+is useful. The linear benchmark suite measures the performance of different RNN
+checkpoints with respect to:
+
+\begin{itemize}
+  \item Melody duration. This is the duration of the input melody, not the \\
+        output melody.
+  \item Number of notes in the input melody. This is with constant duration (16 seconds).
+  \item Total generation steps. Each generation step represents a quarter note in these \\
+        benchmarks.
+\end{itemize}
+
+Here are the results of those benchmarks:
+
+% \begin{figure}[t!]
+\begin{figure}
+  % \caption{w.r.t. input duration}
+  \includegraphics[width=\linewidth]{image/perfwrtduration.pdf}
+  \label{fig:pwrtduration}
+\end{figure}
+% ~
+\begin{figure}
+  % \caption{w.r.t. generation steps}
+  \includegraphics[width=\linewidth]{image/perfwrtsteps.pdf}
+  \label{fig:pwrtsteps}
+\end{figure}
+
+\begin{figure}
+  % \caption{w.r.t. number of input notes}
+  \includegraphics[width=\linewidth]{image/perfwrtnotes.pdf}
+  \label{fig:pwrtnotes}
+\end{figure}
+%   \caption{Generation time}
+% \end{figure}
 
 \paragraph{UI} Before spending development time on a browser based DAW, it is important to
 verify that Raspberry Pi can even run a browser based DAW with acceptable performance.
