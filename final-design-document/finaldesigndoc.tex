@@ -2,7 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{authblk}
 \usepackage{blindtext}
-\usepackage[style=authoryear, backend=biber]{biblatex}
+\usepackage[bibstyle=numeric, citestyle=numeric, backend=biber]{biblatex}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage[letterpaper, margin=1in, left=1.5in]{geometry}
@@ -15,6 +15,7 @@
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{multirow}
+\usepackage{listings}
 \usepackage{adjustbox}
 \usepackage{appendix}
 
@@ -27,6 +28,9 @@
     linkcolor=black,
     urlcolor=black
 }
+
+\lstset{
+frame = single, }
 
 \title{MIDI Autofill}
 \author[1]{Samantha Del Rosario}

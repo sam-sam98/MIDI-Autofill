@@ -84,6 +84,21 @@ through the \url{.xinitrc} file. This file specifies which commands to run whene
 server is started. By simply including the command to run our application in there, we
 will have a single window at startup.
 
+\begin{lstlisting}[language=bash, label={lst:xinitrc}, caption=Example .xinitrc]
+#!/bin/sh
+
+exec chromium --kiosk http://127.0.0.1:8080/
+\end{lstlisting}
+
+Because our app is browser based, the startup application will be a web browser. In our
+case we want to use the Chromium browser, which is the open source variant of Google
+Chrome. Chromium has a feature called Kiosk mode, which puts the browser in fullscreen
+with no border or frame \autocite{chromiumKioskMode}. This in combination with the xinitrc
+file fulfills our requirement of only having a single fullscreen application with no other
+UI. This feature can be enabled through the \url{--kiosk} command line flag
+\autocite{chromiumKioskMode}. See \nameref{lst:xinitrc} for an example of an xinitrc that
+launches chromium in fullscreen mode.
+
 Networking can disabled through the \url{/etc/network/interfaces} config file. This config
 file is used to declare all networking interfaces, and the interfaces can be removed by
 simply removing all lines declaring a networking interface in that file.
