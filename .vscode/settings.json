@@ -10,5 +10,10 @@
         "distro",
         "distros",
         "toolkits"
+    ],
+    "write-good.languages": [
+        "markdown",
+        "plaintext",
+        "latex",
     ]
 }
