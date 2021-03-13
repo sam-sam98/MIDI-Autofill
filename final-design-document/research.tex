@@ -187,23 +187,11 @@ development. There are many OS choices available, as there are many flavors of L
 can run on the armv7 architecture. Some common choices for Raspberry Pi include Raspberry
 Pi OS (formerly known as Raspian), Arch Linux ARM, and DietPi. Each OS has its advantages
 and drawbacks, and it is important for us to select a distro that is well suited for our
-use case.
+use case. We will need to modify the system heavily for our purposes, but we need a good
+baseline for modification.
 
-The most common operating system used for Raspberry Pi is Raspberry Pi OS. This is a
-specially tailored version of Debian for the Raspberry Pi. This is a common choice for any
-general purpose usage the Pi. It can be used like a normal desktop computer when a mouse,
-keyboard, and monitor are plugged in. This is a "batteries included" distro that includes
-many things we will never use. The bloatware from this distro can hinder performance and
-waste SD card space. There is a lightweight alternative known as Raspberry Pi OS Lite.
-This version does not include any desktop environment.
-
-DietPi is similar to Raspberry Pi OS Lite in that it aims to be a lightweight distro.
-DietPi's website claims to be even lighter than Raspberry Pi Os Lite. It occupies 589 Mb
-on the SD card, while Raspberry Pi OS occupies 1424 MB. There are a number of other system
-optimizations in place to improve general performance. After boot, there are only 11 total
-processes, versus 18 total processes running on Raspberry Pi OS.
-
-There are also specialized distros that are only meant to do one specific thing. Examples
+We need our distro to be a lightweight bootloader for our application. There are many
+examples of highly specialized distros designed for one specific task. Examples
 include RetroPIE, which is used to run retro video games, or OpenMediaVault, which is used
 to turn the device into a networked storage device. This is similar to what we want our
 operating system to do. Our use case for the Raspberry Pi is to run one specialized
@@ -211,7 +199,27 @@ application that we ourselves develop. It should boot straight into our applicat
 no other UI from the operating system. The best solution for us is to have a custom distro
 just for running our application. Developing a Linux distro from scratch is a difficult
 process that is out of the scope of this project. But what we can do is modify an existing
-distro to suite our needs.
+distro to suite our needs. We plan to do this process using a tool called Packer,
+described in more detail in section \ref{sec:packer}.
+
+The most common operating system used for Raspberry Pi is Raspberry Pi OS. This is a
+specially tailored version of Debian for the Raspberry Pi. This is a common choice for any
+general purpose usage the Pi. It can be used like a normal desktop computer when a mouse,
+keyboard, and monitor are plugged in. This is a "batteries included" distro that includes
+many things we will never use. The bloatware from this distro can hinder performance and
+waste SD card space. There is a lightweight alternative known as Raspberry Pi OS Lite.
+This version does not include any desktop environment. We think it would be better to
+start with an even lighter weight distro, such as DietPi.
+
+DietPi is like Raspberry Pi OS Lite in that it is a lightweight distro. DietPi's claims to
+be even lighter than Raspberry Pi Os Lite. It occupies 589 Mb on the SD card, while
+Raspberry Pi OS occupies 1424 MB. There are other system optimizations in place to improve
+general performance as well. After boot, there are 11 total processes, versus 18 total
+processes running on Raspberry Pi OS. This is a good choice for base system. It is easier
+for us to start lightweight and add what we need, rather than to start with a bloated
+system and strip it down. DietPi includes an easy way to run chromium in kiosk mode using
+the \url{dietpi-autostart} utility, which we'll need to have configured anyways, as
+described in section \ref{sec:research:subsec:os_config}.
 
 
 \subsubsection{Operating System Configuration}
@@ -220,7 +228,7 @@ distro to suite our needs.
 The operating system will need to be configured for our use-case. We need to get the
 operating system to boot a single GUI application, our DAW, without displaying any other
 UI from the desktop environment (DE). There may be more applications separate from the DAW
-that will run in the background which also must be started immediately after boot. The
+that will run in the background which also must  immediately after boot. The
 operating system will need to be configured to not permit any networking out of security
 and privacy concerns.
 
@@ -230,8 +238,8 @@ mostly agnostic to the UI, and is used for providing UI toolkits a method for ac
 bitmaps to windows. X can be configured in a variety of ways. The way we intend to
 configure X is to host a single fullscreen application for our DAW. This can be done
 through the \url{.xinitrc} file. This file specifies which commands to run whenever the X
-server is started. By simply including the command to run our application in there, we
-will have a single window at startup.
+server starts. By including the command to run our application in there, we will have a
+single window at startup.
 
 \begin{lstlisting}[language=bash, label={lst:xinitrc}, caption=Example .xinitrc]
 #!/bin/sh
@@ -253,6 +261,7 @@ file is used to declare all networking interfaces, and the interfaces can be rem
 simply removing all lines declaring a networking interface in that file.
 
 \subsubsection{Packer}
+\label{sec:packer}
 
 A solution we found for customizing an existing Linux distro is Packer. Packer is a
 utility that can take an existing operating system image, change it, and produce a new
