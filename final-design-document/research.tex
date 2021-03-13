@@ -270,31 +270,73 @@ controller, but is still performance constrained. Our device needs to be able to
 machine learning model and a UI application, both of which are computationally expensive
 tasks.
 
-\paragraph{Magenta}
+\paragraph{Magenta.}
 
 Magenta serves as a good baseline for measuring performance of music generating AI.
 Magenta ships with two machine learning models: MusicRNN and MusicVAE. We have performance
 tested both of these in a demo benchmark program on the Raspberry Pi 4B.
 
 The benchmark program we constructed uses Magenta with JavaScript. We use the Tensorflow
-node backend for good CPU performance with Node. When executed, the program initializes
-both machine learning models, using checkpoints hosted on Google's servers. The program
-measures the time passed in seconds for initialization and music generation time.
+node backend for good CPU performance with Node. The program uses both the MusicRNN and
+MusicVAE models, with checkpoints that are hosted are Google's servers. The checkpoints
+tested are the \url{basic_rnn}, \url{melody_rnn}, and \url{drum_kit_rnn} checkpoints for
+the MusicRNN, and the \url{mel_4bar_small_q2} checkpoint for \url{MusicVAE}. The benchmarks
+use a JavaScript benchmarking framework called Benny to run several test cases with
+magenta, sampling each one several times and providing statistics such as the min, max,
+and mean generation time, as well as the standard deviation.
 
-The MusicRNN model with the provided pretrained checkpoints has shown good performance
-overall when autofilling simple and random melodies, below the 5 second threshold we set
-in our goals.
+Our benchmarking program has two benchmarking suites: a generalized one to gauge overall
+performance (see \nameref{appendix:magenta_benchmark}) and a linear suite to find out what
+factors affect performance the most.
 
-\paragraph{UI} Before spending development time on a browser based DAW, it is important to
-verify that Raspberry Pi can even run a browser based DAW with acceptable performance.
+In the generalized suite, the MusicRNN model with the provided pretrained checkpoints has
+shown good performance overall when autofilling simple and random melodies, well below the
+5 second threshold in general with a few edge cases that exceed 5 seconds. With this
+knowledge we know its feasible to run a music generating AI on the Raspberry Pi. What we
+need to know is how much we are able to push the music generating AI before we fall below
+our threshold. This is where the linear benchmarks come in.
+
+The linear benchmarks allow us to figure out what constraints we have to limit ourselves
+to in order to stay below our 5 second threshold. There are three main factors that we
+speculated will affect the performance. For each of these benchmark factors, we
+progressively test higher amounts and graph the results (See \autoref{fig:magentaperf}).
+
+\begin{itemize}
+  \item \textbf{Melody duration.} This is the duration of the input melody in seconds.
+  \item \textbf{Number of notes.} Total number of notes in the input melody. This is with
+        a constant duration of 16 seconds.
+  \item \textbf{Generation steps.} Each generation step represents a quarter note in these
+        benchmarks. The duration is constant at 16 seconds.
+\end{itemize}
+
+All benchmarks in this suite use random notes quantized to quarter steps. These range of
+these random notes is tailored to each checkpoint it is run against. For example, the
+\url{basic_rnn} checkpoint only supports pitches in the range \url{[48, 84]}, while
+\url{melody_rnn} supports the full MIDI range of \url{[0, 127]}.
+
+With this data collected, it becomes easy to analyze what constraints we are working
+with. Our target is to remain below 5 seconds of generation time, so we need to ensure
+that we have a safe margin below where the graphs meet 5 seconds. The generation time
+increases linearly with melody duration and total generation steps. The generation time
+remains constant when the total number of notes increases.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{image/perf.pdf}
+  \caption{Magenta Generation Time on the Raspberry Pi 4B}
+  \label{fig:magentaperf}
+\end{figure}
+
+\paragraph{UI.} Before spending development time on a browser based DAW, it is important to
+verify that a Raspberry Pi can even run a browser based DAW with acceptable performance.
 Since we have not developed the DAW at this point, we have tested an existing web based
 MIDI editor in the Raspberry Pi.
 
 We used an online MIDI editor called signal (\url{https://signal.vercel.app/}) to get a
 subjective feel for the performance. The test was ran in the chromium web browser on
-Raspberry Pi OS. The performance was acceptable, with a couple things feeling a bit slow
+Raspberry Pi OS. The performance was acceptable, with a couple things feeling slow.
 Dragging around notes had a small but noticeable latency between the mouse cursor's
-movement and the notes position. There was a small but perceptible amount of time between
+movement and the notes position. There was also a small but noticeable latency between
 double clicking to insert a note and the note showing up on screen.
 
 It should be noted that this app was not explicitly designed to be run on such constrained
