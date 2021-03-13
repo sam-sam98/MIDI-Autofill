@@ -5,11 +5,11 @@
 \subsubsection{MIDI}
 
 MIDI stands for Musical Instrument Digital Interface, and it is used to communicate music
-to computers in separate parts. MIDI files themselves do not contain any audio. Instead, they
-send system and channel messages. Each message describes several features, but in this project
-we are primarily concerned with note ON/OFF and the timing clock. The note ON/OFF tells which
-notes are playing during a certain event and at what velocity. The timing clock keeps track of
-when each event is scheduled to occur.
+to computers in separate parts. MIDI files themselves do not contain any audio. Instead,
+they send system and channel messages. Each message describes several features, but in
+this project we are primarily concerned with note ON/OFF and the timing clock. The note
+ON/OFF tells which notes are playing during a certain event and at what velocity. The
+timing clock keeps track of when each event is scheduled to occur.
 
 Between these two features we can determine pitch, timing, and expression - the three
 components of a note which determine whether or not it is melodic in context.
@@ -18,15 +18,15 @@ components of a note which determine whether or not it is melodic in context.
 \label{sec:daw}
 
 DAW stands for Digital Audio Workstation. DAWs are the software that provide an interface
-through which users can alter the contents of a MIDI or other audio file. Because our DAW is
-to be isolated to a MIDI controller, it  will only contain functions concerning MIDI data.
-When dealing with MIDIs, DAWs visualize audio in a piano roll display. The foundation of the
-piano roll is a set of rows, each one representing a piano key and its corresponding note.
-The horizontal axis represents the timing clock data. For each note that plays in the MIDI, the
-piano roll displays a colored bar located in the row of the corresponding note and spanning the
-length of the corresponding timing clock data. Additionally, some DAWs show the velocity of the
-note by the color of the bar - most commonly, red denotes high velocity while blue/violet
-denotes low velocity.
+through which users can alter the contents of a MIDI or other audio file. Because our DAW
+is to be isolated to a MIDI controller, it  will only contain functions concerning MIDI
+data. When dealing with MIDIs, DAWs visualize audio in a piano roll display. The
+foundation of the piano roll is a set of rows, each one representing a piano key and its
+corresponding note. The horizontal axis represents the timing clock data. For each note
+that plays in the MIDI, the piano roll displays a colored bar located in the row of the
+corresponding note and spanning the length of the corresponding timing clock data.
+Additionally, some DAWs show the velocity of the note by the color of the bar - most
+commonly, red denotes high velocity while blue/violet denotes low velocity.
 
 \begin{figure}[h!]
   \centering
@@ -35,13 +35,13 @@ denotes low velocity.
   \label{fig:piano_roll}
 \end{figure}
 
-The most basic ways a DAW can alter a MIDI are by adding, deleting, and editing notes on the
-piano roll; users can change the timing, pitch, and/or velocity of any note. DAWs can also
-quantize notes, meaning they will automatically shift the timing of the notes so that every
-note begins on some specified fraction of the tempo (most commonly a thirty-second note).
-This function is especially useful in adjusting for human errors in timing when writing MIDIs
-with a MIDI controller. Better timing makes it easier to synchronize with other tracks that might
-end up in the same audio file.
+The most basic ways a DAW can alter a MIDI are by adding, deleting, and editing notes on
+the piano roll; users can change the timing, pitch, and/or velocity of any note. DAWs can
+also quantize notes, meaning they will automatically shift the timing of the notes so that
+every note begins on some specified fraction of the tempo (most commonly a thirty-second
+note). This function is especially useful in adjusting for human errors in timing when
+writing MIDIs with a MIDI controller. Better timing makes it easier to synchronize with
+other tracks that might end up in the same audio file.
 
 
 \subsection{AI}
@@ -75,18 +75,19 @@ simplistic bitmap, suggested that a computer vision model would be fast to train
 Additionally, patterns in music are much easier to recognize through visualization than
 through note data. Much of the music theory that determines whether a note is melodic in
 context is generalized in that it works according to intervals as opposed to discrete
-relationships between specific notes. MIDI files don't provide any information about scales
-or chords; they simply list which notes were played. It might take an AI a good bit of
-to recognize that the interval between C and E is the same as the interval between F and A -
-and even longer still to determine which intervals are musically dissonant or not, and in
-which contexts. When music is visualized, however, it can generalize the same way it does in
-abstract theory. Melodic intervals appear visually the same, regardless of the root note. So
-rather than having to learn separately that C pairs well with E and F pairs well with A, it
-can generalize that any note will pair well with the note that is four semitones (or in the
-AI's case, four pixels) above it, known in music theory as the major third.
+relationships between specific notes. MIDI files don't provide any information about
+scales or chords; they simply list which notes were played. It might take an AI a good bit
+of to recognize that the interval between C and E is the same as the interval between F
+and A - and even longer still to determine which intervals are musically dissonant or not,
+and in which contexts. When music is visualized, however, it can generalize the same way
+it does in abstract theory. Melodic intervals appear visually the same, regardless of the
+root note. So rather than having to learn separately that C pairs well with E and F pairs
+well with A, it can generalize that any note will pair well with the note that is four
+semitones (or in the AI's case, four pixels) above it, known in music theory as the major
+third.
 
-The computer vision model was also favored for its level of technical skill. As students, we
-have been exposed to the concept of CNNs but have not yet had the opportunity to apply
+The computer vision model was also favored for its level of technical skill. As students,
+we have been exposed to the concept of CNNs but have not yet had the opportunity to apply
 them. This model felt appropriate for our skill level because it is centered around a
 technique we already understand, but it also implements that technique to a degree we have
 never attempted before.
@@ -94,22 +95,22 @@ never attempted before.
 \subsubsection{PixelCNN}
 
 For the computer vision model, our lead candidate was PixelCNN. Like a standard CNN,
-PixelCNN processes its image inputs an alternating series of masked convolution and pooling.
-The "masks" used in the convolution layer are square matrices, and each element of the matrix
-is a numerical value that denotes the weight of that element. These masks are iterated over the
-input image, convolving with the brightness of the pixels under the mask. In colored images,
-the process is repeated once for each color channel: red, green, and blue. Depending on the
-configuration of the weights in the matrix, different masks can be used to identify different
-visual patterns. Each convolution with each mask outputs a two-dimensional array of values
-called a feature map. The feature maps are then put through an activation function, which
-modifies the values in the feature map to exaggerate the separation between values above a
-certain threshold and  values below it.
+PixelCNN processes its image inputs an alternating series of masked convolution and
+pooling. The "masks" used in the convolution layer are square matrices, and each element
+of the matrix is a numerical value that denotes the weight of that element. These masks
+are iterated over the input image, convolving with the brightness of the pixels under the
+mask. In colored images, the process is repeated once for each color channel: red, green,
+and blue. Depending on the configuration of the weights in the matrix, different masks can
+be used to identify different visual patterns. Each convolution with each mask outputs a
+two-dimensional array of values called a feature map. The feature maps are then put
+through an activation function, which modifies the values in the feature map to exaggerate
+the separation between values above a certain threshold and  values below it.
 
-Unlike a standard CNN, however, PixelCNN specifically uses masks that only allows it to read
-one pixel at a time: row by row, and left to right in each row. This enforces that each pixel
-is dependent upon only those above and to the left of itself. Using this unique relationship,
-PixelCNN has a unique use-case in predicting the bottom half of an image after processing the
-top half as input.
+Unlike a standard CNN, however, PixelCNN specifically uses masks that only allows it to
+read one pixel at a time: row by row, and left to right in each row. This enforces that
+each pixel is dependent upon only those above and to the left of itself. Using this unique
+relationship, PixelCNN has a unique use-case in predicting the bottom half of an image
+after processing the top half as input.
 
 \begin{figure}[h!]
   \centering
@@ -118,16 +119,17 @@ top half as input.
   \label{fig:pixel_mask}
 \end{figure}
 
-This made PixelCNN a particularly appropriate candidate for our computer vision model because
-completing an image after processing the first half is exactly the mechanic we planned to use
-to achieve the melody autofill. All we would have to do is rotate the input image such that
-the time axis propagates top to bottom as opposed to left to right. Additionally, the
-dependencies that PixelCNN establishes simulate dependencies in music really well. Whether or
-not a note is melodic depends on its context - specifically, the notes that came before it in
-time as well as the other notes being played at the same time. Adjusting the axes, PixelCNN's
-dependency upon all pixels above equates to the current note being dependent on all notes
-that were played before it. As for its left to right dependency, chords are typically built
-upward from the root - which, when rotated, would be left to right.
+This made PixelCNN a particularly appropriate candidate for our computer vision model
+because completing an image after processing the first half is exactly the mechanic we
+planned to use to achieve the melody autofill. All we would have to do is rotate the input
+image such that the time axis propagates top to bottom as opposed to left to right.
+Additionally, the dependencies that PixelCNN establishes simulate dependencies in music
+really well. Whether or not a note is melodic depends on its context - specifically, the
+notes that came before it in time as well as the other notes being played at the same
+time. Adjusting the axes, PixelCNN's dependency upon all pixels above equates to the
+current note being dependent on all notes that were played before it. As for its left to
+right dependency, chords are typically built upward from the root - which, when rotated,
+would be left to right.
 
 Our main challenge in the use of PixelCNN would be the collection and preprocessing of
 training data. For this model to work for our purposes, we would have to convert each MIDI
@@ -144,32 +146,35 @@ file into a piano roll visualization which is rotated 90 degrees clockwise.
 
 \subsection{DAW Frontend Technologies}
 
-We are looking to use a browser-based frontend Design. This approach is ideal for its ease of
-implementing a user interface as well as its cross-platform compatibility. Should we decide to
-make the software even more portable by isolating it from the MIDI controller, it will be viewable
-on any device that can run a browser. And because of the computational limits of the MIDI
-controller, any modern device that is suited for a browser will inherently be able to run the
-MIDI autofill software as well.
+We are looking to use a browser-based frontend Design. This approach is ideal for its ease
+of implementing a user interface as well as its cross-platform compatibility. Should we
+decide to make the software even more portable by isolating it from the MIDI controller,
+it will be viewable on any device that can run a browser. And because of the computational
+limits of the MIDI controller, any modern device that is suited for a browser will
+inherently be able to run the MIDI autofill software as well.
 
-Our first consideration was React. Considering our group's familiarity with JavaScript as well as
-HTML and similar markup languages, it would be easier to work with. However, we ultimately opted to
-use Flutter. Flutter's default stylization is sleek and fits in well with the modern aesthetic of
-technology. Plus, its widgets allow for more polish on a UI that also has more niche functionality.
+Our first consideration was React. Considering our group's familiarity with JavaScript as
+well as HTML and similar markup languages, it would be easier to work with. However, we
+ultimately opted to use Flutter. Flutter's default stylization is sleek and fits in well
+with the modern aesthetic of technology. Plus, its widgets allow for more polish on a UI
+that also has more niche functionality.
 
-As established in \textbf{\ref{sec:daw} \nameref{sec:daw}}, the primary aspect of the UI will be the piano roll display.
-The frontend will be responsible for reading the MIDI messages and converting the note ON/OFF and
-timing clock features into the position and dimensions of an arbitrary number of UI elements -
-each representing a note which can be edited.
+As established in \textbf{\ref{sec:daw} \nameref{sec:daw}}, the primary aspect of the UI
+will be the piano roll display. The frontend will be responsible for reading the MIDI
+messages and converting the note ON/OFF and timing clock features into the position and
+dimensions of an arbitrary number of UI elements - each representing a note which can be
+edited.
 
 \subsection{Raspberry Pi}
 
-As mentioned in \textbf{\ref{sec:embedded_controllers} \nameref{sec:embedded_controllers}}, the Raspberry Pi is mini-computer
-which can also function as an embedded controller. The model we're interested in is the
-Raspberry Pi 4B. This Raspberry Pi model uses the ARM64 architecture. It can run numerous
-ARM64 based Linux distros. The advantage here is the software and tooling that is
-available for us to run in a Linux environment. After an analysis of other solutions, we
-have decided that the Raspberry Pi is the best fit for our project. To that end, we have
-researched how the Raspberry Pi can be configured for use in our project.
+As mentioned in \textbf{\ref{sec:embedded_controllers}
+\nameref{sec:embedded_controllers}}, the Raspberry Pi is mini-computer which can also
+function as an embedded controller. The model we're interested in is the Raspberry Pi 4B.
+This Raspberry Pi model uses the ARM64 architecture. It can run numerous ARM64 based Linux
+distros. The advantage here is the software and tooling that is available for us to run in
+a Linux environment. After an analysis of other solutions, we have decided that the
+Raspberry Pi is the best fit for our project. To that end, we have researched how the
+Raspberry Pi can be configured for use in our project.
 
 \subsubsection{Operating System Choice}
 
