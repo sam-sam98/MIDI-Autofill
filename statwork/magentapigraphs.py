@@ -1,5 +1,8 @@
 import pandas as pd
 import plotly.express as px
+import plotly
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 basic_rnn_csv = pd.read_csv(
     '../magenta-trials/benchmarks/linear_basic_rnn.csv')
@@ -29,70 +32,50 @@ def create_bench_col(df, checkpoint):
     df.insert(0, 'checkpoint', checkpoint)
 
 
-create_x_axis(basic_rnn_duration)
-create_x_axis(melody_rnn_duration)
-create_x_axis(drum_kit_rnn_duration)
-create_x_axis(basic_rnn_steps)
-create_x_axis(melody_rnn_steps)
-create_x_axis(drum_kit_rnn_steps)
-create_x_axis(basic_rnn_notes)
-create_x_axis(melody_rnn_notes)
-create_x_axis(drum_kit_rnn_notes)
+checkpoints = ['basic_rnn', 'melody_rnn', 'drum_kit_rnn']
 
-create_bench_col(basic_rnn_duration, 'basic_rnn')
-create_bench_col(melody_rnn_duration, 'melody_rnn')
-create_bench_col(drum_kit_rnn_duration, 'drum_kit_rnn')
-create_bench_col(basic_rnn_steps, 'basic_rnn')
-create_bench_col(melody_rnn_steps, 'melody_rnn')
-create_bench_col(drum_kit_rnn_steps, 'drum_kit_rnn')
-create_bench_col(basic_rnn_notes, 'basic_rnn')
-create_bench_col(melody_rnn_notes, 'melody_rnn')
-create_bench_col(drum_kit_rnn_notes, 'drum_kit_rnn')
+durations = [basic_rnn_duration, melody_rnn_duration, drum_kit_rnn_duration]
+steps = [basic_rnn_steps, melody_rnn_steps, drum_kit_rnn_steps]
+notes = [basic_rnn_notes, melody_rnn_notes, drum_kit_rnn_notes]
 
+basic_rnn = [basic_rnn_duration, basic_rnn_steps, basic_rnn_notes]
+melody_rnn = [melody_rnn_duration, melody_rnn_steps, melody_rnn_notes]
+drum_kit_rnn = [drum_kit_rnn_duration, drum_kit_rnn_steps, drum_kit_rnn_notes]
 
-duration = pd.concat(
-    [basic_rnn_duration, melody_rnn_duration, drum_kit_rnn_duration])
-steps = pd.concat([basic_rnn_steps, melody_rnn_steps, drum_kit_rnn_steps])
-notes = pd.concat([basic_rnn_notes, melody_rnn_notes, drum_kit_rnn_notes])
+everything = durations + steps + notes
 
-fig = px.line(duration,
-              x="x",
-              y="mean",
-              color='checkpoint',
-              labels={
-                  'x': 'Input melody duration (seconds)',
-                  'mean': 'Autocomplete time (seconds)'
-              },
-              width=500,
-              height=400)
-fig = fig.for_each_trace(lambda t: t.update(name=t.name.replace("=", ": ")))
+for thing in everything:
+    create_x_axis(thing)
+
+for (group, checkpoint) in zip([basic_rnn, melody_rnn, drum_kit_rnn], checkpoints):
+    for rnn in group:
+        create_bench_col(rnn, checkpoint)
+
+layout = go.Layout(autosize=True, margin={'l': 0, 'r': 0, 't': 0, 'b': 0})
+
+fig = make_subplots(3, 1, y_title='Generation time (seconds)')
+
 fig.update_layout(font_family="Helvetica")
-fig.write_image('perfwrtduration.pdf')
 
-fig = px.line(steps,
-              x="x",
-              y="mean",
-              color='checkpoint',
-              labels={
-                  'x': 'Generation steps',
-                  'mean': 'Autocomplete time (seconds)'
-              },
-              width=500,
-              height=400)
-fig.update_layout(font_family="Helvetica")
-fig = fig.for_each_trace(lambda t: t.update(name=t.name.replace("=", ": ")))
-fig.write_image("perfwrtsteps.pdf")
+colors = [plotly.colors.DEFAULT_PLOTLY_COLORS[i] for i in [0, 3, 2]]
 
-fig = px.line(notes,
-              x="x",
-              y="mean",
-              color='checkpoint',
-              labels={
-                  'x': 'Number of input notes',
-                  'mean': 'Generation time (seconds)'
-              },
-              width=500,
-              height=400)
-fig.update_layout(font_family="Helvetica")
-fig = fig.for_each_trace(lambda t: t.update(name=t.name.replace("=", ": ")))
-fig.write_image("perfwrtnotes.pdf")
+for (i, benchmark) in enumerate([durations, steps, notes]):
+    for (b, color, checkpoint) in zip(benchmark, colors, checkpoints):
+        fig.append_trace(
+            go.Scatter(
+                x=b['x'],
+                y=b['mean'],
+                line=dict(color=color),
+                name=checkpoint,
+                legendgroup='group',
+                showlegend=(i == 0)
+            ),
+            col=1,
+            row=i+1,
+        )
+
+fig.update_xaxes(title_text="Input duration (seconds)", row=1, col=1)
+fig.update_xaxes(title_text="Generation steps", row=2, col=1)
+fig.update_xaxes(title_text="Number of input notes", row=3, col=1)
+
+fig.write_image('../final-design-document/image/perf.pdf', height=800)
