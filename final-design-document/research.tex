@@ -167,12 +167,10 @@ edited.
 
 \subsection{Raspberry Pi}
 
-As mentioned in \textbf{\ref{sec:embedded_controllers}
-  \nameref{sec:embedded_controllers}}, the Raspberry Pi is mini-computer which can also
-function as an embedded controller. The model we're interested in is the Raspberry Pi 4B.
-This Raspberry Pi model uses the ARM64 architecture. It can run numerous ARM64 based Linux
-distros. The advantage here is the software and tooling that is available for us to run in
-a Linux environment. After an analysis of other solutions, we have decided that the
+As mentioned in \textbf{\ref{sec:embedded_controllers}\nameref{sec:embedded_controllers}},
+the Raspberry Pi is mini-computer which can also function as an embedded controller. The
+model we're interested in is the Raspberry Pi 4B, which is the latest model and has the
+best hardware. After an analysis of other solutions, we have decided that the
 Raspberry Pi is the best fit for our project. To that end, we have researched how the
 Raspberry Pi can be configured for use in our project.
 
@@ -180,11 +178,16 @@ Raspberry Pi can be configured for use in our project.
 
 The first configuration choice that needs to be made is the operating system. A Raspberry
 Pi out of the box has no operating system. An image must be flashed to an SD card to make
-the Raspberry Pi useful. Raspberry Pi's typically run some form of Linux. There are a
-number of choices available, as there are many flavors of Linux that can run on the ARM64
-architecture. Some common choices for Raspberry Pi include Raspberry Pi OS (formerly known
-as Raspian), Arch Linux ARM, and DietPi. Each OS has its advantages and drawbacks, and it
-is important for us to select a distro that is well suited for our use case.
+the Raspberry Pi useful. Raspberry Pi's typically run some form of Linux. The Raspberry Pi
+4B model uses the AArch64 architecture. It can run most AArch64 based Linux distros, but
+we must limit ourselves to armv7 (32 bit) operating systems, as tensorflow does not
+natively support ARM64 as of the time of writing. Tensorflow lite supports ARM64, but
+tensorflow-lite has a limited number of supported operations, which can inhibit our
+development. There are many OS choices available, as there are many flavors of Linux that
+can run on the armv7 architecture. Some common choices for Raspberry Pi include Raspberry
+Pi OS (formerly known as Raspian), Arch Linux ARM, and DietPi. Each OS has its advantages
+and drawbacks, and it is important for us to select a distro that is well suited for our
+use case.
 
 The most common operating system used for Raspberry Pi is Raspberry Pi OS. This is a
 specially tailored version of Debian for the Raspberry Pi. This is a common choice for any
@@ -209,6 +212,7 @@ no other UI from the operating system. The best solution for us is to have a cus
 just for running our application. Developing a Linux distro from scratch is a difficult
 process that is out of the scope of this project. But what we can do is modify an existing
 distro to suite our needs.
+
 
 \subsubsection{Operating System Configuration}
 \label{sec:research:subsec:os_config}
