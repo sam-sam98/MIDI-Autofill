@@ -3,54 +3,72 @@
 \subsubsection{Legal}
 
 Copyright of AI generated works is a highly debated issue. It is a common legal opinion
-that whoever ran the AI would own the generated work, but there is no legal precedent on
-this matter. There are others that believe the creator of the AI would own the copyright
-of any generated works by default. We want the end-user to own the copyright to their
-generated works. We may want to include a clause in our license that specifically states
-that the end-user will own the copyright to their generated works. This can hopefully
-clear up any concerns to the end-user about ownership and would give users confidence that
-they can freely use our device without copyright concerns.
+that AI generated works cannot be copyrighted, as they are not a human creative
+expression, but there is no legal precedent on this matter that we are aware of. In our
+case, the AI is not generating entire works, but is a tool in a human's creative process.
+We believe that in our case the end-user would still retain copyright for their work.
+We may want to include a clause in our license that specifically states that the end-user
+will own the copyright to their generated works. This can hopefully clear up any concerns
+to the end-user about ownership and would give users confidence that they can freely use
+our device without copyright concerns.
 
 The source code of the model and any other libraries we use should be an open source and
 permissive license. Licenses such as MIT and Apache would be more ideal than a copyleft
-license, such as the GPL. One of the AI libraries we are evaluating, magenta, uses the
-Apache 2.0 License, which is great for us. This license will be easy to comply with, as we
-simply need to include a copy of the license with our code and state if there are any
-modifications to the code.  That is just one example, but it will be important for us to
-audit the licenses of all our dependencies before distribution to be sure we comply.
-Especially if we end up using NodeJS, then we may end up with several dependencies
-indirectly.
+license, such as the GPL. The GPL is particularly bothersome, as even if we do make our
+code open source, it is easy to unintentionally violate the GPL. Even the Free Software
+Foundation, who authored the GPL, has accidentally violated the GPL before with it's GNU
+Emacs software, when they distributed binary blobs without the source code
+\autocite{emacsGplViolation}. Our policy is to avoid the GPL in all dependencies. If we do
+end up needing to rely on GPL code, then we should sandbox it off into a small program
+that we release separately under a GPL license.
 
-Another area of concern in the realm of copyright is the license of the pretrained model.
-If we use a pretrained model we need to verify that we have license to use and distribute
-it. The pretrained models would likely not be included in the code repository and could be
-subjected to a different license. For this project, we will need the ability to distribute
-copies of the pretrained model. We may even have multiple pretrained models per genre if
-we accomplish our stretch goal of multiple genres/artists. In such a case we will need to
-verify the license of all models for each genre. If we cannot find a pretrained models
-that fits this requirement, then we may need to train our own model. If the source code of
-the model has a permissive license then it should not be an issue for us to train our own
-model for distribution, should that be necessary.
+One of the AI libraries we are evaluating, Magenta, uses the Apache 2.0 License, which is
+great for us. This license will be easy to comply with, as we simply need to include a
+copy of the license with our code and state if there are any modifications to the code.
+That is just one example, but it will be important for us to audit the licenses of all our
+dependencies before distribution to be sure we comply. We are using JavaScript with
+NodeJS, which means we have hundreds of indirect dependencies which we need to audit. We
+are using a NodeJS program called \url{license-checker} to audit the license of our
+dependencies, and only allowing the MIT, BSD, and Apache licenses.
+
+Another area of concern is the copyright of the pretrained model. It is debatable whether
+a pretrained model can even be copyrighted. It would need to be considered an act of
+human creative expression, and the pretrained models arguably not the result of a creative
+process. These models are freely distributed online, and it would be hard to argue that
+they are not intended to be used freely, but we should still verify that we have license
+to use and distribute it. The pretrained models would likely not be included in the code
+repository and could be subjected to a different license. For this project, we will need
+the ability to distribute copies of the pretrained model. We may even have multiple
+pretrained models per genre if we accomplish our stretch goal of multiple genres/artists.
+In such a case we will need to verify the license of all models for each genre. If we
+cannot find a pretrained models that fits this requirement, then we may need to train our
+own model. If the source code of the model has a permissive license then it should not be
+an issue for us to train our own model for distribution, should that be necessary.
 
 \subsubsection{Ethical}
 
 There are also many questions about the ethics of AI generated artwork. This is a highly
-opinionated topic. Many feel great concern that not only does AI have the potential to
-substitute labor, but also artistic endeavors. Some who have thought that art would be
-safe from AI are shocked to see that AI currently can produce interesting and
-thought-provoking art. While it will still be a long time for AI to catch up with human
-creativity, it is not a misplaced concern. With that said, we believe that this project
-does not fall into this category of AI, as it is intended as a tool to assist musicians
-rather than to replace artistic talent. The project’s goal is not to replace the musician,
-but to help foster their creativity. The MIDI autofill function will only continue an
-existing melody, not generate an entirely new one.
+opinionated topic, with many people who are fearful of AI. Many feel great concern that
+not only does AI have the potential to substitute labor, but also artistic endeavors. Some
+who have thought that art would be safe from AI are shocked to see that AI currently can
+produce interesting and thought-provoking art. While it will still be a long time for AI
+to catch up with human creativity, it is not a misplaced concern. With that said, we
+believe that this project does not fall into this category of AI, as it is intended as a
+tool to assist musicians rather than to replace artistic talent. The project’s goal is not
+to replace the musician, but to help foster their creativity. The MIDI autofill function
+will only continue an existing melody, not generate an entirely new one.
 
 \subsubsection{Privacy}
 
 As far as privacy goes, it is a mostly a non-issue for this project, provided our
-implementation is correct. The MIDI device will not require any network connectivity and
-will not store any user data. Granted, if we do end up using a microcontroller with
-network capability, such as a raspberry pi, we should take extra steps to ensure that any
-networking capability is disable so that the host machine cannot get compromised. Although
-it would be a bit of a stretch, if the host machine can be compromised through the MIDI
-device, then that could lead to major privacy violations.
+implementation is correct. We have no server-side component, and no plans to track any
+user data. The MIDI device will not require any public network connectivity and will not
+store personally identifiable information.
+
+The microcontroller we are using, the Raspberry Pi 4B, does have networking capability,
+and we need local networking capability for the USB connection (which works over normal
+networking interfaces in our case) and potentially for any interprocess communication.
+But we are taking extra steps to ensure that any public networking is disabled so that the
+device cannot get compromised through network. Although it would be a bit of a stretch, if
+the host machine can be compromised through the MIDI device, then that could lead to major
+privacy violations.
