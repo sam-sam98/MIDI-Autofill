@@ -6,17 +6,17 @@ from plotly.subplots import make_subplots
 
 
 CASES = [
-    'StepsAndDuration',
     'Duration',
     'Steps',
+    'StepsAndDuration',
     'Notes',
     'Temperature'
 ]
 
 X_AXIS_TITLES = [
-    'Number of steps and duration (seconds)',
     'Input melody duration (seconds)',
     'Total generation steps',
+    'Number of steps and duration (seconds)',
     'Input notes',
     'RNN Temperature',
 ]
