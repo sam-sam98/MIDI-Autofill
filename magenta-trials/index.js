@@ -7,6 +7,9 @@ const fs = require('fs');
 const b = require('benny');
 const Papa = require('papaparse');
 
+const BENCH_OPTIONS = {
+    maxTime: 1.5
+};
 
 TWINKLE_TWINKLE = {
     notes: [{
@@ -114,12 +117,14 @@ function randomizeQuantizedSequence(numNotes, duration, quantization, range) {
     return core.sequences.quantizeNoteSequence(sequence, quantization);
 }
 
+let addCase = (name, callback) => b.add(name, callback, BENCH_OPTIONS);
+
 //`${size} notes ${step} steps ${duration} duration`
 function randomNoteCases(model, noteRange, durations, steps, sizes, formatStringCallback) {
     return durations.map((duration) => {
         return steps.map((step) => {
             return sizes.map((size) => {
-                return b.add(formatStringCallback(duration, step, size), async () => {
+                return addCase(formatStringCallback(duration, step, size), async () => {
                     let randomNotes = randomizeQuantizedSequence(size, duration, 4, noteRange);
                     return async () => {
                         await model.continueSequence(randomNotes, step, rnn_temperature);
@@ -133,7 +138,7 @@ function randomNoteCases(model, noteRange, durations, steps, sizes, formatString
 function twinkleRepetitions(model, repetitions, steps) {
     return steps.map((step) => {
         return repetitions.map((repetition) => {
-            return b.add(`Twinkle ${repetition} repetitions ${step} steps`, async () => {
+            return addCase(`Twinkle ${repetition} repetitions ${step} steps`, async () => {
                 //let randomNotes = randomizeQuantizedSequence(size, duration, 4, noteRange);
                 let sequences = Array(repetition).fill(TWINKLE_TWINKLE);
                 let sequence = core.sequences.quantizeNoteSequence(
@@ -154,10 +159,21 @@ const range = (start, stop, step = 1) =>
 function increasingStepsAndDuration(model, noteRange) {
     let stepsDurationRange = range(10, 100, 5);
     return stepsDurationRange.map((stepAndDuration) => {
-        return b.add(`StepsAndDuration ${stepAndDuration}`, async () => {
+        return addCase(`StepsAndDuration ${stepAndDuration}`, async () => {
             let randomNotes = randomizeQuantizedSequence(10, stepAndDuration, 4, noteRange);
             return async () => {
                 await model.continueSequence(randomNotes, stepAndDuration, rnn_temperature);
+            };
+        });
+    }).flat(Infinity);
+}
+
+function increasingTemperature(model, noteRange, temperatures) {
+    return temperatures.map((temp) => {
+        return addCase(`Temperature ${temp}`, async () => {
+            let randomNotes = randomizeQuantizedSequence(10, 16, 4, noteRange);
+            return async () => {
+                await model.continueSequence(randomNotes, 16, temp);
             };
         });
     }).flat(Infinity);
@@ -167,7 +183,7 @@ async function runRnnSuite(name, model, range) {
     const formatter = (duration, size, step) => `${size} notes ${step} steps ${duration} duration`;
     await model.initialize();
     return b.suite(name,
-        b.add('Twinkle', async () => {
+        addCase('Twinkle', async () => {
             const rnn_steps = 80;
             let twinkle = core.sequences.quantizeNoteSequence(TWINKLE_TWINKLE, 4);
             await model.continueSequence(twinkle, rnn_steps, rnn_temperature);
@@ -191,6 +207,7 @@ async function runRnnSuite(name, model, range) {
 async function linearIncreaseSuite(name, model, noteRange) {
     await model.initialize();
     return b.suite(name,
+        ...increasingTemperature(model, noteRange, range(1.0, 3.0, 0.2)),
         ...increasingStepsAndDuration(model, noteRange),
         ...randomNoteCases(model, noteRange, range(10, 100, 5), [10], [10], (duration, _size, _step) => `Duration ${duration}`), // Increasing duration
         ...randomNoteCases(model, noteRange, [10], range(10, 100, 5), [16], (_duration, step, _size) => `Steps ${step}`), // Increasing steps
