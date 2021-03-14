@@ -137,7 +137,32 @@ file into a piano roll visualization which is rotated 90 degrees clockwise.
 
 \subsubsection{Magenta}
 
-\blindtext
+As an alternative, we could use an existent open source solution. Magenta is an
+open source project for artistic applications developed by Google AI. This project has 
+released in 2018 an extensive AI library for art and music. This one, contains already
+trained models, API and datasets that can be directly used to solve our problem. Although,
+the level of functionalities already included in these libraries can defeat the academic
+purpose of the current project, there are valuables tools to create our own autocomplete 
+AI model.
+
+As an already functional solution that can be directly applied to our work without any
+modification is the module MusicRNN. This one contains three models of interest: 
+MelodyRNN, ImprovRNN, and PerformanceRNN. All these models, as their name implies, are
+based on recurrent neural netoworks (RNN) produced with Google's TensorFlow.
+
+In constrast with the already mentioned CNN, that processes grid values as is a picture, 
+RNN processes sequential data as string of caracthers, words, or in our case of 
+interest, melody representations. RNN also considers proccesed information along large
+sequnces of data, and not purely local extent as CNN.
+
+
+MelodyRNN model generates melody based on an input melody. To achieve this uses a similar
+method applied for language analisys. 
+
+ImprovRNN
+
+PerformanceRNN
+
 
 \subsection{Embedded Controller Comparisons}
 \label{sec:embedded_controllers}
