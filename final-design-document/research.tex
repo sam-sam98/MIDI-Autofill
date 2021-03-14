@@ -143,7 +143,8 @@ This project has released in 2018 an extensive AI library for art and music. Thi
 contains already trained models, API and datasets that can be directly used to solve our
 problem. Although, the level of functionalities already included in these libraries can
 defeat the academic purpose of the current project, there are valuables tools to create
-our own autocomplete AI model.
+our own autocomplete AI model. The project offers blank models to be trained by our own
+set of data, and also offers the posssibility of using pre-trained models.
 
 As an already functional solution that can be directly applied to our work without any
 modification is the module MusicRNN\autocite{musicRNN}. This one contains three models of
@@ -156,18 +157,48 @@ interest, melody representations. RNN also considers proccesed information along
 sequnces of data, and not purely local extent as CNN.\autocite{fundamentalML}
 
 \paragraph{MelodyRNN.}
-MelodyRNN model generates melody based on an input melody. To achieve this, it uses a long
-short-term memory (LMST) network. This is a variant of RNN design to improve the
-performance of regulr RNN across large sequenes of data. The main issues that LMST adress
-are those related to the exploding gradients and vanishing gradients magnified on any
-recursive network due to the accumulation of errors on the successive feedbacks of data
-analysis.\autocite{melodyRNN}
+MelodyRNN model generates melody based on an input melody. To achieve this, it uses
+language modeling (probability distribution over a sequence of data) with long short-term
+memory (LMST) networks. This is a variant of RNN design to improve the performance of
+regulr RNN across large sequnces of data. The main issues that LMST adress are those
+related to the exploding and vanishing gradients magnified on any recursive network due to
+the accumulation of errors on the successive feedbacks of data analysis. This models also
+have four configurations to assists determining the range of pitches, indentifying
+recursive patterns, and pay special attention on specific sections of the input melody.
+\autocite{melodyRNN} 
+
+This model could be in charge of the autocomplete feature we are
+looking to achieve in our project.
 
 \paragraph{ImprovRNN.}
-ImprovRNN \autocite{improvRNN}
+ImprovRNN generate melodies in the same fashion of MelodyRNN. The main difference with the
+before model is the conditionment of the generated melody to a chord progression. This
+model counts with similar set of configurations than MelodyRNN, but with the addition of
+usign as inputs vectors representing chords of the progression. Although, this can be a
+interesting feature to generate melodies, the model requires to encode the full input
+melody in XML format, not supporting direct MIDI input.\autocite{improvRNN} 
+
+This model would not be directly applied to our project, but still could add interesting
+features for an expanded instance.
 
 \paragraph{PerformanceRNN.}
-PerformanceRNN \autocite{performanceRNN}
+PerformanceRNN generates melodies using dynamic and expressing timing. This allows to
+generate more natural feeling as if a real player is adding to the expression of the
+performance. Although, this came with some trade off as some keys can fall outside the
+proper timing. \autocite{performanceRNN}
+
+This model add a nice to have feature, but is not fundamental for our first aproach.
+
+\paragraph{Datasets.}
+Magenta project offers a set of collections of data that has been used to pre-train
+models. From ths collection, seems that the MAESTRO (MIDI and Audio Edited for Synchronous
+TRacks and Organization) dataset could be the most useful for this project. It contains
+over 200 hours of key annotated piano performing. Other set that can be useful for our
+classical music appoach is the Bach Doodle Set. A large audio dataset (over 6 years of
+total audio), collected by Google using its Bach Doodle. \autocite{magentaData}
+
+The selction of the dataset would be conditioned by the available trianing capabilities
+for this project.
 
 
 \subsection{Embedded Controller Comparisons}
