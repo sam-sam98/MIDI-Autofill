@@ -151,6 +151,18 @@ function twinkleRepetitions(model, repetitions, steps) {
 const range = (start, stop, step = 1) =>
     Array(Math.ceil((stop - start) / step)).fill(start).map((x, y) => x + y * step)
 
+function increasingStepsAndDuration(model, noteRange) {
+    let stepsDurationRange = range(10, 100, 5);
+    return stepsDurationRange.map((stepAndDuration) => {
+        return b.add(`StepsAndDuration ${stepAndDuration}`, async () => {
+            let randomNotes = randomizeQuantizedSequence(10, stepAndDuration, 4, noteRange);
+            return async () => {
+                await model.continueSequence(randomNotes, stepAndDuration, rnn_temperature);
+            };
+        });
+    }).flat(Infinity);
+}
+
 async function runRnnSuite(name, model, range) {
     const formatter = (duration, size, step) => `${size} notes ${step} steps ${duration} duration`;
     await model.initialize();
@@ -179,6 +191,7 @@ async function runRnnSuite(name, model, range) {
 async function linearIncreaseSuite(name, model, noteRange) {
     await model.initialize();
     return b.suite(name,
+        ...increasingStepsAndDuration(model, noteRange),
         ...randomNoteCases(model, noteRange, range(10, 100, 5), [10], [10], (duration, _size, _step) => `Duration ${duration}`), // Increasing duration
         ...randomNoteCases(model, noteRange, [10], range(10, 100, 5), [16], (_duration, step, _size) => `Steps ${step}`), // Increasing steps
         ...randomNoteCases(model, noteRange, [10], [10], range(100, 2000, 100), (_duration, _step, size) => `Notes ${size}`), // Increasing notes
