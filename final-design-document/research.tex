@@ -280,13 +280,16 @@ Performance is always a concern when dealing with constrained embedded hardware.
 Raspberry Pi fares better than microcontrollers you would find in a typical MIDI
 controller, but is still performance constrained. Our device needs to be able to run a
 machine learning model and a UI application, both of which are computationally expensive
-tasks.
+tasks. This is a critical part of our project so we have conducted extensive research to
+ensure that what we want to do is possible on the Raspberry Pi.
 
 \paragraph{Magenta.}
 
 Magenta serves as a good baseline for measuring performance of music generating AI.
 Magenta ships with two machine learning models: MusicRNN and MusicVAE. We have performance
-tested both of these in a demo benchmark program on the Raspberry Pi 4B.
+tested both of these in a demo benchmark program we have written on the Raspberry Pi 4B.
+We have design the benchmark suites to be modular so that we can benchmark our own
+checkpoints or models later in development.
 
 The benchmark program we constructed uses Magenta with JavaScript. We use the Tensorflow
 node backend for good CPU performance with Node. The program uses both the MusicRNN and
@@ -304,9 +307,9 @@ factors affect performance the most.
 In the generalized suite, the MusicRNN model with the provided pretrained checkpoints has
 shown good performance overall when autofilling simple and random melodies, well below the
 5 second threshold in general with a few edge cases that exceed 5 seconds. With this
-knowledge we know its feasible to run a music generating AI on the Raspberry Pi. What we
-need to know is how much we are able to push the music generating AI before we fall below
-our threshold. This is where the linear benchmarks come in.
+knowledge we know its feasible to run a music generating AI on the Raspberry Pi 4B. What
+we need to know is how much we are able to push the music generating AI before we fall
+below our threshold. This is where the linear benchmarks come in.
 
 The linear benchmarks allow us to figure out what constraints we have to limit ourselves
 to in order to stay below our 5 second threshold. There are three main factors that we
@@ -321,16 +324,27 @@ progressively test higher amounts and graph the results (See \autoref{fig:magent
         benchmarks. The duration is constant at 16 seconds.
 \end{itemize}
 
-All benchmarks in this suite use random notes quantized to quarter steps. The random notes
-fit the checkpoints supported note rage, which is different between checkpoints. For
+All benchmarks in the linear suite use random notes quantized to quarter steps. The random
+notes fit the checkpoints supported note rage, which is different between checkpoints. For
 example, the \url{basic_rnn} checkpoint supports pitches in the range \url{[48, 84]},
-while \url{melody_rnn} supports the full MIDI range of \url{[0, 127]}.
+while \url{melody_rnn} supports the full MIDI range of \url{[0, 127]}
+\autocite{modelPitchRange}.
 
 With this data collected, it becomes easy to analyze what constraints we are working
 with. Our target is to remain below 5 seconds of generation time, so we need to ensure
 that we have a safe margin below where the graphs meet 5 seconds. The generation time
-increases linearly with melody duration and total generation steps. The generation time
-remains constant when the total number of notes increases.
+increases linearly with melody duration and total generation steps. We were initially
+surprised to see that the total number of notes had no effect on generation time, which
+remained constant when increasing from 100 to 2000 input notes, but this makes sense as
+
+The input duration is the biggest factor affecting generation time. The number of
+generation steps are the next biggest factor. With this data, we know that we will need to truncate the
+input melody's duration to less than a minute of music. The generation steps need to be
+accounted for when determining the duration of music to accept as input for our AI. As the
+generation steps increase we need make up for that amount of extra time by decreasing the
+input duration even further. There is no exponential factor when increasing both input
+duration and total generation steps, so we can simply subtract the estimated added time
+from the input melody duration.
 
 \begin{figure}
   \centering
