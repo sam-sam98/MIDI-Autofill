@@ -355,5 +355,68 @@ It should be noted that this app was not explicitly designed to run on constrain
 hardware. Based on our findings here we are confident that we can develop a browser based
 app that has exceptional performance on the Raspberry Pi.
 
+\subsection{MIDI Peripheral}
+
+The Pi needs to function as a MIDI peripheral, i.e. plug the device into a computer and it
+functions as a device that sends MIDI commands to the DAW. This connection will happen
+through a USB-C to USB-A cable from the Raspberry Pi to the computer. The Raspberry Pi is
+typically powered from the USB-C port form a power supply connected to a power outlet, but
+in our case the Pi will receive it's power from the host PC over USB-C instead. Once
+plugged in, the Pi will act as a normal MIDI peripheral, which sends MIDI events to the
+PC, which can be picked up by a fully fledged DAW.
+
+The MIDI communication happens over USB in our case, which means we need to work with the
+operating system to send these messages. We are using Linux for our device's operating
+system, so USB communication needs to happen through the Linux kernel. This is known as a
+USB Gadget in the Linux kernel \autocite{usbGadgetDocumentation}. The Raspberry Pi 4b can
+act as a Linux USB Gadget through a USB-C to USB-A connection to the computer, with USB-C
+being on the Raspberry Pi and USB-A being on the host computer
+\autocite{raspberryPiGadgetSetup}. This will not work out of the box, as the Linux kernel
+needs to be made aware that we intend to use the device as a USB gadget. This
+configuration happens through files in the \url{/boot/} directory
+(see listings \ref{lst:bootconfig} and
+\ref{lst:bootcmdline}) \autocite{raspberryPiGadgetSetup}. The Pi will act as a USB
+gadget after Linux boot configuration settings are set and it is plugged up to the host
+machine.
+
+\begin{minipage}{\linewidth}
+
+  \begin{lstlisting}[language=bash,
+  label={lst:bootconfig},
+  caption=Line to be added to /boot/config.txt \autocite{raspberryPiGadgetSetup}]
+dtoverlay=dwc2
+  \end{lstlisting}
+
+  \begin{lstlisting}[language=bash, label={lst:bootcmdline}, caption=DietPi /boot/cmdline.txt modified to allow a USB Gadget \autocite{raspberryPiGadgetSetup}, breaklines=true]
+console=ttyS0,115200 console=tty1 root=PARTUUID=8f4dbd00-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet net.ifnames=0 modules-load=dwc2,g_ether
+  \end{lstlisting}
+
+\end{minipage}
+
+After the boot configuration options are set, the device will be a USB gadget, but there
+is more configuration needed for it to act as a MIDI USB gadget. The Linux kernel already
+provides an interface for USB gadgets to act as MIDI devices, through the
+\url{usb_f_midi.ko} kernel module \autocite{usbGadgetDocumentation}. We need to set our
+Raspberry Pi's USB gadget settings to identify itself as a MIDI peripheral. We have
+followed an online guide to setup this MIDI gadget, which involves providing information
+to the kernel about our device through the \url{/sys/kernel/config/usb_gadget/} folder
+\autocite{raspberryPiGadgetSetup}.
+
+This works, but we ran into a problem with our setup where our HDMI connection to the
+monitor was not working anymore.
+
+\begin{lstlisting}[label={lst:usb_gadget}, caption=Bash procedure to setup a MIDI Gadget\, modified for our device \autocite{raspberryPiGadgetSetup}, breaklines=true]
+cd /sys/kernel/config/usb_gadget/
+mkdir -p midi_over_usb
+cd midi_over_usb
+echo 0x17e8  > idVendor
+echo 0xb09c > idProduct
+echo 0x0100 > bcdDevice
+echo 0x0200 > bcdUSB
+mkdir -p strings/0x409
+echo "fedcba9876543210" > strings/0x409/serialnumber
+echo "MIDI Autofill Group" > strings/0x409/manufacturer
+echo "MIDI Autofill Device" > strings/0x409/product
+\end{lstlisting}
 
 \subsection{Keyboard Design}

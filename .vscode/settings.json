@@ -15,5 +15,8 @@
         "markdown",
         "plaintext",
         "latex",
-    ]
+    ],
+    "write-good.write-good-config": {
+        "passive": false
+    }
 }
