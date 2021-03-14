@@ -396,6 +396,20 @@ hdmi_drive=1
 console=ttyS0,115200 console=tty1 root=PARTUUID=8f4dbd00-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet net.ifnames=0 modules-load=dwc2,g_ether
   \end{lstlisting}
 
+  \begin{lstlisting}[label={lst:usb_gadget}, caption=Bash procedure to setup a MIDI Gadget\, modified for our device \autocite{raspberryPiGadgetSetup}, breaklines=true]
+cd /sys/kernel/config/usb_gadget/
+mkdir -p midi_over_usb
+cd midi_over_usb
+echo 0x17e8  > idVendor
+echo 0xb09c > idProduct
+echo 0x0100 > bcdDevice
+echo 0x0200 > bcdUSB
+mkdir -p strings/0x409
+echo "fedcba9876543210" > strings/0x409/serialnumber
+echo "MIDI Autofill Group" > strings/0x409/manufacturer
+echo "MIDI Autofill Device" > strings/0x409/product
+  \end{lstlisting}
+
 \end{minipage}
 
 After the boot configuration options are set, the device will be a USB gadget, but there
@@ -416,7 +430,7 @@ force an HDMI connection, using the \url{hdmi_force_hotplug} option
 be seen in listing \ref{lst:bootconfig}.
 
 We have also ran into some low voltage warnings when running the Raspberry Pi 4B as a USB
-gadget. These warnings are found in systemlogs and are viewed with `journalctl'. The
+gadget. These warnings are found in systemlogs and are viewed with \url{journalctl}. The
 Raspberry Pi 4b requires 5.1 volts and 3 amps to operate effectively, and will send the
 undervolt warning whenever it runs below 4.63 volts
 \autocite{raspberryPiAmps}. We notice that we see these warnings early in the boot, but it
@@ -424,18 +438,5 @@ seems to stabilize later. We have not run into any issues with these undervolts 
 but it could lead to stability issues later. We are still researching  solutions to this
 problem.
 
-\begin{lstlisting}[label={lst:usb_gadget}, caption=Bash procedure to setup a MIDI Gadget\, modified for our device \autocite{raspberryPiGadgetSetup}, breaklines=true]
-cd /sys/kernel/config/usb_gadget/
-mkdir -p midi_over_usb
-cd midi_over_usb
-echo 0x17e8  > idVendor
-echo 0xb09c > idProduct
-echo 0x0100 > bcdDevice
-echo 0x0200 > bcdUSB
-mkdir -p strings/0x409
-echo "fedcba9876543210" > strings/0x409/serialnumber
-echo "MIDI Autofill Group" > strings/0x409/manufacturer
-echo "MIDI Autofill Device" > strings/0x409/product
-\end{lstlisting}
 
 \subsection{Keyboard Design}
