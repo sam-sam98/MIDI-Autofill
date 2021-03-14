@@ -383,8 +383,13 @@ machine.
 
   \begin{lstlisting}[language=bash,
   label={lst:bootconfig},
-  caption=Line to be added to /boot/config.txt \autocite{raspberryPiGadgetSetup}]
+  caption=Lines added to /boot/config.txt \autocite{raspberryPiGadgetSetup, raspberryPiHDMIFix}]
 dtoverlay=dwc2
+hdmi_force_hotplug=1
+hdmi_group=2
+hdmi_mode=87
+hdmi_cvt=800 480 60 6 0 0 0
+hdmi_drive=1
   \end{lstlisting}
 
   \begin{lstlisting}[language=bash, label={lst:bootcmdline}, caption=DietPi /boot/cmdline.txt modified to allow a USB Gadget \autocite{raspberryPiGadgetSetup}, breaklines=true]
@@ -403,7 +408,21 @@ to the kernel about our device through the \url{/sys/kernel/config/usb_gadget/} 
 \autocite{raspberryPiGadgetSetup}.
 
 This works, but we ran into a problem with our setup where our HDMI connection to the
-monitor was not working anymore.
+monitor was not working anymore. This connection is critical, as we need to be able to
+display our DAW to the built in connection using HDMI, so we had to find a workaround for
+this issue. We found out that there are \url{/boot/config.txt} options that can added to
+force an HDMI connection, using the \url{hdmi_force_hotplug} option
+\autocite{raspberryPiHDMIFix}. This configuration as well as some other HDMI settings can
+be seen in listing \ref{lst:bootconfig}.
+
+We have also ran into some low voltage warnings when running the Raspberry Pi 4B as a USB
+gadget. These warnings are found in systemlogs and are viewed with `journalctl'. The
+Raspberry Pi 4b requires 5.1 volts and 3 amps to operate effectively, and will send the
+undervolt warning whenever it runs below 4.63 volts
+\autocite{raspberryPiAmps}. We notice that we see these warnings early in the boot, but it
+seems to stabilize later. We have not run into any issues with these undervolts as of now,
+but it could lead to stability issues later. We are still researching  solutions to this
+problem.
 
 \begin{lstlisting}[label={lst:usb_gadget}, caption=Bash procedure to setup a MIDI Gadget\, modified for our device \autocite{raspberryPiGadgetSetup}, breaklines=true]
 cd /sys/kernel/config/usb_gadget/
