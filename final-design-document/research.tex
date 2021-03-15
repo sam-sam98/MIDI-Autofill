@@ -5,11 +5,11 @@
 \subsubsection{MIDI}
 
 MIDI stands for Musical Instrument Digital Interface, and it is used to communicate music
-to computers in separate parts. MIDI files themselves do not contain any audio. Instead, they
-send system and channel messages. Each message describes several features, but in this project
-we are primarily concerned with note ON/OFF and the timing clock. The note ON/OFF tells which
-notes are playing during a certain event and at what velocity. The timing clock keeps track of
-when each event is scheduled to occur.
+to computers in separate parts. MIDI files themselves do not contain any audio. Instead,
+they send system and channel messages. Each message describes several features, but in
+this project we are primarily concerned with note ON/OFF and the timing clock. The note
+ON/OFF tells which notes are playing during a certain event and at what velocity. The
+timing clock keeps track of when each event is scheduled to occur.
 
 Between these two features we can determine pitch, timing, and expression - the three
 components of a note which determine whether or not it is melodic in context.
@@ -18,15 +18,15 @@ components of a note which determine whether or not it is melodic in context.
 \label{sec:daw}
 
 DAW stands for Digital Audio Workstation. DAWs are the software that provide an interface
-through which users can alter the contents of a MIDI or other audio file. Because our DAW is
-to be isolated to a MIDI controller, it  will only contain functions concerning MIDI data.
-When dealing with MIDIs, DAWs visualize audio in a piano roll display. The foundation of the
-piano roll is a set of rows, each one representing a piano key and its corresponding note.
-The horizontal axis represents the timing clock data. For each note that plays in the MIDI, the
-piano roll displays a colored bar located in the row of the corresponding note and spanning the
-length of the corresponding timing clock data. Additionally, some DAWs show the velocity of the
-note by the color of the bar - most commonly, red denotes high velocity while blue/violet
-denotes low velocity.
+through which users can alter the contents of a MIDI or other audio file. Because our DAW
+is to be isolated to a MIDI controller, it  will only contain functions concerning MIDI
+data. When dealing with MIDIs, DAWs visualize audio in a piano roll display. The
+foundation of the piano roll is a set of rows, each one representing a piano key and its
+corresponding note. The horizontal axis represents the timing clock data. For each note
+that plays in the MIDI, the piano roll displays a colored bar located in the row of the
+corresponding note and spanning the length of the corresponding timing clock data.
+Additionally, some DAWs show the velocity of the note by the color of the bar - most
+commonly, red denotes high velocity while blue/violet denotes low velocity.
 
 \begin{figure}[h!]
   \centering
@@ -35,13 +35,13 @@ denotes low velocity.
   \label{fig:piano_roll}
 \end{figure}
 
-The most basic ways a DAW can alter a MIDI are by adding, deleting, and editing notes on the
-piano roll; users can change the timing, pitch, and/or velocity of any note. DAWs can also
-quantize notes, meaning they will automatically shift the timing of the notes so that every
-note begins on some specified fraction of the tempo (most commonly a thirty-second note).
-This function is especially useful in adjusting for human errors in timing when writing MIDIs
-with a MIDI controller. Better timing makes it easier to synchronize with other tracks that might
-end up in the same audio file.
+The most basic ways a DAW can alter a MIDI are by adding, deleting, and editing notes on
+the piano roll; users can change the timing, pitch, and/or velocity of any note. DAWs can
+also quantize notes, meaning they will automatically shift the timing of the notes so that
+every note begins on some specified fraction of the tempo (most commonly a thirty-second
+note). This function is especially useful in adjusting for human errors in timing when
+writing MIDIs with a MIDI controller. Better timing makes it easier to synchronize with
+other tracks that might end up in the same audio file.
 
 
 \subsection{AI}
@@ -75,18 +75,19 @@ simplistic bitmap, suggested that a computer vision model would be fast to train
 Additionally, patterns in music are much easier to recognize through visualization than
 through note data. Much of the music theory that determines whether a note is melodic in
 context is generalized in that it works according to intervals as opposed to discrete
-relationships between specific notes. MIDI files don't provide any information about scales
-or chords; they simply list which notes were played. It might take an AI a good bit of
-to recognize that the interval between C and E is the same as the interval between F and A -
-and even longer still to determine which intervals are musically dissonant or not, and in
-which contexts. When music is visualized, however, it can generalize the same way it does in
-abstract theory. Melodic intervals appear visually the same, regardless of the root note. So
-rather than having to learn separately that C pairs well with E and F pairs well with A, it
-can generalize that any note will pair well with the note that is four semitones (or in the
-AI's case, four pixels) above it, known in music theory as the major third.
+relationships between specific notes. MIDI files don't provide any information about
+scales or chords; they simply list which notes were played. It might take an AI a good bit
+of to recognize that the interval between C and E is the same as the interval between F
+and A - and even longer still to determine which intervals are musically dissonant or not,
+and in which contexts. When music is visualized, however, it can generalize the same way
+it does in abstract theory. Melodic intervals appear visually the same, regardless of the
+root note. So rather than having to learn separately that C pairs well with E and F pairs
+well with A, it can generalize that any note will pair well with the note that is four
+semitones (or in the AI's case, four pixels) above it, known in music theory as the major
+third.
 
-The computer vision model was also favored for its level of technical skill. As students, we
-have been exposed to the concept of CNNs but have not yet had the opportunity to apply
+The computer vision model was also favored for its level of technical skill. As students,
+we have been exposed to the concept of CNNs but have not yet had the opportunity to apply
 them. This model felt appropriate for our skill level because it is centered around a
 technique we already understand, but it also implements that technique to a degree we have
 never attempted before.
@@ -94,6 +95,7 @@ never attempted before.
 \subsubsection{PixelCNN}
 
 For the computer vision model, our lead candidate was PixelCNN. Like a standard CNN,
+<<<<<<< HEAD
 PixelCNN processes its image inputs primarily through layers of masked convolution.
 The "masks" used in the convolution layer are square matrices, and each element of the matrix
 is a numerical value that denotes the weight of that element. These masks are iterated over the
@@ -110,6 +112,24 @@ PixelCNN has a unique use-case in predicting the bottom half of an image after p
 top half as input. The AI uses the probability distribution of visual features found in all pixels
 iterated through prior to inform the probability distribution it creates to predict the pixels that
 will follow.\autocite{pixelRNN}
+=======
+PixelCNN processes its image inputs an alternating series of masked convolution and
+pooling. The "masks" used in the convolution layer are square matrices, and each element
+of the matrix is a numerical value that denotes the weight of that element. These masks
+are iterated over the input image, convolving with the brightness of the pixels under the
+mask. In colored images, the process is repeated once for each color channel: red, green,
+and blue. Depending on the configuration of the weights in the matrix, different masks can
+be used to identify different visual patterns. Each convolution with each mask outputs a
+two-dimensional array of values called a feature map. The feature maps are then put
+through an activation function, which modifies the values in the feature map to exaggerate
+the separation between values above a certain threshold and  values below it.
+
+Unlike a standard CNN, however, PixelCNN specifically uses masks that only allows it to
+read one pixel at a time: row by row, and left to right in each row. This enforces that
+each pixel is dependent upon only those above and to the left of itself. Using this unique
+relationship, PixelCNN has a unique use-case in predicting the bottom half of an image
+after processing the top half as input.
+>>>>>>> 6ef941b0f919cd97bb54ee753b42ed3c53f484e5
 
 \begin{figure}[h!]
   \centering
@@ -118,16 +138,17 @@ will follow.\autocite{pixelRNN}
   \label{fig:pixel_mask}
 \end{figure}
 
-This made PixelCNN a particularly appropriate candidate for our computer vision model because
-completing an image after processing the first half is exactly the mechanic we planned to use
-to achieve the melody autofill. All we would have to do is rotate the input image such that
-the time axis propagates top to bottom as opposed to left to right. Additionally, the
-dependencies that PixelCNN establishes simulate dependencies in music really well. Whether or
-not a note is melodic depends on its context - specifically, the notes that came before it in
-time as well as the other notes being played at the same time. Adjusting the axes, PixelCNN's
-dependency upon all pixels above equates to the current note being dependent on all notes
-that were played before it. As for its left to right dependency, chords are typically built
-upward from the root - which, when rotated, would be left to right.
+This made PixelCNN a particularly appropriate candidate for our computer vision model
+because completing an image after processing the first half is exactly the mechanic we
+planned to use to achieve the melody autofill. All we would have to do is rotate the input
+image such that the time axis propagates top to bottom as opposed to left to right.
+Additionally, the dependencies that PixelCNN establishes simulate dependencies in music
+really well. Whether or not a note is melodic depends on its context - specifically, the
+notes that came before it in time as well as the other notes being played at the same
+time. Adjusting the axes, PixelCNN's dependency upon all pixels above equates to the
+current note being dependent on all notes that were played before it. As for its left to
+right dependency, chords are typically built upward from the root - which, when rotated,
+would be left to right.
 
 Our main challenge in the use of PixelCNN would be the collection and preprocessing of
 training data. For this model to work for our purposes, we would have to convert each MIDI
@@ -135,7 +156,69 @@ file into a piano roll visualization which is rotated 90 degrees clockwise.
 
 \subsubsection{Magenta}
 
-\blindtext
+As an alternative, we could use an existent open source solution. Magenta is an open
+source project for artistic applications developed by Google AI\autocite{magentaHome}.
+This project has released in 2018 an extensive AI library for art and music. This one,
+contains already trained models, API and datasets that can be directly used to solve our
+problem. Although, the level of functionalities already included in these libraries can
+defeat the academic purpose of the current project, there are valuables tools to create
+our own autocomplete AI model. The project offers blank models to be trained by our own
+set of data, and also offers the posssibility of using pre-trained models.
+
+As an already functional solution that can be directly applied to our work without any
+modification is the module MusicRNN\autocite{musicRNN}. This one contains three models of
+interest: MelodyRNN, ImprovRNN, and PerformanceRNN. All these models, as their name
+implies, are based on recurrent neural netoworks (RNN) produced with Google's TensorFlow.
+
+In constrast with the already mentioned CNN, that processes grid values as is a picture,
+RNN processes sequential data as string of caracthers, words, or in our case of
+interest, melody representations. RNN also considers proccesed information along large
+sequnces of data, and not purely local extent as CNN.\autocite{fundamentalML}
+
+\paragraph{MelodyRNN.}
+MelodyRNN model generates melody based on an input melody. To achieve this, it uses
+language modeling (probability distribution over a sequence of data) with long short-term
+memory (LMST) networks. This is a variant of RNN design to improve the performance of
+regulr RNN across large sequnces of data. The main issues that LMST adress are those
+related to the exploding and vanishing gradients magnified on any recursive network due to
+the accumulation of errors on the successive feedbacks of data analysis. This models also
+have four configurations to assists determining the range of pitches, indentifying
+recursive patterns, and pay special attention on specific sections of the input melody.
+\autocite{melodyRNN}
+
+This model could be in charge of the autocomplete feature we are
+looking to achieve in our project.
+
+\paragraph{ImprovRNN.}
+ImprovRNN generate melodies in the same fashion of MelodyRNN. The main difference with the
+before model is the conditionment of the generated melody to a chord progression. This
+model counts with similar set of configurations than MelodyRNN, but with the addition of
+usign as inputs vectors representing chords of the progression. Although, this can be a
+interesting feature to generate melodies, the model requires to encode the full input
+melody in XML format, not supporting direct MIDI input.\autocite{improvRNN}
+
+This model would not be directly applied to our project, but still could add interesting
+features for an expanded instance.
+
+\paragraph{PerformanceRNN.}
+PerformanceRNN generates melodies using dynamic and expressing timing. This allows to
+generate more natural feeling as if a real player is adding to the expression of the
+performance. Although, this came with some trade off as some keys can fall outside the
+proper timing. \autocite{performanceRNN}
+
+This model add a nice to have feature, but is not fundamental for our first aproach.
+
+\paragraph{Datasets.}
+Magenta project offers a set of collections of data that has been used to pre-train
+models. From ths collection, seems that the MAESTRO (MIDI and Audio Edited for Synchronous
+TRacks and Organization) dataset could be the most useful for this project. It contains
+over 200 hours of key annotated piano performing. Other set that can be useful for our
+classical music appoach is the Bach Doodle Set. A large audio dataset (over 6 years of
+total audio), collected by Google using its Bach Doodle. \autocite{magentaData}
+
+The selction of the dataset would be conditioned by the available trianing capabilities
+for this project.
+
 
 \subsection{Embedded Controller Comparisons}
 \label{sec:embedded_controllers}
@@ -144,58 +227,52 @@ file into a piano roll visualization which is rotated 90 degrees clockwise.
 
 \subsection{DAW Frontend Technologies}
 
-We are looking to use a browser-based frontend Design. This approach is ideal for its ease of
-implementing a user interface as well as its cross-platform compatibility. Should we decide to
-make the software even more portable by isolating it from the MIDI controller, it will be viewable
-on any device that can run a browser. And because of the computational limits of the MIDI
-controller, any modern device that is suited for a browser will inherently be able to run the
-MIDI autofill software as well.
+We are looking to use a browser-based frontend Design. This approach is ideal for its ease
+of implementing a user interface as well as its cross-platform compatibility. Should we
+decide to make the software even more portable by isolating it from the MIDI controller,
+it will be viewable on any device that can run a browser. And because of the computational
+limits of the MIDI controller, any modern device that is suited for a browser will
+inherently be able to run the MIDI autofill software as well.
 
-Our first consideration was React. Considering our group's familiarity with JavaScript as well as
-HTML and similar markup languages, it would be easier to work with. However, we ultimately opted to
-use Flutter. Flutter's default stylization is sleek and fits in well with the modern aesthetic of
-technology. Plus, its widgets allow for more polish on a UI that also has more niche functionality.
+Our first consideration was React. Considering our group's familiarity with JavaScript as
+well as HTML and similar markup languages, it would be easier to work with. However, we
+ultimately opted to use Flutter. Flutter's default stylization is sleek and fits in well
+with the modern aesthetic of technology. Plus, its widgets allow for more polish on a UI
+that also has more niche functionality.
 
-As established in \textbf{\ref{sec:daw} \nameref{sec:daw}}, the primary aspect of the UI will be the piano roll display.
-The frontend will be responsible for reading the MIDI messages and converting the note ON/OFF and
-timing clock features into the position and dimensions of an arbitrary number of UI elements -
-each representing a note which can be edited.
+As established in \textbf{\ref{sec:daw} \nameref{sec:daw}}, the primary aspect of the UI
+will be the piano roll display. The frontend will be responsible for reading the MIDI
+messages and converting the note ON/OFF and timing clock features into the position and
+dimensions of an arbitrary number of UI elements - each representing a note which can be
+edited.
 
 \subsection{Raspberry Pi}
 
-As mentioned in \textbf{\ref{sec:embedded_controllers} \nameref{sec:embedded_controllers}}, the Raspberry Pi is mini-computer
-which can also function as an embedded controller. The model we're interested in is the
-Raspberry Pi 4B. This Raspberry Pi model uses the ARM64 architecture. It can run numerous
-ARM64 based Linux distros. The advantage here is the software and tooling that is
-available for us to run in a Linux environment. After an analysis of other solutions, we
-have decided that the Raspberry Pi is the best fit for our project. To that end, we have
-researched how the Raspberry Pi can be configured for use in our project.
+As mentioned in \textbf{\ref{sec:embedded_controllers} \nameref{sec:embedded_controllers}},
+the Raspberry Pi is mini-computer which can also function as an embedded controller. The
+model we're interested in is the Raspberry Pi 4B, which is the latest model and has the
+best hardware. After an analysis of other solutions, we have decided that the
+Raspberry Pi is the best fit for our project. To that end, we have researched how the
+Raspberry Pi can be configured for use in our project.
 
 \subsubsection{Operating System Choice}
 
 The first configuration choice that needs to be made is the operating system. A Raspberry
 Pi out of the box has no operating system. An image must be flashed to an SD card to make
-the Raspberry Pi useful. Raspberry Pi's typically run some form of Linux. There are a
-number of choices available, as there are many flavors of Linux that can run on the ARM64
-architecture. Some common choices for Raspberry Pi include Raspberry Pi OS (formerly known
-as Raspian), Arch Linux ARM, and DietPi. Each OS has its advantages and drawbacks, and it
-is important for us to select a distro that is well suited for our use case.
+the Raspberry Pi useful. Raspberry Pi's typically run some form of Linux. The Raspberry Pi
+4B model uses the AArch64 architecture. It can run most AArch64 based Linux distros, but
+we must limit ourselves to armv7 (32 bit) operating systems, as tensorflow does not
+natively support ARM64 as of the time of writing. Tensorflow lite supports ARM64, but
+tensorflow-lite has a limited number of supported operations, which can inhibit our
+development. There are still many OS choices available, as there are many flavors of Linux
+that can run on the armv7 architecture. Some common choices for Raspberry Pi include
+Raspberry Pi OS (formerly known as Raspian), Arch Linux ARM, and DietPi. Each OS has its
+advantages and drawbacks, and it is important for us to select a distro that is well
+suited for our use case. We will need to modify the system heavily for our purposes, but
+we need a good baseline for modification.
 
-The most common operating system used for Raspberry Pi is Raspberry Pi OS. This is a
-specially tailored version of Debian for the Raspberry Pi. This is a common choice for any
-general purpose usage the Pi. It can be used like a normal desktop computer when a mouse,
-keyboard, and monitor are plugged in. This is a "batteries included" distro that includes
-many things we will never use. The bloatware from this distro can hinder performance and
-waste SD card space. There is a lightweight alternative known as Raspberry Pi OS Lite.
-This version does not include any desktop environment.
-
-DietPi is similar to Raspberry Pi OS Lite in that it aims to be a lightweight distro.
-DietPi's website claims to be even lighter than Raspberry Pi Os Lite. It occupies 589 Mb
-on the SD card, while Raspberry Pi OS occupies 1424 MB. There are a number of other system
-optimizations in place to improve general performance. After boot, there are only 11 total
-processes, versus 18 total processes running on Raspberry Pi OS.
-
-There are also specialized distros that are only meant to do one specific thing. Examples
+We need our distro to be a lightweight bootloader for our application. There are many
+examples of highly specialized distros designed for one specific task. Examples
 include RetroPIE, which is used to run retro video games, or OpenMediaVault, which is used
 to turn the device into a networked storage device. This is similar to what we want our
 operating system to do. Our use case for the Raspberry Pi is to run one specialized
@@ -203,7 +280,35 @@ application that we ourselves develop. It should boot straight into our applicat
 no other UI from the operating system. The best solution for us is to have a custom distro
 just for running our application. Developing a Linux distro from scratch is a difficult
 process that is out of the scope of this project. But what we can do is modify an existing
-distro to suite our needs.
+distro to suite our needs. We plan to do this process using a tool called Packer,
+described in more detail in section \ref{sec:packer}.
+
+The most common operating system used for Raspberry Pi is Raspberry Pi OS. This is a
+specially tailored version of Debian for the Raspberry Pi. This is a common choice for any
+general purpose usage the Pi. It can be used like a normal desktop computer when a mouse,
+keyboard, and monitor are plugged in. This is a "batteries included" distro that includes
+many things we will never use. The bloatware from this distro can hinder performance and
+waste SD card space. There is a lightweight alternative known as Raspberry Pi OS Lite.
+This version does not include any desktop environment. We think it would be better to
+start with an even lighter weight distro, such as DietPi.
+
+DietPi is like Raspberry Pi OS Lite in that it is a lightweight distro. DietPi's claims to
+be even lighter than Raspberry Pi Os Lite. It occupies 589 Mb on the SD card, while
+Raspberry Pi OS occupies 1424 MB. There are other system optimizations in place to improve
+general performance as well. After boot, there are 11 total processes, versus 18 total
+processes running on Raspberry Pi OS. This is a good choice for base system. It is easier
+for us to start lightweight and add what we need, rather than to start with a bloated
+system and strip it down. DietPi includes an easy way to run chromium in kiosk mode using
+the \url{dietpi-autostart} utility, which we'll need to have configured anyways, as
+described in section \ref{sec:research:subsec:os_config}. DietPi also supports a fully
+automated installation process, which we intend to take advantage of, as it is tedious to
+have to flash the Raspberry Pi and go through the distro's installation process every time
+we change the operating system configuration.
+
+From our research, we have decided to use DietPi as a baseline operating system for our
+project. The lightweight aspect suits us well, as we only need to boot a single
+application. The easy chromium kiosk mode configuration is also a big bonus, as it
+relieves us from a configuration burden.
 
 \subsubsection{Operating System Configuration}
 \label{sec:research:subsec:os_config}
@@ -211,7 +316,7 @@ distro to suite our needs.
 The operating system will need to be configured for our use-case. We need to get the
 operating system to boot a single GUI application, our DAW, without displaying any other
 UI from the desktop environment (DE). There may be more applications separate from the DAW
-that will run in the background which also must be started immediately after boot. The
+that will run in the background which also must  immediately after boot. The
 operating system will need to be configured to not permit any networking out of security
 and privacy concerns.
 
@@ -221,8 +326,8 @@ mostly agnostic to the UI, and is used for providing UI toolkits a method for ac
 bitmaps to windows. X can be configured in a variety of ways. The way we intend to
 configure X is to host a single fullscreen application for our DAW. This can be done
 through the \url{.xinitrc} file. This file specifies which commands to run whenever the X
-server is started. By simply including the command to run our application in there, we
-will have a single window at startup.
+server starts. By including the command to run our application in there, we will have a
+single window at startup.
 
 \begin{lstlisting}[language=bash, label={lst:xinitrc}, caption=Example .xinitrc]
 #!/bin/sh
@@ -237,25 +342,38 @@ with no border or frame \autocite{chromiumKioskMode}. This in combination with t
 file fulfills our requirement of only having a single fullscreen application with no other
 UI. This feature can be enabled through the \url{--kiosk} command line flag
 \autocite{chromiumKioskMode}. See \nameref{lst:xinitrc} for an example of an xinitrc that
-launches chromium in fullscreen mode.
+launches chromium in fullscreen mode. DietPi can also handle this configuration for us,
+using the \url{dietpi-autostart} configuration utility.
 
 Networking can disabled through the \url{/etc/network/interfaces} config file. This config
 file is used to declare all networking interfaces, and the interfaces can be removed by
-simply removing all lines declaring a networking interface in that file.
+simply removing all lines declaring a networking interface in that file. We can remove all
+networking interfaces except for the loopback (\url{lo}) and USB Ethernet interfaces.
+
+There is more operating system configuration that must happen as well in order for the
+Raspberry Pi 4B to be configured as USB MIDI Gadget. This bit of configuration is quite
+extensive and is covered in more detail in section \ref{sec:midi_peripheral}.
 
 \subsubsection{Packer}
+\label{sec:packer}
 
 A solution we found for customizing an existing Linux distro is Packer. Packer is a
-utility that can take an existing operating system image, modify it, and produce a new
+utility that can take an existing operating system image, change it, and produce a new
 image. Modification is done through provisioners, which exist to perform steps, such as
 copying files, running shell commands, setting permissions, etc. Packer relies on builders
 to carry out the tasks laid out in a configuration file. The builder we will use is called
 packer-builder-arm, which builds ARM images and is suitable for a Raspberry Pi.
 
 We can use our own Packer config file to setup all the tasks described in
-\nameref{sec:research:subsec:os_config}. For example, we can use the file provisioner to
-copy the \url{.xinitrc} file to the home directory, which is used to configure X11 for our
-application.
+\nameref{sec:research:subsec:os_config}. For example, the file provisioner can copy the
+\url{.xinitrc} file to the home directory, which configures X11 for our application.
+
+We will use shell provisioners to run all the DietPi installation and configuration steps.
+This will include automating the options we specify in the \url{dietpi-config} and
+\url{dietpi-software} utilities.
+
+Packer will also be used to copy the \url{/boot/} modifications required to turn the
+device into a USB gadget, as described in section \ref{sec:midi_peripheral}.
 
 \subsubsection{Performance}
 
@@ -263,38 +381,195 @@ Performance is always a concern when dealing with constrained embedded hardware.
 Raspberry Pi fares better than microcontrollers you would find in a typical MIDI
 controller, but is still performance constrained. Our device needs to be able to run a
 machine learning model and a UI application, both of which are computationally expensive
-tasks.
+tasks. This is a critical part of our project so we have conducted extensive research to
+ensure that what we want to do is possible on the Raspberry Pi.
 
-\paragraph{Magenta}
+\paragraph{Magenta.}
 
 Magenta serves as a good baseline for measuring performance of music generating AI.
 Magenta ships with two machine learning models: MusicRNN and MusicVAE. We have performance
-tested both of these in a demo benchmark program on the Raspberry Pi 4B.
+tested both of these in a demo benchmark program we have written on the Raspberry Pi 4B.
+We have design the benchmark suites to be modular so that we can benchmark our own
+checkpoints or models later in development.
 
 The benchmark program we constructed uses Magenta with JavaScript. We use the Tensorflow
-node backend for good CPU performance with Node. When executed, the program initializes
-both machine learning models, using checkpoints hosted on Google's servers. The program
-measures the time passed in seconds for initialization and music generation time.
+node backend for good CPU performance with Node. The program uses both the MusicRNN and
+MusicVAE models, with checkpoints that are hosted are Google's servers. The checkpoints
+tested are the \url{basic_rnn}, \url{melody_rnn}, and \url{drum_kit_rnn} checkpoints for
+the MusicRNN, and the \url{mel_4bar_small_q2} checkpoint for \url{MusicVAE}. The benchmarks
+use a JavaScript benchmarking framework called Benny to run several test cases with
+magenta, sampling each one several times and providing statistics such as the min, max,
+and mean generation time, as well as the standard deviation.
 
-The MusicRNN model with the provided pretrained checkpoints has shown good performance
-overall when autofilling simple and random melodies, below the 5 second threshold we set
-in our goals.
+Our benchmarking program has two benchmarking suites: a generalized one to gauge overall
+performance (see \nameref{appendix:magenta_benchmark}) and a linear suite to find out what
+factors affect performance the most.
 
-\paragraph{UI} Before spending development time on a browser based DAW, it is important to
-verify that Raspberry Pi can even run a browser based DAW with acceptable performance.
+In the generalized suite, the MusicRNN model with the provided pretrained checkpoints has
+shown good performance overall when autofilling simple and random melodies, well below the
+5 second threshold in general with a few edge cases that exceed 5 seconds. With this
+knowledge we know its feasible to run a music generating AI on the Raspberry Pi 4B. What
+we need to know is how much we are able to push the music generating AI before we fall
+below our threshold. This is where the linear benchmarks come in.
+
+The linear benchmarks allow us to figure out what constraints we have to limit ourselves
+to in order to stay below our 5 second threshold. We based these benchmarks around factors
+we speculated would affect the performance the most. For each of these benchmark factors,
+we progressively test higher amounts and graph the results for easy analysis (See
+\autoref{fig:magentaperf}).
+
+\paragraph{Linear benchmark factors}
+\begin{itemize}
+  \item \textbf{Melody duration.} This is the duration of the input melody in seconds.
+  \item \textbf{Number of notes.} Total number of notes in the input melody. This is with
+        a constant duration of 16 seconds.
+  \item \textbf{Generation steps.} Each generation step represents a quarter note in these
+        benchmarks. The duration is constant at 16 seconds.
+  \item \textbf{Temperature} This is the temperature of the RNN, which affects the
+        randomness of the generated melodies.
+\end{itemize}
+
+All benchmarks in the linear suite use random notes quantized to quarter steps. The random
+notes fit the checkpoints supported note rage, which is different between checkpoints. For
+example, the \url{basic_rnn} checkpoint supports pitches in the range \url{[48, 84]},
+while \url{melody_rnn} supports the full MIDI range of \url{[0, 127]}
+\autocite{modelPitchRange}.
+
+With this data collected, it becomes easy to analyze what constraints we are working
+with. Our target is to remain below 5 seconds of generation time, so we need to ensure
+that we have a safe margin below where the graphs meet 5 seconds. The generation time
+increases linearly with melody duration and total generation steps. The \url{basic_rnn}
+and \url{melody_rnn} checkpoints were neck and neck in terms of generation time, while the
+\url{drum_kit_rnn} checkpoint was consistently slower. The temperature had no effect on
+the generation time. We were initially surprised to see that the total number of notes had
+no effect on generation time, which remained constant when increasing from 100 to 2000
+input notes, but this makes sense as the input tensor size does not change with the number
+of notes.
+
+The input duration is the biggest factor affecting generation time. The number of
+generation steps are the next biggest factor. With this data, we know that we will most
+likely need to truncate the input melody's duration to less than a 40 seconds of music.
+The generation steps need to be accounted for when determining the duration of music to
+accept as input for our AI. As the generation steps increase we need make up for that
+amount of extra time by decreasing the input duration even further. We added in a
+benchmark for increasing duration and generation steps simultaneously to see if this would
+lead to exponential behavior, but found that it remained linear. So we can simply subtract
+the estimated added time from the input melody duration.
+
+With these benchmark results, we are confident that the Raspberry Pi 4B is capable of
+handling the computational load that this project requires, without the need for any
+external processing. We also have a good benchmarking solution that can be adapted for any
+checkpoints or models that we will further into the project's development.
+
+\begin{figure}
+  \centerline{ \includegraphics[width=.95\linewidth]{image/perf.pdf} }
+  \caption{Magenta Generation Time on the Raspberry Pi 4B}
+  \label{fig:magentaperf}
+\end{figure}
+
+\paragraph{UI.} It is important to verify that a Raspberry Pi can even run a browser based
+DAW with acceptable performance before spending development time creating the web app.
 Since we have not developed the DAW at this point, we have tested an existing web based
 MIDI editor in the Raspberry Pi.
 
 We used an online MIDI editor called signal (\url{https://signal.vercel.app/}) to get a
 subjective feel for the performance. The test was ran in the chromium web browser on
-Raspberry Pi OS. The performance was acceptable, with a couple things feeling a bit slow
+Raspberry Pi OS. The performance was acceptable, with some actions feeling slow.
 Dragging around notes had a small but noticeable latency between the mouse cursor's
-movement and the notes position. There was a small but perceptible amount of time between
-double clicking to insert a note and the note showing up on screen.
+movement and the notes position. There was also a small but noticeable latency between
+double clicking to insert a note and the note showing up on screen. The playhead updated
+smoothly when playing the MIDI track, which is the most important aspect, as laggy
+playback is awful for the user experience.
 
-It should be noted that this app was not explicitly designed to be run on such constrained
-hardware. Based on our findings here we are confident that we can develop a browser based
-app that has exceptional performance on the Raspberry Pi.
+It should be noted that this app was not explicitly designed to run on constrained
+hardware. Web apps can run great on Raspberry Pi's when optimized to do so. Based on our
+findings here we are confident that we can develop a browser based app that has
+exceptional performance on the Raspberry Pi.
+
+\subsection{MIDI Peripheral}
+\label{sec:midi_peripheral}
+
+The Pi needs to function as a MIDI peripheral, i.e. plug the device into a computer and it
+functions as a device that sends MIDI commands to the DAW. This connection will happen
+through a USB-C to USB-A cable from the Raspberry Pi to the computer. The Raspberry Pi is
+typically powered from the USB-C port form a power supply connected to a power outlet, but
+in our case the Pi will receive it's power from the host PC over USB-C instead. Once
+plugged in, the Pi will act as a normal MIDI peripheral, which sends MIDI events to the
+PC, which can be picked up by a fully fledged DAW.
+
+The MIDI communication happens over USB in our case, which means we need to work with the
+operating system to send these messages. We are using Linux for our device's operating
+system, so USB communication needs to happen through the Linux kernel. This is known as a
+USB Gadget in the Linux kernel \autocite{usbGadgetDocumentation}. The Raspberry Pi 4b can
+act as a Linux USB Gadget through a USB-C to USB-A connection to the computer, with USB-C
+being on the Raspberry Pi and USB-A being on the host computer
+\autocite{raspberryPiGadgetSetup}. This will not work out of the box, as the Linux kernel
+needs to be made aware that we intend to use the device as a USB gadget. This
+configuration happens through files in the \url{/boot/} directory
+(see listings \ref{lst:bootconfig} and
+\ref{lst:bootcmdline}) \autocite{raspberryPiGadgetSetup}. The Pi will act as a USB
+gadget after Linux boot configuration settings are set and it is plugged up to the host
+machine.
+
+\begin{minipage}{\linewidth}
+
+  \begin{lstlisting}[language=bash,
+  label={lst:bootconfig},
+  caption=Lines added to /boot/config.txt \autocite{raspberryPiGadgetSetup, raspberryPiHDMIFix}]
+dtoverlay=dwc2
+hdmi_force_hotplug=1
+hdmi_group=2
+hdmi_mode=87
+hdmi_cvt=800 480 60 6 0 0 0
+hdmi_drive=1
+  \end{lstlisting}
+
+  \begin{lstlisting}[language=bash, label={lst:bootcmdline}, caption=DietPi /boot/cmdline.txt modified to allow a USB Gadget \autocite{raspberryPiGadgetSetup}, breaklines=true]
+console=ttyS0,115200 console=tty1 root=PARTUUID=8f4dbd00-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet net.ifnames=0 modules-load=dwc2,g_ether
+  \end{lstlisting}
+
+  \begin{lstlisting}[label={lst:usb_gadget}, caption=Bash procedure to setup a MIDI Gadget\, modified for our device \autocite{raspberryPiGadgetSetup}, breaklines=true]
+cd /sys/kernel/config/usb_gadget/
+mkdir -p midi_over_usb
+cd midi_over_usb
+echo 0x17e8  > idVendor
+echo 0xb09c > idProduct
+echo 0x0100 > bcdDevice
+echo 0x0200 > bcdUSB
+mkdir -p strings/0x409
+echo "fedcba9876543210" > strings/0x409/serialnumber
+echo "MIDI Autofill Group" > strings/0x409/manufacturer
+echo "MIDI Autofill Device" > strings/0x409/product
+  \end{lstlisting}
+
+\end{minipage}
+
+After the boot configuration options are set, the device will be a USB gadget, but there
+is more configuration needed for it to act as a MIDI USB gadget. The Linux kernel already
+provides an interface for USB gadgets to act as MIDI devices, through the
+\url{usb_f_midi.ko} kernel module \autocite{usbGadgetDocumentation}. We need to set our
+Raspberry Pi's USB gadget settings to identify itself as a MIDI peripheral. We have
+followed an online guide to setup this MIDI gadget, which involves providing information
+to the kernel about our device through the \url{/sys/kernel/config/usb_gadget/} folder
+\autocite{raspberryPiGadgetSetup}.
+
+This works, but we ran into a problem with our setup where our HDMI connection to the
+monitor was not working anymore. This connection is critical, as we need to be able to
+display our DAW to the built in connection using HDMI, so we had to find a workaround for
+this issue. We found out that there are \url{/boot/config.txt} options that can added to
+force an HDMI connection, using the \url{hdmi_force_hotplug} option
+\autocite{raspberryPiHDMIFix}. This configuration as well as some other HDMI settings can
+be seen in listing \ref{lst:bootconfig}.
+
+We have also ran into some low voltage warnings when running the Raspberry Pi 4B as a USB
+gadget. These warnings are found in systemlogs and are viewed with \url{journalctl}. The
+Raspberry Pi 4b requires 5.1 volts and 3 amps to operate effectively, and will send the
+undervolt warning whenever it runs below 4.63 volts
+\autocite{raspberryPiAmps}. We notice that we see these warnings early in the boot, but it
+seems to stabilize later. We have not run into any issues with these undervolts as of now.
+The Pi does not encounter anymore voltage warnings when running a CPU stress test, but it
+could lead to stability issues later.  We are still researching  solutions to this
+problem.
 
 
 \subsection{Keyboard Design}

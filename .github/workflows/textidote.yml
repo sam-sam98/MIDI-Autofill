@@ -3,6 +3,12 @@ on:
     pull_request:
         paths:
             - '**.tex'
+    push:
+        branches:
+            - 'develop'
+            - 'main'
+        paths:
+            - '**.tex'
 jobs:
     lint_latex:
         runs-on: ubuntu-latest
