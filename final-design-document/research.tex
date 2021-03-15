@@ -374,16 +374,20 @@ we need to know is how much we are able to push the music generating AI before w
 below our threshold. This is where the linear benchmarks come in.
 
 The linear benchmarks allow us to figure out what constraints we have to limit ourselves
-to in order to stay below our 5 second threshold. There are three main factors that we
-speculated will affect the performance. For each of these benchmark factors, we
-progressively test higher amounts and graph the results (See \autoref{fig:magentaperf}).
+to in order to stay below our 5 second threshold. We based these benchmarks around factors
+we speculated would affect the performance the most. For each of these benchmark factors,
+we progressively test higher amounts and graph the results for easy analysis (See
+\autoref{fig:magentaperf}).
 
+\paragraph{Linear benchmark factors}
 \begin{itemize}
   \item \textbf{Melody duration.} This is the duration of the input melody in seconds.
   \item \textbf{Number of notes.} Total number of notes in the input melody. This is with
         a constant duration of 16 seconds.
   \item \textbf{Generation steps.} Each generation step represents a quarter note in these
         benchmarks. The duration is constant at 16 seconds.
+  \item \textbf{Temperature} This is the temperature of the RNN, which affects the
+        randomness of the generated melodies.
 \end{itemize}
 
 All benchmarks in the linear suite use random notes quantized to quarter steps. The random
@@ -395,22 +399,31 @@ while \url{melody_rnn} supports the full MIDI range of \url{[0, 127]}
 With this data collected, it becomes easy to analyze what constraints we are working
 with. Our target is to remain below 5 seconds of generation time, so we need to ensure
 that we have a safe margin below where the graphs meet 5 seconds. The generation time
-increases linearly with melody duration and total generation steps. We were initially
-surprised to see that the total number of notes had no effect on generation time, which
-remained constant when increasing from 100 to 2000 input notes, but this makes sense as
+increases linearly with melody duration and total generation steps. The \url{basic_rnn}
+and \url{melody_rnn} checkpoints were neck and neck in terms of generation time, while the
+\url{drum_kit_rnn} checkpoint was consistently slower. The temperature had no effect on
+the generation time. We were initially surprised to see that the total number of notes had
+no effect on generation time, which remained constant when increasing from 100 to 2000
+input notes, but this makes sense as the input tensor size does not change with the number
+of notes.
 
 The input duration is the biggest factor affecting generation time. The number of
-generation steps are the next biggest factor. With this data, we know that we will need to truncate the
-input melody's duration to less than a minute of music. The generation steps need to be
-accounted for when determining the duration of music to accept as input for our AI. As the
-generation steps increase we need make up for that amount of extra time by decreasing the
-input duration even further. There is no exponential factor when increasing both input
-duration and total generation steps, so we can simply subtract the estimated added time
-from the input melody duration.
+generation steps are the next biggest factor. With this data, we know that we will most
+likely need to truncate the input melody's duration to less than a 40 seconds of music.
+The generation steps need to be accounted for when determining the duration of music to
+accept as input for our AI. As the generation steps increase we need make up for that
+amount of extra time by decreasing the input duration even further. We added in a
+benchmark for increasing duration and generation steps simultaneously to see if this would
+lead to exponential behavior, but found that it remained linear. So we can simply subtract
+the estimated added time from the input melody duration.
+
+With these benchmark results, we are confident that the Raspberry Pi 4B is capable of
+handling the computational load that this project requires, without the need for any
+external processing. We also have a good benchmarking solution that can be adapted for any
+checkpoints or models that we will further into the project's development.
 
 \begin{figure}
-  \centering
-  \includegraphics[width=\linewidth]{image/perf.pdf}
+  \centerline{ \includegraphics[width=.95\linewidth]{image/perf.pdf} }
   \caption{Magenta Generation Time on the Raspberry Pi 4B}
   \label{fig:magentaperf}
 \end{figure}
