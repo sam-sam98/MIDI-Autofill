@@ -43,6 +43,58 @@ note). This function is especially useful in adjusting for human errors in timin
 writing MIDIs with a MIDI controller. Better timing makes it easier to synchronize with
 other tracks that might end up in the same audio file.
 
+\subsection{Music Theory: Consonance}
+
+One of the biggest issues with creating computer-generated music is that music, like all art
+forms, is highly subjective. There are no universal rules for right or wrong, and yet at the
+same time there are combinations of sound that could (almost) universally be considered bad music.
+So how does a computer decide what factors will most likely lead to a good melody?
+
+To start, the generally agreed upon definition of melody is that it is the linear succession
+of musical tones, with its primary components being pitch and rhythm. Occasionally, it also
+encompasses tonal color and other factors of expression.\autocite{melody} In music theory, parts
+of music can be described as dissonant or consonant. Dissonance denotes a feeling of instability or
+incompleteness in a musical phrase, and consonance denotes resolution and stability. Once again,
+these metrics are highly subjective, but they are based in the principle that music is composed
+of organized patterns in sound.\autocite{musiciansArithmetic} Aside from easily identifiable
+patterns, such as rhythm or repeated note sequences, this especially applies to patterns in note
+intervals.
+
+\subsubsection{Scales}
+
+
+\subsubsection{Harmonics}
+
+Scales are not the only markers for tonal intervals. Another factor that plays a role in the
+consonance of pitch is harmoncics. The Lipps-Meyer law, for example, proposes that the consonance
+of a melodic interval can generally be determined by whether or not the end tone of the interval
+can be represented by a power of two.\autocite{musiciansArithmetic} These numbers which represent
+the tones are not their scale intervals, but instead are derived from the Harmonic Series.
+
+The Harmonic Series is actually based on a principle in physics. Sound is a wave, any tone \textit{t}
+is a sound wave oscillating at a specific frequency \textit{f}. Any sound wave with a frequency
+that is an integer multiple of \textit{f} is considered to be harmonic to \textit{t}.\autocite{intervals} For example,
+if \textit{f} is the frequency of the tonic (the root note of a scale), the unison (no interval,
+so also the root note) would be the first harmonic because it has the same frequency. The second
+harmonic has a frequency of 2\textit{f} - this coincides with the tone that's exactly one octave
+above the root. In fact, every power of two falls on the root note of a different octave. Going
+back to the Lipps-Meyers law, this implies that proper consonance can be achieved by ending the
+musical phrase on the tonic of the key.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.5\linewidth]{image/Harmonics.png}
+  \caption{A comparison of the wavelengths of waves in a Harmonic Series \autocite{harmonicSeries}}
+\end{figure}
+
+Basically, in a roundabout way, we've affirmed a fairly core and commonly known principle of
+melody writing: resolve to the root. However, this is not the only way in which interval patterns
+and the Harmonic series are used to determine consonance. Octaves are not actually the only case to
+which the Lipps-Meyers law applies. Melodic intervals can be simplified the same was fractions can.\autocite{intervals}
+So then, an interval of 9:6, which correlate to the major second and major fifth respectively, could
+also be written as 3:2 and therefore follows the Lipps-Meyers law.
+
+
 
 \subsection{AI}
 
@@ -95,7 +147,6 @@ never attempted before.
 \subsubsection{PixelCNN}
 
 For the computer vision model, our lead candidate was PixelCNN. Like a standard CNN,
-<<<<<<< HEAD
 PixelCNN processes its image inputs primarily through layers of masked convolution.
 The "masks" used in the convolution layer are square matrices, and each element of the matrix
 is a numerical value that denotes the weight of that element. These masks are iterated over the
@@ -112,24 +163,6 @@ PixelCNN has a unique use-case in predicting the bottom half of an image after p
 top half as input. The AI uses the probability distribution of visual features found in all pixels
 iterated through prior to inform the probability distribution it creates to predict the pixels that
 will follow.\autocite{pixelRNN}
-=======
-PixelCNN processes its image inputs an alternating series of masked convolution and
-pooling. The "masks" used in the convolution layer are square matrices, and each element
-of the matrix is a numerical value that denotes the weight of that element. These masks
-are iterated over the input image, convolving with the brightness of the pixels under the
-mask. In colored images, the process is repeated once for each color channel: red, green,
-and blue. Depending on the configuration of the weights in the matrix, different masks can
-be used to identify different visual patterns. Each convolution with each mask outputs a
-two-dimensional array of values called a feature map. The feature maps are then put
-through an activation function, which modifies the values in the feature map to exaggerate
-the separation between values above a certain threshold and  values below it.
-
-Unlike a standard CNN, however, PixelCNN specifically uses masks that only allows it to
-read one pixel at a time: row by row, and left to right in each row. This enforces that
-each pixel is dependent upon only those above and to the left of itself. Using this unique
-relationship, PixelCNN has a unique use-case in predicting the bottom half of an image
-after processing the top half as input.
->>>>>>> 6ef941b0f919cd97bb54ee753b42ed3c53f484e5
 
 \begin{figure}[h!]
   \centering
