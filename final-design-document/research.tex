@@ -606,3 +606,68 @@ problem.
 
 
 \subsection{Keyboard Design}
+
+\subsubsection{Backgorund}
+
+Any project centered around musicians or their instrument cannot avoid the term ‘feel’. Unlike math or physics where the goal is to arrive at a concrete and unified solution, music is often abstract and expressed through emotions or feelings. There are certainly wrong answers in music, but very few objectively correct answers, and this concept plays a huge role in how musicians choose their instruments.
+
+In a perfect world, the keys of any digital piano (also known as an electric keyboard, keyboard, or synthesizer) would feel, function, and look like an acoustic keyboard: if a player chooses to play a synthesizer, they have most likely played on an acoustic piano. Most keyboard players know that the tactile response of a key in any piano or synthesizer is important because it determines how each note reacts to the player’s touch. For example, lighter keys will respond more quickly to the touch, but will reduce the ease of creating a dynamic range in strike velocity compared to their heavier counterparts. Velocity-sensitive tension spring keys will provide a more uniform tension throughout the keystroke, while weighted keys are balanced on a “balance pin” that separates the user from its striking mechanism, shown in Figure \ref{fig:key_mechanism}, and as a result varies in tension as the key is pressed.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/KeyMechanism.png}
+  \caption{}
+  \label{fig:key_mechanism}
+\end{figure}
+
+In addition, each performer and use of the instrument plays a role in determining the desired preference of key feel. EDM or heavily synthesised music designers will care less about key feel because most of the work in writing this type of music, besides determining the melodic structure, will come in post production and adjusting the key inputs from the computer. On the opposite end of the spectrum, classically trained musicians will dramatically care about key feel because most of the work is dedicated to how they express the music through their performance.
+
+On top of the key feel, the amount of keys available to the player has its own important role to the user and their desired end goal as well. To gather a better understanding, a single octave on a piano consists of twelve keys: seven white keys, and five black keys as shown in Figure \ref{fig:octave}. A writer who is focused on beat making and synthesized music can craft most of their music with a single octave and the transposition of that octave. A writer who is classically trained will most likely be adjusted to a standard 7 octave keyboard without the option of transposition. Ultimately, we decided our device should be modeled similarly to a professionally designed MIDI controller that is smaller than five octaves to keep the portability, but larger than one octave to provide a useful range to most players.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.5\linewidth]{image/Octave.png}
+  \caption{}
+  \label{fig:octave}
+\end{figure}
+
+\subsubsection{Design}
+Our key design was created by referencing two different electric keyboards: the Roland DP-90 and Arturia’s Keylab MkII - 61 key. We chose to measure from these devices because our group has direct access to these and there are no official standardized key sizes. Now, although Figure \ref{fig:octave} does not express the nuances in key design, there are six different key shapes that we have labeled: black, b, t, d, tb, and td, from the letter shapes they are most similar to. tb and tb are a hybrid of the t and b or t and d shape keys. The measurements taken from those devices are shown in Table \ref{Tab:key_specs}.
+
+\begin{table}[h!]
+  \centering
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{|l|l|l|l|}
+    \hline
+    \textbf{Keyboard}       & \textbf{Roland DP-90} & \textbf{Keylab MkII} & \textbf{Our Choice} \\ \hline
+    \textbf{Black Key}      &                       &                      &                     \\ \hline
+    Base Width (mm)         & 12                    & 12                   & 12                  \\ \hline
+    Base Length (mm)        & 95                    & 80                   & 80                  \\ \hline
+    Top Width (mm)          & 9                     & 9                    & 9                   \\ \hline
+    Top Height (mm)         & 88                    & 72                   & 72                  \\ \hline
+    \textbf{Standard White} &                       &                      &                     \\ \hline
+    Base Width (mm)         & 22                    & 22                   & 22                  \\ \hline
+    Base Length (mm)        & 150                   & 130                  & 130                 \\ \hline
+    b cut-in (mm)           & 9                     & 8                    & 8                   \\ \hline
+    t cut-in (mm)           & 4.5 / 4.5             & 4 / 4                & 4 / 4               \\ \hline
+    d cut-in (mm)           & 9                     & 8                    & 8                   \\ \hline
+    tb cut-in (mm)          & 3 / 6                 & 3 / 6                & 3 / 6               \\ \hline
+    td cut-in (mm)          & 6 / 3                 & 6 / 3                & 6 / 3               \\ \hline
+    Key Separation (mm)     & 1.5                   & 2                    & 2                   \\ \hline
+    Trigger Angle (Degrees) & 4.972                 & 5.296                & 5                   \\ \hline
+  \end{tabular}}
+  \caption{}
+  \label{Tab:key_specs}
+\end{table}
+
+Our objective is to empower any creative or independent writer, so these devices were happily chosen in particular for their difference in range of use cases. The Roland DP-90 is designed such that it “performs and responds like a grand piano”, while the Keylab MkII is designed as a “definitive MIDI controller keyboard ... a luxurious, expressive tool for your studio” . By taking measurements from two vastly different devices and noticing the minimal variation between their two key sizes, we were able to be confident that our key size choice would suffice. For the project, we chose to go with the cut-in and general measurements of the Keylab MkII because the distance between each key was about 2 mm, compared to the 1.5 mm distance the DP-90 keeps. Since this project will be crafted without professional business assistance, we felt as much leeway to avoid collisions as possible would be beneficial. Additionally, we felt that using the smaller dimensions in key sizes would help reduce the overall form factor of the device and keep it as portable as possible.
+
+We chose to create a thirty-two key keyboard. We landed on this choice as a result of the following factors: first, when this device is in use we do not wish to limit our users to one octave. Our autocomplete AI is modeled from classical music and we understand that the input and output melodies will likely span over a wider range than one octave. We also recognize that this device is more useful in the post-production setting compared to a performance setting and therefore does not need the full seven octave range. Second, to keep the cost low and the form factor small, we wanted to keep the keys below three octaves. We are choosing to build this keyboard as a portable, stand-alone, robust piece of equipment and we believe our device should not cause a struggle to carry around. With the measurements we took, each octave will accompany about 262 mm (10.315 inches) of space in keys alone. This means a thirty-two key keyboard is estimated to need 666 mm (approximately 2.185 ft) of lateral space in keys alone. We knew when multiplexing our signals that using a power of two for our set of inputs would be beneficial. A power-of-two inputs allows us to use the entirety of each multiplexor we implement. As a result, thirty-two keys provides a set of two and a half octaves and will utilize the entirety of each multiplexor without extending the keyboard to sixty-four keys, which is around five octaves. To compare, sixty-four keys would extend to 1290 mm (approximately 4.232 ft) and in our humble opinion, would no longer allow this device to be comfortably portable.
+
+In our application we are looking to distinguish which note is being pressed, the velocity that note was triggered, and which channel the device is communicating through. With the digital functionality of the key in mind, the physical key design only has to worry about how to communicate the velocity of the note. To be able to do this, we are using a two button trigger system for each key. As observed in Figure \ref{fig:key_mechanism}, there are two rods extending from the bottom of the key of different lengths. In the full keyboard model, these rods are lined up with two silicone covered buttons, one of which is triggered at the start of the keystroke and the other is triggered near the conclusion of the keystroke. The difference in trigger time between the two buttons will determine the note velocity which is explained in greater detail from Section [IDK YET].
+
+After basic functionality, our next concern is key feel. With the time allotted for this project and our desire for ease of portability, it is obvious from observing Figure 1 that we will not attempt to replicate the full counter-weighted key design. To keep costs low and durability high, we are also avoiding any semi-weighted keys or the usual expensive key material such as ivory or wood. By utilizing 3D printed plastics, we are able to create custom, robust designs at a cheaper cost than the alternatives.
+
+[INSERT COST OF MATERIAL AND STRENGTH OF MATERIAL TABLE]
+
+To provide the actuation action for the key itself, we will be using tension springs to hold the key in place as it sits on a lever.
