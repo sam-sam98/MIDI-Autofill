@@ -229,7 +229,7 @@ edited.
 
 \subsection{Raspberry Pi}
 
-As mentioned in \textbf{\ref{sec:embedded_controllers}\nameref{sec:embedded_controllers}},
+As mentioned in \textbf{\ref{sec:embedded_controllers} \nameref{sec:embedded_controllers}},
 the Raspberry Pi is mini-computer which can also function as an embedded controller. The
 model we're interested in is the Raspberry Pi 4B, which is the latest model and has the
 best hardware. After an analysis of other solutions, we have decided that the
@@ -245,12 +245,12 @@ the Raspberry Pi useful. Raspberry Pi's typically run some form of Linux. The Ra
 we must limit ourselves to armv7 (32 bit) operating systems, as tensorflow does not
 natively support ARM64 as of the time of writing. Tensorflow lite supports ARM64, but
 tensorflow-lite has a limited number of supported operations, which can inhibit our
-development. There are many OS choices available, as there are many flavors of Linux that
-can run on the armv7 architecture. Some common choices for Raspberry Pi include Raspberry
-Pi OS (formerly known as Raspian), Arch Linux ARM, and DietPi. Each OS has its advantages
-and drawbacks, and it is important for us to select a distro that is well suited for our
-use case. We will need to modify the system heavily for our purposes, but we need a good
-baseline for modification.
+development. There are still many OS choices available, as there are many flavors of Linux
+that can run on the armv7 architecture. Some common choices for Raspberry Pi include
+Raspberry Pi OS (formerly known as Raspian), Arch Linux ARM, and DietPi. Each OS has its
+advantages and drawbacks, and it is important for us to select a distro that is well
+suited for our use case. We will need to modify the system heavily for our purposes, but
+we need a good baseline for modification.
 
 We need our distro to be a lightweight bootloader for our application. There are many
 examples of highly specialized distros designed for one specific task. Examples
@@ -281,8 +281,15 @@ processes running on Raspberry Pi OS. This is a good choice for base system. It 
 for us to start lightweight and add what we need, rather than to start with a bloated
 system and strip it down. DietPi includes an easy way to run chromium in kiosk mode using
 the \url{dietpi-autostart} utility, which we'll need to have configured anyways, as
-described in section \ref{sec:research:subsec:os_config}.
+described in section \ref{sec:research:subsec:os_config}. DietPi also supports a fully
+automated installation process, which we intend to take advantage of, as it is tedious to
+have to flash the Raspberry Pi and go through the distro's installation process every time
+we change the operating system configuration.
 
+From our research, we have decided to use DietPi as a baseline operating system for our
+project. The lightweight aspect suits us well, as we only need to boot a single
+application. The easy chromium kiosk mode configuration is also a big bonus, as it
+relieves us from a configuration burden.
 
 \subsubsection{Operating System Configuration}
 \label{sec:research:subsec:os_config}
@@ -316,11 +323,17 @@ with no border or frame \autocite{chromiumKioskMode}. This in combination with t
 file fulfills our requirement of only having a single fullscreen application with no other
 UI. This feature can be enabled through the \url{--kiosk} command line flag
 \autocite{chromiumKioskMode}. See \nameref{lst:xinitrc} for an example of an xinitrc that
-launches chromium in fullscreen mode.
+launches chromium in fullscreen mode. DietPi can also handle this configuration for us,
+using the \url{dietpi-autostart} configuration utility.
 
 Networking can disabled through the \url{/etc/network/interfaces} config file. This config
 file is used to declare all networking interfaces, and the interfaces can be removed by
-simply removing all lines declaring a networking interface in that file.
+simply removing all lines declaring a networking interface in that file. We can remove all
+networking interfaces except for the loopback (\url{lo}) and USB Ethernet interfaces.
+
+There is more operating system configuration that must happen as well in order for the
+Raspberry Pi 4B to be configured as USB MIDI Gadget. This bit of configuration is quite
+extensive and is covered in more detail in section \ref{sec:midi_peripheral}.
 
 \subsubsection{Packer}
 \label{sec:packer}
@@ -335,6 +348,13 @@ packer-builder-arm, which builds ARM images and is suitable for a Raspberry Pi.
 We can use our own Packer config file to setup all the tasks described in
 \nameref{sec:research:subsec:os_config}. For example, the file provisioner can copy the
 \url{.xinitrc} file to the home directory, which configures X11 for our application.
+
+We will use shell provisioners to run all the DietPi installation and configuration steps.
+This will include automating the options we specify in the \url{dietpi-config} and
+\url{dietpi-software} utilities.
+
+Packer will also be used to copy the \url{/boot/} modifications required to turn the
+device into a USB gadget, as described in section \ref{sec:midi_peripheral}.
 
 \subsubsection{Performance}
 
@@ -448,6 +468,7 @@ findings here we are confident that we can develop a browser based app that has
 exceptional performance on the Raspberry Pi.
 
 \subsection{MIDI Peripheral}
+\label{sec:midi_peripheral}
 
 The Pi needs to function as a MIDI peripheral, i.e. plug the device into a computer and it
 functions as a device that sends MIDI commands to the DAW. This connection will happen
