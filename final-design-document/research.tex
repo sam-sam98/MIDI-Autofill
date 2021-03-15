@@ -94,22 +94,22 @@ never attempted before.
 \subsubsection{PixelCNN}
 
 For the computer vision model, our lead candidate was PixelCNN. Like a standard CNN,
-PixelCNN processes its image inputs an alternating series of masked convolution and pooling.
+PixelCNN processes its image inputs primarily through layers of masked convolution.
 The "masks" used in the convolution layer are square matrices, and each element of the matrix
 is a numerical value that denotes the weight of that element. These masks are iterated over the
 input image, convolving with the brightness of the pixels under the mask. In colored images,
-the process is repeated once for each color channel: red, green, and blue. Depending on the
+the process is repeated once for each color channel: red, green, and blue.\autocite{pixelCNN} Depending on the
 configuration of the weights in the matrix, different masks can be used to identify different
 visual patterns. Each convolution with each mask outputs a two-dimensional array of values
-called a feature map. The feature maps are then put through an activation function, which
-modifies the values in the feature map to exaggerate the separation between values above a
-certain threshold and  values below it.
+called a feature map.
 
 Unlike a standard CNN, however, PixelCNN specifically uses masks that only allows it to read
-one pixel at a time: row by row, and left to right in each row. This enforces that each pixel
+one pixel at a time: row by row, and left to right in each row.\autocite{pixelCNN} This enforces that each pixel
 is dependent upon only those above and to the left of itself. Using this unique relationship,
 PixelCNN has a unique use-case in predicting the bottom half of an image after processing the
-top half as input.
+top half as input. The AI uses the probability distribution of visual features found in all pixels
+iterated through prior to inform the probability distribution it creates to predict the pixels that
+will follow.\autocite{pixelRNN}
 
 \begin{figure}[h!]
   \centering
