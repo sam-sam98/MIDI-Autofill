@@ -151,8 +151,8 @@ modification is the module MusicRNN\autocite{musicRNN}. This one contains three 
 interest: MelodyRNN, ImprovRNN, and PerformanceRNN. All these models, as their name
 implies, are based on recurrent neural netoworks (RNN) produced with Google's TensorFlow.
 
-In constrast with the already mentioned CNN, that processes grid values as is a picture, 
-RNN processes sequential data as string of caracthers, words, or in our case of 
+In constrast with the already mentioned CNN, that processes grid values as is a picture,
+RNN processes sequential data as string of caracthers, words, or in our case of
 interest, melody representations. RNN also considers proccesed information along large
 sequnces of data, and not purely local extent as CNN.\autocite{fundamentalML}
 
@@ -165,7 +165,7 @@ related to the exploding and vanishing gradients magnified on any recursive netw
 the accumulation of errors on the successive feedbacks of data analysis. This models also
 have four configurations to assists determining the range of pitches, indentifying
 recursive patterns, and pay special attention on specific sections of the input melody.
-\autocite{melodyRNN} 
+\autocite{melodyRNN}
 
 This model could be in charge of the autocomplete feature we are
 looking to achieve in our project.
@@ -176,7 +176,7 @@ before model is the conditionment of the generated melody to a chord progression
 model counts with similar set of configurations than MelodyRNN, but with the addition of
 usign as inputs vectors representing chords of the progression. Although, this can be a
 interesting feature to generate melodies, the model requires to encode the full input
-melody in XML format, not supporting direct MIDI input.\autocite{improvRNN} 
+melody in XML format, not supporting direct MIDI input.\autocite{improvRNN}
 
 This model would not be directly applied to our project, but still could add interesting
 features for an expanded instance.
@@ -438,11 +438,14 @@ subjective feel for the performance. The test was ran in the chromium web browse
 Raspberry Pi OS. The performance was acceptable, with some actions feeling slow.
 Dragging around notes had a small but noticeable latency between the mouse cursor's
 movement and the notes position. There was also a small but noticeable latency between
-double clicking to insert a note and the note showing up on screen.
+double clicking to insert a note and the note showing up on screen. The playhead updated
+smoothly when playing the MIDI track, which is the most important aspect, as laggy
+playback is awful for the user experience.
 
 It should be noted that this app was not explicitly designed to run on constrained
-hardware. Based on our findings here we are confident that we can develop a browser based
-app that has exceptional performance on the Raspberry Pi.
+hardware. Web apps can run great on Raspberry Pi's when optimized to do so. Based on our
+findings here we are confident that we can develop a browser based app that has
+exceptional performance on the Raspberry Pi.
 
 \subsection{MIDI Peripheral}
 
