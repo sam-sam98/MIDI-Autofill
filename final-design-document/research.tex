@@ -448,7 +448,7 @@ below our threshold. This is where the linear benchmarks come in.
 The linear benchmarks allow us to figure out what constraints we have to limit ourselves
 to in order to stay below our 5 second threshold. We based these benchmarks around factors
 we speculated would affect the performance the most. For each of these benchmark factors,
-we progressively test higher amounts and graph the results for easy analysis (See
+we progressively test higher amounts and graph the results for easy analysis (see
 \autoref{fig:magentaperf}).
 
 \paragraph{Linear benchmark factors}
@@ -586,8 +586,19 @@ followed an online guide to setup this MIDI gadget, which involves providing inf
 to the kernel about our device through the \url{/sys/kernel/config/usb_gadget/} folder
 \autocite{raspberryPiGadgetSetup}.
 
-This works, but we ran into a problem with our setup where our HDMI connection to the
-monitor was not working anymore. This connection is critical, as we need to be able to
+From here we can use the \url{aplaymidi} command to test our MIDI device, which sends a
+MIDI file to the host computer \autocite{gadgetTesting}. If the gadget is working
+properly, then the MIDI sequences should be visible in any application that listens for
+MIDI note events, such as a DAW.
+
+USB Gadgets appear as USB ethernet devices and can be read and written to like any other
+networking interface. USB MIDI gadgets similarly communicate through standard networking
+interfaces under Linux, meaning that our backend program for sending MIDI events to the
+host computer will be sending messages through networking interfaces. However, we will
+most likely use a library to abstract away this networking aspect.
+
+USB gadgets work, but we ran into a problem with our setup where our HDMI connection to
+the monitor was not working anymore. This connection is critical, as we need to be able to
 display our DAW to the built in connection using HDMI, so we had to find a workaround for
 this issue. We found out that there are \url{/boot/config.txt} options that can added to
 force an HDMI connection, using the \url{hdmi_force_hotplug} option
@@ -595,7 +606,7 @@ force an HDMI connection, using the \url{hdmi_force_hotplug} option
 be seen in listing \ref{lst:bootconfig}.
 
 We have also ran into some low voltage warnings when running the Raspberry Pi 4B as a USB
-gadget. These warnings are found in systemlogs and are viewed with \url{journalctl}. The
+gadget. These warnings are found in system logs and are viewed with \url{journalctl}. The
 Raspberry Pi 4b requires 5.1 volts and 3 amps to operate effectively, and will send the
 undervolt warning whenever it runs below 4.63 volts
 \autocite{raspberryPiAmps}. We notice that we see these warnings early in the boot, but it
@@ -637,25 +648,25 @@ Our key design was created by referencing two different electric keyboards: the 
 \begin{table}[h!]
   \centering
   \resizebox{\textwidth}{!}{%
-  \begin{tabular}{|l|l|l|l|}
-    \hline
-    \textbf{Keyboard}       & \textbf{Roland DP-90} & \textbf{Keylab MkII} & \textbf{Our Choice} \\ \hline
-    \textbf{Black Key}      &                       &                      &                     \\ \hline
-    Base Width (mm)         & 12                    & 12                   & 12                  \\ \hline
-    Base Length (mm)        & 95                    & 80                   & 80                  \\ \hline
-    Top Width (mm)          & 9                     & 9                    & 9                   \\ \hline
-    Top Height (mm)         & 88                    & 72                   & 72                  \\ \hline
-    \textbf{Standard White} &                       &                      &                     \\ \hline
-    Base Width (mm)         & 22                    & 22                   & 22                  \\ \hline
-    Base Length (mm)        & 150                   & 130                  & 130                 \\ \hline
-    b cut-in (mm)           & 9                     & 8                    & 8                   \\ \hline
-    t cut-in (mm)           & 4.5 / 4.5             & 4 / 4                & 4 / 4               \\ \hline
-    d cut-in (mm)           & 9                     & 8                    & 8                   \\ \hline
-    tb cut-in (mm)          & 3 / 6                 & 3 / 6                & 3 / 6               \\ \hline
-    td cut-in (mm)          & 6 / 3                 & 6 / 3                & 6 / 3               \\ \hline
-    Key Separation (mm)     & 1.5                   & 2                    & 2                   \\ \hline
-    Trigger Angle (Degrees) & 4.972                 & 5.296                & 5                   \\ \hline
-  \end{tabular}}
+    \begin{tabular}{|l|l|l|l|}
+      \hline
+      \textbf{Keyboard}       & \textbf{Roland DP-90} & \textbf{Keylab MkII} & \textbf{Our Choice} \\ \hline
+      \textbf{Black Key}      &                       &                      &                     \\ \hline
+      Base Width (mm)         & 12                    & 12                   & 12                  \\ \hline
+      Base Length (mm)        & 95                    & 80                   & 80                  \\ \hline
+      Top Width (mm)          & 9                     & 9                    & 9                   \\ \hline
+      Top Height (mm)         & 88                    & 72                   & 72                  \\ \hline
+      \textbf{Standard White} &                       &                      &                     \\ \hline
+      Base Width (mm)         & 22                    & 22                   & 22                  \\ \hline
+      Base Length (mm)        & 150                   & 130                  & 130                 \\ \hline
+      b cut-in (mm)           & 9                     & 8                    & 8                   \\ \hline
+      t cut-in (mm)           & 4.5 / 4.5             & 4 / 4                & 4 / 4               \\ \hline
+      d cut-in (mm)           & 9                     & 8                    & 8                   \\ \hline
+      tb cut-in (mm)          & 3 / 6                 & 3 / 6                & 3 / 6               \\ \hline
+      td cut-in (mm)          & 6 / 3                 & 6 / 3                & 6 / 3               \\ \hline
+      Key Separation (mm)     & 1.5                   & 2                    & 2                   \\ \hline
+      Trigger Angle (Degrees) & 4.972                 & 5.296                & 5                   \\ \hline
+    \end{tabular}}
   \caption{}
   \label{Tab:key_specs}
 \end{table}
@@ -668,6 +679,6 @@ In our application we are looking to distinguish which note is being pressed, th
 
 After basic functionality, our next concern is key feel. With the time allotted for this project and our desire for ease of portability, it is obvious from observing Figure 1 that we will not attempt to replicate the full counter-weighted key design. To keep costs low and durability high, we are also avoiding any semi-weighted keys or the usual expensive key material such as ivory or wood. By utilizing 3D printed plastics, we are able to create custom, robust designs at a cheaper cost than the alternatives.
 
-[INSERT COST OF MATERIAL AND STRENGTH OF MATERIAL TABLE]
+  [INSERT COST OF MATERIAL AND STRENGTH OF MATERIAL TABLE]
 
 To provide the actuation action for the key itself, we will be using tension springs to hold the key in place as it sits on a lever.
