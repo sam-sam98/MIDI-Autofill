@@ -169,6 +169,14 @@ diminished tonic - commonly viewed as more dissonant - is composed of the harmon
 
 \subsection{AI}
 
+The artificial intelligence of this project should be able to generate a melody using
+a piece of original melody as input. Ideally, it would be able to extend the input at a
+similar lenght and with similar tonality, mood, tension. For this, we research
+a couple of different alternatives, with their own sets of advantages, disadvantages, and
+trade-offs.
+
+\subsubsection{First Approach: Computer Vision. PixelCNN}
+
 Our original concept for the AI model took a computer vision approach. To begin we would
 have had to develop a script which could convert between MIDI data and a PNG
 visualization. This image would be similar in structure to what might show on the piano
@@ -215,7 +223,7 @@ them. This model felt appropriate for our skill level because it is centered aro
 technique we already understand, but it also implements that technique to a degree we have
 never attempted before.
 
-\subsubsection{PixelCNN}
+\paragraph{PixelCNN}
 
 For the computer vision model, our lead candidate was PixelCNN. Like a standard CNN,
 PixelCNN processes its image inputs primarily through layers of masked convolution.
@@ -258,26 +266,34 @@ Our main challenge in the use of PixelCNN would be the collection and preprocess
 training data. For this model to work for our purposes, we would have to convert each MIDI
 file into a piano roll visualization which is rotated 90 degrees clockwise.
 
-\subsubsection{Magenta}
+\subsubsection{Second Approach: Already existent libraries. Magenta.}
 
-As an alternative, we could use an existent open source solution. Magenta is an open
-source project for artistic applications developed by Google AI\autocite{magentaHome}.
-This project has released in 2018 an extensive AI library for art and music. This one,
-contains already trained models, API and datasets that can be directly used to solve our
-problem. Although, the level of functionalities already included in these libraries can
-defeat the academic purpose of the current project, there are valuables tools to create
-our own autocomplete AI model. The project offers blank models to be trained by our own
-set of data, and also offers the posssibility of using pre-trained models.
+Before starting to develop a solution, we checked on existent libraries, researches and
+open source projects. This gave us a broader idea about the possible factors that can
+become in major challeges. Examples of these factors could be: find and prepare datasets,
+choose the correct AI prediction model, and what resources are required for training. We
+found that Google AI has released in 2018 an extensive library for art and music
+applications: Magenta.
 
-As an already functional solution that can be directly applied to our work without any
-modification is the module MusicRNN\autocite{musicRNN}. This one contains three models of
-interest: MelodyRNN, ImprovRNN, and PerformanceRNN. All these models, as their name
-implies, are based on recurrent neural netoworks (RNN) produced with Google's TensorFlow.
+\paragraph{Magenta Project} This collection of libraries is specific for music and art 
+creation. It contains already trained AI models, different tools for MIDI handling, API 
+and datasets that can be directly used to solve our problem. Although, the level of
+functionalities already included in the main API can defeat the academic purpose of the
+current project. Still, some of this elements can be valuable tools to create, train, and
+use our own autocomplete AI model. Either way, here we analyze the parts of the library that
+can be applied to our project.
 
-In constrast with the already mentioned CNN, that processes grid values as is a picture,
-RNN processes sequential data as string of caracthers, words, or in our case of
-interest, melody representations. RNN also considers proccesed information along large
-sequnces of data, and not purely local extent as CNN.\autocite{fundamentalML}
+\subparagraph{MusicRNN} The module MusicRNN offers a close to ideal solution for the
+autocomplete functionality. This module contains models for generating and performing
+sections of melodies \autocite{musicRNN}. The models of interest are MelodyRNN, ImprovRNN,
+and PerformanceRNN. All these models, as their name implies, are based on recurrent neural
+netoworks (RNN) produced with Google's TensorFlow.
+
+\subparagraph{Recursive Neural Network (RNN)} In constrast with the already mentioned CNN,
+that processes grid values without contextual information, RNN processes sequential data
+as string of caracthers, words, or in our case of interest, melody representations. RNN
+also considers proccesed information along large sequnces of data, and not purely local
+extent as CNN.\autocite{fundamentalML}
 
 \paragraph{MelodyRNN.}
 MelodyRNN model generates melody based on an input melody. To achieve this, it uses
@@ -287,11 +303,9 @@ regulr RNN across large sequnces of data. The main issues that LMST adress are t
 related to the exploding and vanishing gradients magnified on any recursive network due to
 the accumulation of errors on the successive feedbacks of data analysis. This models also
 have four configurations to assists determining the range of pitches, indentifying
-recursive patterns, and pay special attention on specific sections of the input melody.
-\autocite{melodyRNN}
-
-This model could be in charge of the autocomplete feature we are
-looking to achieve in our project.
+recursive patterns, and pay special attention on specific sections of the input melody
+\autocite{melodyRNN}. This model alone could be in charge of the autocomplete feature we
+are looking to achieve in our project.
 
 \paragraph{ImprovRNN.}
 ImprovRNN generate melodies in the same fashion of MelodyRNN. The main difference with the
@@ -299,10 +313,9 @@ before model is the conditionment of the generated melody to a chord progression
 model counts with similar set of configurations than MelodyRNN, but with the addition of
 usign as inputs vectors representing chords of the progression. Although, this can be a
 interesting feature to generate melodies, the model requires to encode the full input
-melody in XML format, not supporting direct MIDI input.\autocite{improvRNN}
-
-This model would not be directly applied to our project, but still could add interesting
-features for an expanded instance.
+melody in XML format, not supporting direct MIDI input \autocite{improvRNN}.This model
+would not be directly applied to our project, but still could add interesting features for
+an expanded instance.
 
 \paragraph{PerformanceRNN.}
 PerformanceRNN generates melodies using dynamic and expressing timing. This allows to
@@ -322,6 +335,10 @@ total audio), collected by Google using its Bach Doodle. \autocite{magentaData}
 
 The selction of the dataset would be conditioned by the available trianing capabilities
 for this project.
+
+\subsubsection{Third Approach: Develop out own RNN. LSTM.}
+
+(This is under research by Jorge)
 
 
 \subsection{Embedded Controller Comparisons}
