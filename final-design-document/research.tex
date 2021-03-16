@@ -409,16 +409,34 @@ copying files, running shell commands, setting permissions, etc. Packer relies o
 to carry out the tasks laid out in a configuration file. The builder we will use is called
 packer-builder-arm, which builds ARM images and is suitable for a Raspberry Pi.
 
-We can use our own Packer config file to setup all the tasks described in
-\nameref{sec:research:subsec:os_config}. For example, the file provisioner can copy the
+Packer is configured through simple JSON files. These JSON files contain information about
+the original operating system's image, such as the URL it's hosted on, as well as other
+metadata about the image. The JSON file also configures provisioners to modify the
+operating system. With this provisioners, we can create our own packer json config file to
+setup all the tasks described in \nameref{sec:research:subsec:os_config}.
+
+One of the provisioners we will use is the file provisioner, which copies files from the
+build tree over to the operating system. For example, the file provisioner can copy the
 \url{.xinitrc} file to the home directory, which configures X11 for our application.
+We will also use file provisioners to copy over the \url{/boot/} modifications required to
+turn the device into a USB gadget, as described in section \ref{sec:midi_peripheral}.
 
 We will use shell provisioners to run all the DietPi installation and configuration steps.
 This will include automating the options we specify in the \url{dietpi-config} and
-\url{dietpi-software} utilities.
+\url{dietpi-software} utilities. We will also use shell provisioners to clone our DAW
+application and any other backend software we need to run on the device. The software
+should be pulled straight from the git repository if available.
 
-Packer will also be used to copy the \url{/boot/} modifications required to turn the
-device into a USB gadget, as described in section \ref{sec:midi_peripheral}.
+The final output is a reliable \url{.img} file built, that can be flashed to an SD card
+using a simple image flashing utility, such as balenaEtcher. This image will already have
+the operating system fully configured and with our software preinstalled onto it, so there
+will be no need to do any setup after the image is flashed.
+
+We are also looking into having this packer build be integrated into our GitHub repo with
+GitHub Actions, which will automatically build a new image on every pull request. This
+will allow us to ensure that the OS build is working before merging any new code into our
+upstream. This should give us the confidence to work on the code without fear that we will
+break the Raspberry Pi image builds every time.
 
 \subsubsection{Performance}
 
