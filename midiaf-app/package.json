@@ -1,0 +1,15 @@
+{
+  "name": "midiaf-app",
+  "version": "1.0.0",
+  "description": "The main application that powers MIDI-Autofill",
+  "main": "main/main.js",
+  "scripts": {
+      "start": "./node_modules/electron/dist/electron ."
+  },
+  "repository": "https://github.com/sam-sam98/MIDI-Autofill",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "electron": "^12.0.1"
+  }
+}
