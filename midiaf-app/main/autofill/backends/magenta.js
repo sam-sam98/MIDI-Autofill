@@ -26,3 +26,4 @@ module.exports = {
     return await checkpoint.model.continueSequence(noteSequence, steps, temperature)
   }
 }
+

@@ -1,5 +1,5 @@
 require('@tensorflow/tfjs-node')
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 const af = require('./autofill/autofill')('magenta')
 const core = require('@magenta/music/node/core')
@@ -19,17 +19,20 @@ TWINKLE_TWINKLE = {
     {pitch: 64, startTime: 5.5, endTime: 6.0},
     {pitch: 62, startTime: 6.0, endTime: 6.5},
     {pitch: 62, startTime: 6.5, endTime: 7.0},
-    {pitch: 60, startTime: 7.0, endTime: 8.0},  
+    {pitch: 60, startTime: 7.0, endTime: 8.0},
   ],
   totalTime: 8
 };
 
+let win = undefined
+
 function createWindow () {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      nodeIntegration: true,
+      contextIsolation: false,
     }
   })
 
@@ -46,9 +49,9 @@ app.whenReady().then(async () => {
   })
 
   await af.initialize()
-  let qns = core.sequences.quantizeNoteSequence(TWINKLE_TWINKLE, 4)
-  let result = await af.autofill(af.checkpoints[0], qns, 20, 1.5)
-  console.log(result)
+  let checkpoints = af.checkpoints.map((checkpoint) => checkpoint.name)
+  console.log(checkpoints)
+  win.webContents.send('ready', checkpoints)
 })
 
 app.on('window-all-closed', () => {
@@ -57,3 +60,8 @@ app.on('window-all-closed', () => {
   }
 })
 
+ipcMain.handle('generate', async (_, checkpointName, noteSequence, steps, temperature) => {
+  let qns = core.sequences.quantizeNoteSequence(noteSequence, 4)
+  let checkpoint = af.checkpoints.find(check => check.name == checkpointName)
+  return await af.autofill(checkpoint, qns, steps, temperature)
+})

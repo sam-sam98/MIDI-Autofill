@@ -7,6 +7,22 @@
     </head>
     <body>
         <h1>Welcome to MIDI-Autofill!</h1>
-        This is a placeholder.
+
+        <div id="loading">Loading...</div>
+
+        <label for="checkpoint">Checkpoint:</label>
+        <select name="checkpoint" id="checkpoint">
+        </select>
+
+        <button id="generatebtn">Generate!</button>
+
+        <br>
+
+        <canvas id="canvas"></canvas>
+
+        <script src="https://cdn.jsdelivr.net/npm/@magenta/music@^1.0.0"></script>
+        <script>
+            require('../renderer/renderer')
+        </script>
     </body>
 </html>
