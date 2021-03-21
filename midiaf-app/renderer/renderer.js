@@ -1,4 +1,5 @@
 const { ipcRenderer } = require("electron/renderer")
+const core = require('@magenta/music/node/core')
 
 TWINKLE_TWINKLE = {
   notes: [
@@ -23,7 +24,6 @@ TWINKLE_TWINKLE = {
 ipcRenderer.once('ready', (_, checkpoints) => {
   let selector = document.getElementById('checkpoint')
   for (let checkpoint of checkpoints) {
-    let name = checkpoint.name;
     let option = document.createElement("option")
     option.text = checkpoint
     option.value = checkpoint
@@ -39,13 +39,13 @@ document.getElementById('generatebtn').onclick = () => {
   let selector = document.getElementById('checkpoint')
   let checkpoint = selector.value
   ipcRenderer.invoke('generate', checkpoint, TWINKLE_TWINKLE, 20, 1.5).then((newNotes) => {
-    newNotes = mm.sequences.unquantizeSequence(newNotes)
-    let seq = mm.sequences.concatenate([TWINKLE_TWINKLE, newNotes])
+    newNotes = core.sequences.unquantizeSequence(newNotes)
+    let seq = core.sequences.concatenate([TWINKLE_TWINKLE, newNotes])
     seq.totalTime = TWINKLE_TWINKLE.totalTime + newNotes.totalTime
-    viz = new mm.Visualizer(seq, document.getElementById('canvas'))
+    viz = new core.Visualizer(seq, document.getElementById('canvas'))
   })
 }
 
 window.onload = function() {
-  viz = new mm.Visualizer(TWINKLE_TWINKLE, document.getElementById('canvas'))
+  viz = new core.Visualizer(TWINKLE_TWINKLE, document.getElementById('canvas'))
 }
