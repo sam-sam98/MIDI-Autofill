@@ -21,7 +21,11 @@ TWINKLE_TWINKLE = {
   totalTime: 8
 };
 
-let noteSequence = TWINKLE_TWINKLE
+// The starting melody. This starts as twinkle twinkle, but
+// can be changed to a user uploaded MIDI.
+let originalSequence = TWINKLE_TWINKLE
+
+let noteSequence = originalSequence
 
 ipcRenderer.once('ready', (_, checkpoints) => {
   let selector = document.getElementById('checkpoint')
@@ -56,7 +60,14 @@ document.getElementById('playbtn').onclick = () => {
 
 document.getElementById('resetbtn').onclick = () => {
   player.stop()
-  noteSequence = TWINKLE_TWINKLE
+  noteSequence = originalSequence
+  viz = new core.Visualizer(noteSequence, document.getElementById('canvas'))
+}
+
+document.getElementById('midifile').onchange = async (event) => {
+  const midi = event.target.files[0];
+  originalSequence = await core.blobToNoteSequence(midi)
+  noteSequence = originalSequence
   viz = new core.Visualizer(noteSequence, document.getElementById('canvas'))
 }
 
