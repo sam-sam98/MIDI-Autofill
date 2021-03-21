@@ -21,6 +21,8 @@ TWINKLE_TWINKLE = {
   totalTime: 8
 };
 
+let noteSequence = TWINKLE_TWINKLE
+
 ipcRenderer.once('ready', (_, checkpoints) => {
   let selector = document.getElementById('checkpoint')
   for (let checkpoint of checkpoints) {
@@ -35,15 +37,27 @@ ipcRenderer.once('ready', (_, checkpoints) => {
 
 let viz = undefined
 
+let player = new core.Player()
+
 document.getElementById('generatebtn').onclick = () => {
+  player.stop()
   let selector = document.getElementById('checkpoint')
   let checkpoint = selector.value
   ipcRenderer.invoke('generate', checkpoint, TWINKLE_TWINKLE, 20, 1.5).then((newNotes) => {
     newNotes = core.sequences.unquantizeSequence(newNotes)
-    let seq = core.sequences.concatenate([TWINKLE_TWINKLE, newNotes])
-    seq.totalTime = TWINKLE_TWINKLE.totalTime + newNotes.totalTime
-    viz = new core.Visualizer(seq, document.getElementById('canvas'))
+    noteSequence = core.sequences.concatenate([noteSequence, newNotes])
+    viz = new core.Visualizer(noteSequence, document.getElementById('canvas'))
   })
+}
+
+document.getElementById('playbtn').onclick = () => {
+  player.start(noteSequence)
+}
+
+document.getElementById('resetbtn').onclick = () => {
+  player.stop()
+  noteSequence = TWINKLE_TWINKLE
+  viz = new core.Visualizer(noteSequence, document.getElementById('canvas'))
 }
 
 window.onload = function() {
