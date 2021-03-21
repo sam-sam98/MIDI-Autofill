@@ -41,7 +41,9 @@ ipcRenderer.once('ready', (_, checkpoints) => {
 
 let viz = undefined
 
-let player = new core.Player()
+let player = new core.Player(true, {
+  run: (note) => viz.redraw(note),
+})
 
 document.getElementById('generatebtn').onclick = () => {
   player.stop()
@@ -72,5 +74,5 @@ document.getElementById('midifile').onchange = async (event) => {
 }
 
 window.onload = function() {
-  viz = new core.Visualizer(TWINKLE_TWINKLE, document.getElementById('canvas'))
+  viz = new core.Visualizer(originalSequence, document.getElementById('canvas'))
 }
