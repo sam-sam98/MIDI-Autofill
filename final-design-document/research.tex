@@ -666,13 +666,20 @@ exceptional performance on the Raspberry Pi.
 \subsection{MIDI Peripheral}
 \label{sec:midi_peripheral}
 
-The Pi needs to function as a MIDI peripheral, i.e. plug the device into a computer and it
-functions as a device that sends MIDI commands to the DAW. This connection will happen
-through a USB-C to USB-A cable from the Raspberry Pi to the computer. The Raspberry Pi is
-typically powered from the USB-C port form a power supply connected to a power outlet, but
-in our case the Pi will receive it's power from the host PC over USB-C instead. Once
-plugged in, the Pi will act as a normal MIDI peripheral, which sends MIDI events to the
-PC, which can be picked up by a fully fledged DAW.
+The Pi needs to function as a MIDI peripheral, i.e. connect the device into a computer and
+it functions as a device that sends MIDI commands to the DAW. There are a few different
+ways to approach this connection, and we have explored a few such approaches for this
+project.
+
+
+\subsubsection{Linux USB Gadget}
+
+Under this approach, the connection will happen through a USB-C to USB-A cable from the
+Raspberry Pi to the computer. The Raspberry Pi is typically powered from the USB-C port
+form a power supply connected to a power outlet, but in our case the Pi will receive its
+power from the host PC over USB-C instead. Once plugged in, the Pi will act as a normal
+MIDI peripheral, which sends MIDI events to the PC, which can be picked up by a fully
+fledged DAW.
 
 The MIDI communication happens over USB in our case, which means we need to work with the
 operating system to send these messages. We are using Linux for our device's operating
@@ -756,7 +763,110 @@ undervolt warning whenever it runs below 4.63 volts \autocite{raspberryPiAmps}. 
 that we see these warnings early in the boot, but it seems to stabilize later. We have not
 run into any issues with these undervolts as of now. The Pi does not encounter anymore
 voltage warnings when running a CPU stress test, but it could lead to stability issues
-later.  We are still researching  solutions to this problem.
+later.
+
+This approach runs into a wall when considering how to allow the device to function as a
+standalone device, while also being able to receive power through the USB-C connection.
+USB gadgets are supposed to be powered through the USB-C port, but when not connected, the
+USB device will operate off of a battery. The standalone operation requirement makes this
+connection mode very difficult. There is another interface for powering the raspberry PI,
+which is the 5 volt GPIO pin. This could be connected to a battery. But then there is the
+question of if the Pi can be simultaneously powered by the 5 volt GPIO port while also
+being plugged in with USB-C. This may be possible, but there are no resources online that
+show how this can be done. It is not worth the time to figure out how this can be done.
+
+\subsubsection{RTP-MIDI Over WIFI}
+
+RTP-MIDI is an open source protocol to send and recieve MIDI messages over standard
+networking interfaces. RTP-MIDI is built over Real-time Transport Protocol (RTP), which is
+a protocol for real-time communication over the network. RTP typically works through UDP
+messages over IP. RTP-MIDI can be used over a LAN network. When used over WIFI, the MIDI
+device can be connected to another computer without a wired connection. This wireless
+factor provides an extra convenience factor for the end user.
+
+With wireless connections, there is always a question of if it can achieve acceptable
+latencies. RTP-MIDI over WIFI is fast, and latency is not a major concern. RTP-MIDI Over
+WIFI has a latency of around 8.5 ms with a standard deviation of 8 ms
+\autocite{inproceedings}.
+
+A major disadvantage of RTP-MIDI is that it is not supported out of the box in Windows 10.
+Since RTP-MIDI are just simple UDP network messages, this can be worked around by
+downloading a driver, or by using a standalone piece of software. Requiring the user to
+download extra software to the computer will degrade the user experience. We want the user
+to be able to use the MIDI device with minimal extra setup, and this would hamper that
+experience. Addtionally, the user would need to know the IP address of the device on the
+LAN, and enter it into the software. This is another step that will hamper the out of box
+experience.
+
+This approach would be the easiest to implement from a developer perspective. These are
+just simple network messages, without the need to go through any special interfaces. There
+is a NodeJS library called \url{node-rtpmidi} which would make RTP-MIDI trivial to
+implement on the Raspberry Pi. It would be a matter of simply making the connection and
+using the library to send MIDI messages.
+
+\subsubsection{MIDI Over Bluetooth Low Energy}
+
+Bluetooth Low Energy (BLE) is a wireless technology standard that enables BLE compatible
+devices to communicate with one another. Despite the namesake, BLE is separate from
+classic Bluetooth, intended to consume less power, and is not backwards compatible with
+classic Bluetooth. Common examples of BLE devices include BLE speakers, keyboards and
+mice. The Raspberry Pi 4B supports BLE, which means that the Raspberry Pi can act as a BLE
+device. Using BLE has the benefit of being convenient for the end-user as well, with the
+ability to move the device freely and without needing to manage another cable.
+
+Most computers also support BLE, or can be made to support BLE through the use of a
+Bluetooth USB Dongle. While BLE is not as prevalent as USB, compatibility should not be a
+concern for the majority of devices.
+
+BLE can be used for a wide variety of devices. BLE devices communicate through profiles,
+which specify the BLE  application and the communication specifications. There is a long
+list of standardized BLE profiles, with one such profile being BLE MIDI. While support for
+BLE is very common, support for certain BLE profiles is not, as its up to each BLE
+implementor to support whatever profiles are needed by the device. However, BLE MIDI is
+supported by Windows 10, MacOS, Linux, iOS, and Android \autocite{inproceedings}. With BLE
+MIDI being supported by every major operating system, we are confident that we will not
+run into any compatibility issues with this approach, except for on older computers.
+
+We initially thought that using BLE would incur too much input latency to be practical for
+musicians. Using Bluetooth audio is notorious for its latency. But the latency situation
+with BLE MIDI is much better than Bluetooth audio. BLE MIDI has higher latency than USB
+MIDI, but the numbers are acceptable. BLE MIDI events have a delay of approximately 12
+milliseconds one-way and 26ms round-trip time \autocite{inproceedings}. We find this
+latency number to be acceptable for our project.
+
+The Raspberry Pi runs Linux, which means that it needs to work through the BlueZ stack in
+order to function as a BLE device. BlueZ is a component of Linux that implements Bluetooth
+and BLE. The BlueZ stack supports MIDI over BLE, and in combination with ALSA, it is
+possible to turn a Raspberry Pi into a BLE MIDI device.
+
+Audio under Linux is handled through the ALSA interface. ALSA also provides what are known
+as sequencer ports, which are used to send MIDI events over through an interface that can
+be connected to a variety of targets. In combination with BlueZ, we can create an ALSA
+sequencer port to send MIDI events over BLE. Bluez provides a binary called
+\url{bt-midi-server}, which creates the ALSA sequencer port. From there, we can send MIDI
+events over BLE by simply using the ALSA APIs for sequencer ports. This is a nice
+abstraction which allows us to write MIDI code without needing to consider Bluetooth in
+the code itself. The \url{bt-midi-server} can be run at startup using a systemd service.
+
+ALSA sequences are programmed using a C API. This C API can be called from JavaScript
+using the Foreign Function Interface (FFI). In this library, clients send sequencer events
+through the port, which can encode various MIDI events, such as note on/off, with data
+such as the pitch and velocity.
+
+With this interface, it is easy to create a program that creates a ALSA connection to the
+BLE MIDI sequencer port, listens for the keypresses from GPIO events, interprets those
+GPIO events, and sends the corresponding MIDI commands to the ALSA sequencer port. The BLE
+connection is abstracted away in this configuration, allowing us to just focus on writing
+MIDI code.
+
+\subsubsection{Conclusion}
+
+We have decided to go with the MIDI over Bluetooth Low Energy approach. This approach does
+to suffer from the same problems the USB-C approach has, and provides an added convenience
+factor, allowing the user to use the device without wires. It is also easier for the
+end-user to configure, with the end-user only needing to connect to a Bluetooth device
+through the operating system's Bluetooth interface. The latency is higher than USB-C, but
+it is within our specifications. The implementation is also simpler than using USB-C.
 
 \subsection{Application Architecture}
 
@@ -886,13 +996,13 @@ ABIs of both langauges to allow a library written in one language to be used in 
 language.
 
 For the MIDI device interface, which will be programmed in C, this approach works well.
-Both JavaScript and Python support calling C code through a foreign function interface
-(FFI). C has the closest to what can be considered a standard ABI, with the SystemV ABI
-being a standard in Linux, with all binaries being in the standard Executable and Linkable
-Format (ELF) format. Using the \url{node-ffi} library in NodeJS, the main JavaScript
-process can easily integrate with a C library. It is not as straightforward as using a
-normal JavaScript library, but it does not take much effort. Python can also interface
-with C libraries through its built in CFFI module, but that will not be necessary for this
+Both JavaScript and Python can call C code through a foreign function interface (FFI). C
+has the closest to what can be considered a standard ABI, with the SystemV ABI being a
+standard in Linux, with all binaries being in the standard Executable and Linkable Format
+(ELF) format. Using the \url{node-ffi} library in NodeJS, the main JavaScript process can
+easily integrate with a C library. It is not as straightforward as using a normal
+JavaScript library, but it does not take much effort. Python can also interface with C
+libraries through its built in CFFI module, but that will not be necessary for this
 project.
 
 Where this approach falls apart is creating a binding to python for the music generation
