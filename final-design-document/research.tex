@@ -43,7 +43,7 @@ note). This function is especially useful in adjusting for human errors in timin
 writing MIDIs with a MIDI controller. Better timing makes it easier to synchronize with
 other tracks that might end up in the same audio file.
 
-\subsection{Music Theory: Consonance}
+\subsection{Music Theory: Melody}
 
 One of the biggest issues with creating computer-generated music is that music, like all art
 forms, is highly subjective. There are no universal rules for right or wrong, and yet at the
@@ -53,12 +53,13 @@ So how does a computer decide what factors will most likely lead to a good melod
 To start, the generally agreed upon definition of melody is that it is the linear succession
 of musical tones, with its primary components being pitch and rhythm. Occasionally, it also
 encompasses tonal color and other factors of expression.\autocite{melody} In music theory, parts
-of music can be described as dissonant or consonant. Dissonance denotes a feeling of instability or
+of music can be described as dissonant or consonant. Dissonance denotes a feeling of tension or
 incompleteness in a musical phrase, and consonance denotes resolution and stability. Once again,
 these metrics are highly subjective, but they are based in the principle that music is composed
 of organized patterns in sound.\autocite{musiciansArithmetic} Aside from easily identifiable
 patterns, such as rhythm or repeated note sequences, this especially applies to patterns in note
-intervals.
+intervals. In the following subsections, we will discuss a few of the measures we could use to
+qualitatively measure the success of our AI output.
 
 \subsubsection{Degrees}
 
@@ -90,12 +91,17 @@ its role in the scale based on its scale step from the root note.
   \label{Tab:degrees}
 \end{table}
 
-According to music theory, each degree plays a different role in the scale. The tonic is
-colloquially known as "home" in the scale, because it is where most music starts and where most
-music resolves and concludes to. The subtonic or leading tone is named as such because within the
-scale it sounds unstable on its own and often relies on the tonic to resolve it. The dominant and
-mediant are melodically stable because they (along with the tonic) compose the major chord rooted
-at the tonic, which has strong consonance.
+According to music theory, each degree plays a different role in the scale based on its generation
+or release of tension. The tonic, for example, is colloquially known as "home" in the scale,
+because it is where most music starts and where most music can resolve and conclude to. In other
+words, it is a universal vehicle for tension release. The subtonic or leading tone is named as
+such because within the scale it sounds unstable on its own and often relies on the tonic to resolve
+it. Thus the subtonic plays the opposite function to the tonic in that it is a universal tension
+generator. Good melodies are constructed not to avoid generating tension, but to end the
+musical phrase with an equal release of tension.
+
+By being aware of the role of each note in a scale we can get a sense not only of whether or not
+the AI-generated outputs are sufficiently competent in melodic structure, but also why that is so.
 
 \subsubsection{Harmonics}
 
@@ -166,6 +172,30 @@ An important part of Helmholtz's theory was that harmonic intervals of smaller i
 create higher degrees of consonance.\autocite{intervals} This much is evident in common chord
 structures. For example the major tonic is composed of harmonics 1, 3, and 5. Conversely, the
 diminished tonic - commonly viewed as more dissonant - is composed of the harmonics 1, 11, and 19.
+
+\subsubsection{Contour}
+
+Intervals primarily address each note only in relation to the note directly prior; however, melody
+is also constructed upon more macroscopic contexts. This is where contour comes into play. Contour
+describes the "shape" of a melody by its repetition, conjunctness, and direction of motion.\autocite{contour}
+
+Repetition is straightforward; it describes the reoccurrence of a note or series of notes. Too much
+repetition in a melody tends to make it feel monotonous, while too little makes it erratic and
+difficult to follow.\autocite{contour}
+
+Conjunct motion is also referred to as step-wise motion because it denotes that each note is within
+one diatonic step (a major or minor second interval) of the note prior. Its opposite - disjunct
+motion - refers to melodies containing intervals larger than the diatonic step. Disjunct motion can
+add a dynamic element to a melody, but when a melody jumps too large an interval in too short a
+time span, it not only generates a lot of tension, it also makes the melody more difficult for a
+human to play. For both of these reasons, we should aim to keep our AI outputs to a reduced degree
+of disjunctness.\autocite{contour}
+
+Direction in a melody refers specifically to vertical direction. A melody is considered to be
+ascending when each note has a higher pitch than the previous and descending when each note is of a
+lower pitch than the previous. Fluid motion tends to come across more melodically in music. As
+such, it is more desirable to maintain the direction of a melody for a certain period of time
+before switching it as opposed to having notes rapidly alternate between ascension and descension.\autocite{contour}
 
 \subsection{AI}
 
@@ -275,8 +305,8 @@ choose the correct AI prediction model, and what resources are required for trai
 found that Google AI has released in 2018 an extensive library for art and music
 applications: Magenta.
 
-\paragraph{Magenta Project} This collection of libraries is specific for music and art 
-creation. It contains already trained AI models, different tools for MIDI handling, API 
+\paragraph{Magenta Project} This collection of libraries is specific for music and art
+creation. It contains already trained AI models, different tools for MIDI handling, API
 and datasets that can be directly used to solve our problem. Although, the level of
 functionalities already included in the main API can defeat the academic purpose of the
 current project. Still, some of this elements can be valuable tools to create, train, and
@@ -355,11 +385,17 @@ it will be viewable on any device that can run a browser. And because of the com
 limits of the MIDI controller, any modern device that is suited for a browser will
 inherently be able to run the MIDI autofill software as well.
 
-Our first consideration was React. Considering our group's familiarity with JavaScript as
-well as HTML and similar markup languages, it would be easier to work with. However, we
-ultimately opted to use Flutter. Flutter's default stylization is sleek and fits in well
-with the modern aesthetic of technology. Plus, its widgets allow for more polish on a UI
-that also has more niche functionality.
+We experimented with several options for a UI-building environment. Our first consideration was
+React. Considering our group's familiarity with JavaScript as well as HTML and similar markup
+languages, it would be easier to pick up. Electron offered a similar level of convenience, but with
+an added implementation of Node.js that would make our code more modular. Another strong candidate
+was Google's Flutter. Flutter's default stylization is sleek and fits in well with the modern
+aesthetic of technology. Plus, its widgets allow for more polish on a UI that also has more niche
+functionality.
+
+Our frontrunners after all options had been proposed were Electron and Flutter. Utlimately it was
+our hardware constraints that pointed us toward Electron because the HTML and JavaScript
+application was the most likely to be compatible to run on the Raspberry Pi.
 
 As established in \textbf{\ref{sec:daw} \nameref{sec:daw}}, the primary aspect of the UI
 will be the piano roll display. The frontend will be responsible for reading the MIDI
