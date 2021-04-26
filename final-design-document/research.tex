@@ -455,12 +455,21 @@ Raspberry Pi OS occupies 1424 MB. There are other system optimizations in place 
 general performance as well. After boot, there are 11 total processes, versus 18 total
 processes running on Raspberry Pi OS. This is a good choice for base system. It is easier
 for us to start lightweight and add what we need, rather than to start with a bloated
-system and strip it down. DietPi includes an easy way to run chromium in kiosk mode using
-the \url{dietpi-autostart} utility, which we'll need to have configured anyways, as
-described in Section \ref{sec:research:subsec:os_config}. DietPi also supports a fully
-automated installation process, which we intend to take advantage of, as it is tedious to
-have to flash the Raspberry Pi and go through the distro's installation process every time
-we change the operating system configuration.
+system and strip it down. DietPi comes with a flexible configuration utility that allows
+the system to be customized for a specific use case, as show in \autoref{fig:dietpi}.
+DietPi includes an easy way to run chromium in kiosk mode using the \url{dietpi-autostart}
+utility, which we'll need to have configured anyways, as described in Section
+\ref{sec:research:subsec:os_config}. DietPi also supports a fully automated installation
+process, which we intend to take advantage of, as it is tedious to have to flash the
+Raspberry Pi and go through the distro's installation process every time we change the
+operating system configuration.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/dietpi-config.png}
+  \caption{DietPi's Installation Menu}
+  \label{fig:dietpi}
+\end{figure}
 
 From our research, we have decided to use DietPi as a baseline operating system for our
 project. The lightweight aspect suits us well, as we only need to boot a single
@@ -501,17 +510,30 @@ file fulfills our requirement of only having a single fullscreen application wit
 UI. This feature can be enabled through the \url{--kiosk} command line flag
 \autocite{chromiumKioskMode}. See \nameref{lst:xinitrc} for an example of an xinitrc that
 launches chromium in fullscreen mode. DietPi can also handle this configuration for us,
-using the \url{dietpi-autostart} configuration utility.
+using the \url{dietpi-autostart} configuration utility (See
+\autoref{fig:dietpi-autostart}).
 
-Networking can disabled through the \url{/etc/network/interfaces} config file. This config
-file is used to declare all networking interfaces, and the interfaces can be removed by
-simply removing all lines declaring a networking interface in that file. We can remove all
-networking interfaces except for the loopback (\url{lo}) and USB Ethernet interfaces
-(these are needed for the device to be a USB Gadget).
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/dietpi-autostart.png}
+  \caption{DietPi's Autostart Menu with Chromium Kiosk Option}
+  \label{fig:dietpi-autostart}
+\end{figure}
 
-Additionally the operating system will need to have Bluetooth configured through the BlueZ
-stack using the BlueZ utilities and configuration files. This configuration process is
-quite extensive and is covered in more detail in \nameref{sec:ble_midi}.
+For the final product, we will want to have networking disabled. We will need network
+connectivity while in development, so we can use SSH and LAN, so we need to make sure that
+we switch it off for the final rpdouct. Networking can disabled through the
+\url{/etc/network/interfaces} config file. This config file is used to declare all
+networking interfaces, and the interfaces can be removed by simply removing all lines
+declaring a networking interface in that file. We can remove all networking interfaces
+except for the loopback (\url{lo}) interface, which is the localhost interface that is
+important for the system to function properly.
+
+The MIDI connection is going to happen through MIDI over Bluetooth Low Energy, which will
+require operating system configuration. This configuration happens through the BlueZ
+stack, which is the Linux component responsible for handling Bluetooth, and will be
+configured using the BlueZ utilities and configuration files. This configuration process
+is quite extensive and is covered in more detail in \nameref{sec:ble_midi}.
 
 \subsubsection{Packer}
 \label{sec:packer}
