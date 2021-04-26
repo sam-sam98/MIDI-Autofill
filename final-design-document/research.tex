@@ -455,12 +455,21 @@ Raspberry Pi OS occupies 1424 MB. There are other system optimizations in place 
 general performance as well. After boot, there are 11 total processes, versus 18 total
 processes running on Raspberry Pi OS. This is a good choice for base system. It is easier
 for us to start lightweight and add what we need, rather than to start with a bloated
-system and strip it down. DietPi includes an easy way to run chromium in kiosk mode using
-the \url{dietpi-autostart} utility, which we'll need to have configured anyways, as
-described in Section \ref{sec:research:subsec:os_config}. DietPi also supports a fully
-automated installation process, which we intend to take advantage of, as it is tedious to
-have to flash the Raspberry Pi and go through the distro's installation process every time
-we change the operating system configuration.
+system and strip it down. DietPi comes with a flexible configuration utility that allows
+the system to be customized for a specific use case, as show in \autoref{fig:dietpi}.
+DietPi includes an easy way to run chromium in kiosk mode using the \url{dietpi-autostart}
+utility, which we'll need to have configured anyways, as described in Section
+\ref{sec:research:subsec:os_config}. DietPi also supports a fully automated installation
+process, which we intend to take advantage of, as it is tedious to have to flash the
+Raspberry Pi and go through the distro's installation process every time we change the
+operating system configuration.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/dietpi-config.png}
+  \caption{DietPi's Installation Menu}
+  \label{fig:dietpi}
+\end{figure}
 
 From our research, we have decided to use DietPi as a baseline operating system for our
 project. The lightweight aspect suits us well, as we only need to boot a single
@@ -501,17 +510,30 @@ file fulfills our requirement of only having a single fullscreen application wit
 UI. This feature can be enabled through the \url{--kiosk} command line flag
 \autocite{chromiumKioskMode}. See \nameref{lst:xinitrc} for an example of an xinitrc that
 launches chromium in fullscreen mode. DietPi can also handle this configuration for us,
-using the \url{dietpi-autostart} configuration utility.
+using the \url{dietpi-autostart} configuration utility (See
+\autoref{fig:dietpi-autostart}).
 
-Networking can disabled through the \url{/etc/network/interfaces} config file. This config
-file is used to declare all networking interfaces, and the interfaces can be removed by
-simply removing all lines declaring a networking interface in that file. We can remove all
-networking interfaces except for the loopback (\url{lo}) and USB Ethernet interfaces
-(these are needed for the device to be a USB Gadget).
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/dietpi-autostart.png}
+  \caption{DietPi's Autostart Menu with Chromium Kiosk Option}
+  \label{fig:dietpi-autostart}
+\end{figure}
 
-There is more operating system configuration that must happen as well in order for the
-Raspberry Pi 4B to be configured as USB MIDI Gadget. This bit of configuration is quite
-extensive and is covered in more detail in Section \ref{sec:midi_peripheral}.
+For the final product, we will want to have networking disabled. We will need network
+connectivity while in development, so we can use SSH and LAN, so we need to make sure that
+we switch it off for the final rpdouct. Networking can disabled through the
+\url{/etc/network/interfaces} config file. This config file is used to declare all
+networking interfaces, and the interfaces can be removed by simply removing all lines
+declaring a networking interface in that file. We can remove all networking interfaces
+except for the loopback (\url{lo}) interface, which is the localhost interface that is
+important for the system to function properly.
+
+The MIDI connection is going to happen through MIDI over Bluetooth Low Energy, which will
+require operating system configuration. This configuration happens through the BlueZ
+stack, which is the Linux component responsible for handling Bluetooth, and will be
+configured using the BlueZ utilities and configuration files. This configuration process
+is quite extensive and is covered in more detail in \nameref{sec:ble_midi}.
 
 \subsubsection{Packer}
 \label{sec:packer}
@@ -796,7 +818,7 @@ networking interfaces. RTP-MIDI is built over Real-time Transport Protocol (RTP)
 a protocol for real-time communication over the network. RTP typically works through UDP
 messages over IP. RTP-MIDI can be used over a LAN network. When used over WIFI, the MIDI
 device can be connected to another computer without a wired connection. This wireless
-factor provides an extra convenience factor for the end user.
+factor is convenient for the end user.
 
 With wireless connections, there is always a question of if it can achieve acceptable
 latencies. RTP-MIDI over WIFI is fast, and latency is not a major concern. RTP-MIDI Over
@@ -810,7 +832,8 @@ download extra software to the computer will degrade the user experience. We wan
 to be able to use the MIDI device with minimal extra setup, and this would hamper that
 experience. Addtionally, the user would need to know the IP address of the device on the
 LAN, and enter it into the software. This is another step that will hamper the out of box
-experience.
+experience. This can be avoided if the user is running the Bonjour service, but that is
+another step that could potentially cause problems.
 
 This approach would be the easiest to implement from a developer perspective. These are
 just simple network messages, without the need to go through any special interfaces. There
@@ -835,6 +858,7 @@ using the library to send MIDI messages.
 \end{itemize}
 
 \subsubsection{MIDI Over Bluetooth Low Energy}
+\label{sec:ble_midi}
 
 Bluetooth Low Energy (BLE) is a wireless technology standard that enables BLE compatible
 devices to communicate with one another. Despite the namesake, BLE is separate from
@@ -872,13 +896,15 @@ and BLE. The BlueZ stack supports MIDI over BLE, and in combination with ALSA, i
 possible to turn a Raspberry Pi into a BLE MIDI device.
 
 Audio under Linux is handled through the ALSA interface. ALSA also provides what are known
-as sequencer ports, which are used to send MIDI events over through an interface that can
-be connected to a variety of targets. In combination with BlueZ, we can create an ALSA
-sequencer port to send MIDI events over BLE. Bluez provides a binary called
-\url{bt-midi-server}, which creates the ALSA sequencer port. From there, we can send MIDI
-events over BLE by simply using the ALSA APIs for sequencer ports. This is a nice
-abstraction which allows us to write MIDI code without needing to consider Bluetooth in
-the code itself. The \url{bt-midi-server} can be run at startup using a systemd service.
+as sequencer ports, which are used to send MIDI events through an interface that can be
+connected to a variety of targets. In combination with BlueZ, we can create an ALSA
+sequencer port to send MIDI events over BLE. BlueZ provides a binary called
+\url{bt-midi-server}, which creates an ALSA sequencer port that is connected to a BLE MIDI
+output. From there, we can send MIDI events over BLE by simply using the ALSA APIs for
+sequencer ports. This is a nice abstraction which allows us to write MIDI code without
+needing to consider Bluetooth in the code itself. The \url{bt-midi-server} can be run at
+startup using a systemd service. Our code will simply need to check for the existence of
+the sequencer port to see if we're connected to Bluetooth.
 
 ALSA sequences are programmed using a C API. This C API can be called from JavaScript
 using the Foreign Function Interface (FFI). In this library, clients send sequencer events
@@ -1013,6 +1039,13 @@ particular, as python is the most common choice to develop machine learning AI i
 there are more libraries, documentation, and tutorials to develop machine learning
 applications in python.
 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/multiprocess.png}
+  \caption{Proposed Multi-process Architecture}
+  \label{fig:multiprocess}
+\end{figure}
+
 \paragraph{Pros}
 
 \begin{itemize}
@@ -1026,12 +1059,12 @@ applications in python.
   \item Architectural complexity
   \item Need to implement IPC
   \item Need to manage child processes
-  \item Need to create a messaging format and parse that format in all prcoesses
+  \item Need to create a messaging format and parse that format in all processes
 \end{itemize}
 
 \subsubsection{Library Approach}
 
-In this approach, there is a main executable supplemented by libraries. The main proceess
+In this approach, there is a main executable supplemented by libraries. The main process
 will be a NodeJS based web application and it would libraries for the Music Generation and
 MIDI device interface will be handled by external libraries. This would allow the
 components to be developed in different languages and environments without the need to
@@ -1040,7 +1073,7 @@ there are some caveats that make this infeasible. Creating a library requires th
 developer to create bindings to the libraries. Different languages have different binary
 interfaces. The Application binary interfaces (ABI) defines how functions and data
 structures are laid out in memory. Bindings are used to bridge the differences between the
-ABIs of both langauges to allow a library written in one language to be used in another
+ABIs of both languages to allow a library written in one language to be used in another
 language.
 
 For the MIDI device interface, which will be programmed in C, this approach works well.
