@@ -2,9 +2,357 @@
 
 \subsection{Build plan}
 
-\blindtext
+\subsubsection{Background}
+
+Any project centered around musicians or their instruments cannot avoid the term ‘feel’. Unlike math or physics where the goal is to arrive at a concrete and unified solution, music is often abstract and expressed through emotions or feelings. There are certainly wrong answers in music, but very few objectively correct answers, and this concept plays a huge role in how musicians choose their instruments.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/KeyMechanism.png}
+  \caption{}
+  \label{fig:key_mechanism}
+\end{figure}
+
+In a perfect world, the keys of any digital piano (also known as an electric keyboard, keyboard, or synthesizer) would feel, function, and look like an acoustic keyboard: if a player chooses to play a synthesizer, they have most likely played on an acoustic piano. Most keyboard players know that the tactile response of a key in any piano or synthesizer is important because it determines how each note reacts to the player’s touch. For example, lighter keys will respond more quickly to the touch, but will reduce the ease of creating a dynamic range in strike velocity compared to their heavier counterparts. Velocity-sensitive tension spring keys will provide a more uniform tension throughout the keystroke, while weighted keys are balanced on a “balance pin” that separates the user from its striking mechanism, shown in \textit{Figure \ref{fig:key_mechanism}}, and as a result varies in normal force as the key is pressed.
+
+In addition, each performer and use of the instrument plays a role in determining the desired preference of key feel. EDM or heavily synthesized music designers will care less about key feel because most of the work in writing this type of music, besides determining the melodic structure, will come in post production and adjusting the key inputs from the computer. On the opposite end of the spectrum, classically trained musicians will dramatically care about key feel because most of the work is dedicated to how they express the music through their performance.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/Octave.png}
+  \caption{}
+  \label{fig:octave}
+\end{figure}
+
+On top of the key feel, the amount of keys available to the player has its own important role to the user and their desired end goal as well. To gather a better understanding, a single octave on a piano consists of twelve keys: seven white keys, and five black keys as shown in \textit{Figure \ref{fig:octave}}. A writer who is focused on beat making and synthesized music can craft most of their music with a single octave and the use of transposing that octave. A writer who is classically trained will most likely be adjusted to a standard 7 octave keyboard without the option of transposition. Weary of what will be possible for us, we used this information and decided our device should be modeled similarly to a professionally designed MIDI controller that is smaller than five octaves to keep the portability, but larger than one octave to provide a useful range to most players.
+
+\subsubsection{Key Size}
+Our key design was created by referencing two different electric keyboards: the \textit{Roland DP-90} and \textit{Arturia’s Keylab MkII - 61 key}. We chose to take our initial key measurements from these devices because our group has direct access to these and there are no official standardized key sizes. Although \textit{Figure \ref{fig:octave}} does not express the nuances in key design, there are six different key shapes that we have labeled: black, b, t, d, tb, and td, from the letter shapes they are most similar to. tb and tb are a hybrid of the t and b or t and d shape keys. The measurements taken from those devices are shown in \textit{Table \ref{Tab:key_dimensions}} .
+
+\begin{table}[]
+  \centering
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{|l|l|l|l|}
+    \hline
+    Keyboard                & Roland DP-90 & Keylab MkII & Our Choice \\ \hline
+    Black Key               &              &             &            \\ \hline
+    Base Width (mm)         & 12           & 12          & 12         \\ \hline
+    Base Length (mm)        & 95           & 80          & 80         \\ \hline
+    Top Width (mm)          & 9            & 9           & 9          \\ \hline
+    Top Height (mm)         & 88           & 72          & 72         \\ \hline
+    Standard White          &              &             &            \\ \hline
+    Base Width (mm)         & 22           & 22          & 22         \\ \hline
+    Base Length (mm)        & 150          & 130         & 130        \\ \hline
+    b cut-in (mm)           & 9            & 8           & 8          \\ \hline
+    t cut-in (mm)           & 4.5 / 4.5    & 4 / 4       & 4 / 4      \\ \hline
+    d cut-in (mm)           & 9            & 8           & 8          \\ \hline
+    tb cut-in (mm)          & 3 / 6        & 3 / 6       & 3 / 6      \\ \hline
+    td cut-in (mm)          & 6 / 3        & 6 / 3       & 6 / 3      \\ \hline
+    Key Separation (mm)     & 1.5          & 2           & 2          \\ \hline
+    Trigger Angle (Degrees) & 6.972        & 8.296       & 5          \\ \hline
+  \end{tabular}}
+  \caption{}
+  \label{Tab:key_dimensions}
+\end{table}
+
+Our objective is to empower any creative or independent writer, so these devices were happily chosen in particular for their difference in range of use cases. The \textit{Roland DP-90} is designed such that it “performs and responds like a grand piano”, while the \textit{Keylab MkII} is designed as a “definitive MIDI controller keyboard ... a luxurious, expressive tool for your studio” . By taking measurements from two vastly different devices and noticing the minimal variation between their two key sizes, we were able to be confident that our key size choice would suffice. For the project, we chose to go with the cut-in and general measurements of the \textit{Keylab MkII} because the distance between each key was about 2 mm, compared to the 1.5 mm distance the \textit{DP-90} keeps. Since this project will be crafted without professional business assistance, we felt as much leeway to avoid collisions as possible would be beneficial. Additionally, we felt that using the smaller dimensions in key sizes would help reduce the overall form factor of the device and keep it as portable as possible.
+
+\subsubsection{Number of Keys}
+
+We chose to create a thirty-two key keyboard. We landed on this choice as a result of the following factors: first, when this device is in use we do not wish to limit our users to one octave. Our autocomplete AI is modeled from classical music and we understand that the input and output melodies will likely span over a wider range than one octave. We also recognize that this device is more useful in the post-production setting compared to a performance setting and therefore does not need the full seven octave range. Second, to keep the cost low and the form factor small, we wanted to keep the keys below three octaves. We are choosing to build this keyboard as a portable, stand-alone, robust piece of equipment and we believe our device should not cause struggle to carry around. With the measurements we took, each octave will accompany about 262 mm (10.315 inches) of space in keys alone. This means a thirty-two key keyboard is estimated to need 666 mm ($ \approx $ 2.185 ft) of lateral space in keys alone. We knew when multiplexing our signals that using a power of two for our set of inputs would be beneficial. A power-of-two inputs allows us to use the entirety of each multiplexor we implement. As a result, thirty-two keys provides a set of two and a half octaves and will utilize the entirety of each multiplexor without extending the keyboard to sixty-four keys, which is around five octaves. To compare, sixty-four keys would extend to 1290 mm ($ \approx $ 4.232 ft) and in our humble opinion, would no longer allow this device to be comfortably portable.
+
+\subsubsection{Key Functionality}
+
+In our application we are looking to distinguish which note is being pressed, the velocity that note was triggered, and which channel the device is communicating through. With the digital functionality of the key in mind, the physical key design only has to worry about how to communicate the velocity of the note to the Arduino, which will later be sent to the Pi. To be able to do this, we are using a two button trigger system for each key. As observed in \textit{Figure \ref{fig:key_mechanism}}, there are two rods extending from the bottom of the key of different lengths. In the full keyboard model, these rods are lined up with two silicone covered buttons, one of which is triggered at the start of the keystroke and the other is triggered near the conclusion of the keystroke. The difference in trigger time between the two buttons will determine the note velocity which is explained in greater detail from Section IDK YET .
+
+After basic functionality, our next concern is key feel. With the time allotted for this project, what is possible to craft at this level of expertise, and our desire for ease of portability, it is obvious from observing \textit{Figure \ref{fig:key_mechanism}} that we will not attempt to replicate the full counter-weighted key design. To keep costs low and durability high, we are also avoiding any semi-weighted keys or the usual expensive key material such as ivory or wood. By utilizing 3D printed plastics, we are able to create custom, robust designs at a cheaper cost than the alternatives.
+
+    INSERT COST OF MATERIAL AND STRENGTH OF MATERIAL TABLE
+
+To provide the actuation action for the key itself, we will be using tension springs to hold the key in place as it sits on a lever.
 
 \subsection{Prototyping}
+
+\subsubsection{Keyboard}
+
+Before deciding the selection of tension springs, actuator lengths, and the peripheral components to complete the key functionality, we decided that an initial design should first be created and printed to ensure our future endeavors would work as planned. With 3D printing, especially while utilizing an ‘at home’ 3D printer, there are a few parameters we need to keep in mind.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/WhiteModel1.png}
+  \caption{}
+  \label{fig:white_model1}
+\end{figure}
+
+An associate of the team built the 3D printer we will be putting to use. Due to the years of development, custom embedded code, and a variety of parts from different manufacturers, the best resource to learn about the printer would be our associate himself: Anton Strickland. Anton’s printer was initially purchased as a Creality Ender 5. The first major change to the hardware was the replacements of the control board from an eight bit control board with fifteen kilobytes of memory to a thirty-two bit control board the 512 kilobytes of memory. The increase in processing power along with the increase in memory allows for some advanced features such as enhanced acceleration control, jerk reductions, and square wave output.
+
+The enhanced acceleration control as well as the jerk reduction are important parameters for the speed of the print. We will be sharing this printer with other groups and since we plan to print possibly more than thirty-one keys, the key rail configurations, and the electronics housing, it is important to make sure the prints will be executed accurately and produced in time to be added to the prototype. The enhanced acceleration control allows the device to change velocity with more precision and boost our confidence to ramp up the speed of the print where at all possible. As a result of attempting more speedy prints, the jerk, or change in acceleration, needed to be monitored more greatly as well. With the new control board, reducing the jerk and altering the extrusion rate of the filament with the newly enhanced parameters is finally possible. In addition to these parameters, the new board can signal using square waves as an output. This means the data that we are sending and monitoring is more consistent and reliable. All together, this means faster prints with a smaller rate of failure compared to the previous board.
+
+In addition to the hardware that boosts the software, this device is equipped with 2209 Stepper motor drivers which replaced the original drivers to add more smooth and consistent nozzle travel. The nozzle has also been replaced with an upgraded hot end titanium heatbreak nozzle that is designed to prevent heat creep. This is important when printing multiple prints in rapid succession to prevent any overheating or inconsistent filament extrusion. This also means that the printer can print twenty-four hours a day and seven days a week without a high risk of print failure.
+
+The hardware Z-axis lead screw has also been replaced from four-hundred steps per millimeter to 1600 steps per millimeter, increasing the accuracy of layer size and decision variation. This device can print anything smaller than 220x220x400 mm, a line width that can be altered from .2 mm to .8 mm with as small as +/-.15 mm tolerance, and customizable infill percentages.
+
+From this information, it is evident that most prints with any structural integrity will be indefinitely feasible as long as each print is smaller than the allotted max size of 220x220x400 mm.
+
+To begin crafting the keys for this device, I started with a basic model I have labeled textit{WhiteKeyStart.SLDPRT}, shown in \textit{Figure \ref{fig:white_model1}}. The white keys, also known as natural keys named after the not sharp nor flat notes in music, are the larger set of keys which make up most of the space on the keyboard. As you can see from \textit{Figure \ref{fig:white_model1}}, this key does not have the actuating levers to connect to the buttons on the PCB nor does it have any cuts to make room for the black keys, or non-natural keys, which fit in-between most of the white keys. This model was crafted from measurements and observations made from \textit{Table \ref{Tab:key-dimensions}} and is the baseline of each natural key model. Looking at the model in \textit{Figure \ref{fig:white_model1}} closely, one can observe the incomplete sketch line that is about one-third into the key. This sketch marks the location where each key needed to be cut, forty-eight millimeters from the base, to create the five different models of the natural keys and ultimately allowed the crafting of the following models to be much easier.
+
+The major parameters of this model are as follows. Each natural key has a base width of twenty-two millimeters and a playable length of 123.71 mm which is a little shorter than the measured length of the Keylab MkII, but fits the idea of the project due to our desire to create a portable device. Viewing \textit{Figure \ref{fig:white_model2}}, there is a two millimeter lip on the end of the key, shown in the top right of the figure, to the correct key feel and provide the user with better feedback to distinguish the tip of the key. Below that lip is a five millimeter drop at a 95 degree angle, followed by a 20 degree 28.73 mm drop to provide aesthetic distance from the lip and preventing the key from looking blocky from the front.
+
+Next we can see the functional aspects of the design. Below the 28.73 mm 20 degree decline is a 22 mm guiding plane that is two millimeters thick. This serves not only as a guiding plane, but also prevents the user from viewing the hidden electronics beneath the key. 15 mm up from the bottom of the guiding plane is a 10 mm long platform that is used to limit the actuation of the key for a realistic ten degree actuation angle which will become more apparent in the full model.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/WhiteModel2.png}
+  \caption{}
+  \label{fig:white_model2}
+\end{figure}
+
+In the first iteration, the almost complete circle to the far left is five millimeters in diameter. This will be touched on later in this design section of the document. Above that circle is a divot, in the shape of an upside trapezoid, five millimeters at the base with 45 degree inclines to the top of the key. This divot is used to allow the cover of the keyboard to not only keep help guide the key and keep it in place, but also to once again prevent the user from clearly seeing the electronics hidden inside the full device. Finally, on the far top left of the key is a 3x2x5mm hole designed to hook onto the tension springs that help provide the pull-back of the actuation. Each natural key has the exact same cut-in values as given in \textit{Table \ref{Tab:key_dimensions}}.
+
+Next in the first iteration of key designs is the non-natural key, or black key, named after the sharp and flat notes these keys trigger. From a design standpoint, it is helpful that all of the non-natural keys share the same structure. To begin, the guiding plane and size of the connecting platform have the same measurements of the natural keys, fifteen millimeter plane and a ten millimeter platform. The divot, the hole beneath the divot, and the extruded cut where the spring attaches all have the same measurements as the natural keys as well. The original design has a playable length of 120.71 mm. Due to the shorter playing length and same guiding plane length, the actuation of the keys has been approximated to be around 15 degrees, compared to the 10 degree actuation of the natural keys. This key does not need any tip as a tip could obstruct any transition the player may have switching from the non-natural keys to the natural keys, instead the tip of the non-natural key has a 15 degree chamfer on all sides to allow the fingers to slide from the elevated top of the non-natural key to the lower natural keys. As a result, the top of the key is thinner than the base, as is expected from the measurements taken in Table 1. To gather a better understanding, the base of the key is the section which aligns with the elevation of the natural keys, while the tip elevates ten millimeters above the key. Between the base and the tip is what makes up the key itself.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/BlackModel.png}
+  \caption{}
+  \label{fig:black_model}
+\end{figure}
+
+The first iteration of the key rail and base was intended to be a completely 3D printed component shown in \textit{Figure \ref{fig:base_model1}}. This rail and base, filed as KeyRail2.SLDPRT, features a five millimeter thick base for structural integrity with an overall length of 94.5 mm to allow the guiding plane of the natural keys to sit in front of the base itself. The six millimeter extruded cuts, which occur 76.5 mm from the back of the base, are to allow the guiding planes from the black keys to slot within the holes freely and without obstruction. There is a 10 degree incline at the front of the base and a 10 degree incline near the non-natural key guiding holes, which is addressed later, to give the keys a flat plane to stop the actuation when the keys are fully pressed to play. The rail that the keys attach to, which is raised 27.83 mm from the back of the base to the center of the rail, is 4.85 mm in diameter and has two millimeter plastic spacers at appropriate distances to slot each key into position while allowing enough space to easily actuate. In this design, I allowed one millimeter of tolerance for each key. This rail is supported by 2.5x2mm thick vertical poles with a 2.5x3 mm horizontal piece of support plastic. When assembled, the full first prototype can be seen in \textit{Figure \ref{fig:assembled_model}}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/BaseModel1.png}
+  \caption{}
+  \label{fig:base_model1}
+\end{figure}
+
+To allow an appropriate prototype test, I first chose to simulate the assembly with collision detection enabled. Luckily, while all keys were in their starting position, no collisions were detected. Sadly, when some keys were actuated, the simulate responded with a collision report. It was difficult, at first, to determine where the collisions were occurring. In some settings, it was evident that certain collisions only occurred when the keys were placed in positions that would not be possible in the final assembly and actual implementation of the device. In other cases, the collisions could not be easily seen in the model. Due to this, I decided to run a test print of some of the pieces present. I figured I would not need the entire model to determine where the problems were occurring as the difference in model pieces were not drastic.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/AssembledModel.png}
+  \caption{}
+  \label{fig:assembled_model}
+\end{figure}
+
+\textbf{Iteration One}
+
+This first print was a test to determine the functionality of the keyboard in its preliminary stage. As the reader can tell by the title listed at the beginning of the document, there are no mechanical engineers on this team and therefore there are no members with a solid grasp on tolerances for different applications. We figured the best way to determine the tolerance we are looking for is to test a couple different sizes. In the test print, the rail itself was designed to be 4.85 mm in diameter, so obviously we needed to allow the circular cut which rests on the rail to be larger than 4.85 mm in diameter. For this print, we used the rail, the b-model, the t-model, and two non-natural keys. The b-model had a circular cut of 5.35 mm in diameter, the t-model had a circular cut of 5.15 mm in diameter, and the black keys had a circular cut of 5 mm in diameter shown in \textit{Table \ref{Tab:connections}}.
+
+\begin{table}[]
+  \centering
+  \begin{tabular}{|l|l|}
+    \hline
+    Model           & Connection Diameter (mm) \\ \hline
+    Rail            & 4.85                     \\ \hline
+    b-model         & 5.35                     \\ \hline
+    t-model         & 5.15                     \\ \hline
+    Non-natural key & 5                        \\ \hline
+  \end{tabular}
+  \caption{}
+  \label{Tab:connections}
+\end{table}
+
+The results of the model are shown in \textit{Figure \ref{fig:print1}} below.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/Print1.png}
+  \caption{}
+  \label{fig:print1}
+\end{figure}
+
+At first glance, the model seemed really well produced. The results of the different tolerances for the connecting circular cut to rail are as follows. With a .15 mm tolerance, as exemplified from the non-natural keys, the keys snapped into place and connected with the keyrail. At a .3 mm tolerance, the t-key was able to slide, but with resistance. At a .45 mm tolerance, the b-key was able to slide with ease. Luckily, the .45 mm tolerance did not make the b-key feel shaky or disconnected from the rail which was an issue we hoped to avoid and learn about through this test. From this test, we knew that moving forward with a .45 mm tolerance was our best bet. The major issue with this test is that the rail itself is not perfectly round because it is constructed of linear layers and, although it provides a good idea for the final model, is not the best example of how rotational tolerances should be designed. This is addressed in Iteration Three of the prototype.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/Print2.png}
+  \caption{}
+  \label{fig:print2}
+\end{figure}
+
+After toying with the model for some time, a few issues were brought to light. The most obvious being the uneven slots designed to grip the tension springs, shown in \textit{Figure \ref{fig:print2}}. Since we did not change the base location of the holes to hook the springs, the way the cuts were made created uneven spacing of the aft tip of the key. Not only that, with the holes using 2 mm of wall space and being 5 mm deep, it was evident after the print that those holes needed to be less deep to actually allow the spring to hook. Since the keys are light and the tension of the spring does not need to be exceptionally tight or forceful, it will be more than possible to reduce this thickness without any major issues in functionality.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/Print3.png}
+  \caption{}
+  \label{fig:print3}
+\end{figure}
+
+The next minor fault was with the quality of the print. Due to the chamfered edges of the non-natural keys and the way the model was designed, the key needed support material between the base and the tip of the key. This support material, when removed, caused a rough edge to the key itself, shown in \textit{Figure \ref{fig:print3}}.  To fix this, our team debated a few different ideas. First, we thought about restructuring the key itself and removing the chamfer such that the key could print in a different orientation. This would be additionally helpful because it would allow the key to be printed from the top of the key down, meaning the top plane would be placed on the printing bed leading to a smoother key texture where the user plays. The biggest downside to this idea is that the key would lose its gradual shape from the top of the key and make the key itself look and feel more blocky to the player.
+
+An alternate idea, rather than changing the model, is to simply add a thin layer of epoxy resin to the surface of the key to create that smooth key feel the player will desire. This eliminates the option of a blocky key, but also adds additional work on our end and may cause an uneven surface finish. Another alternative idea is to manufacture these non-natural keys at a professional 3D printing company. This idea has already been debated by the team before the model was even completed, but comes with its own problems of shipping time and extra cost. These alternatives will be discussed and finalized in SECTION IDK YET.
+
+Continuing with the non-natural key, another issue reared its ugly head: actuation interference. Since the non-natural keys were designed to be only 3 mm shorter than the natural keys, the natural keys were unable to actuate fully without coming in contact with the guiding plane of the non-natural keys and stopping the actuation of the natural keys. The length of one or the other needed to change and this is discussed in Iteration Three of the prototype.
+
+Another issue we discussed is the fact that there were no parameters in place to prevent the key from actuating backwards. Considering the tension spring will be pulling the key in place, we needed to take into account the possibility that the resting position of the spring will most likely not be the exact distance from the two hooks in the final design. And that we may not even want the resting position of the spring to be of equal length of the two hooks the spring will attach to. This is further touched on in Iteration Three of the prototype.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/Print4.png}
+  \caption{}
+  \label{fig:print4}
+\end{figure}
+
+The final issue, as shown in \textit{Figure \ref{fig:print4}}, is the poor structural integrity of this completely 3D printed part. Within two hours of the print being completed, the rail detached from the support material rendering the entire print useless. Luckily we were able to receive the results from the test that we needed before the entire print broke down. While discussing the integrity and viewing \textit{Figure \ref{fig:print4}}, it is also evident that creating overhangs that this model demands results in a lot of stringing and print mutations that were not intended.
+
+Thus, it was back to the drawing board, or as SolidWorks users describe, the sketching board, and back to redesigning
+
+One major benefit of this print is noting that an estimated time of printing all thirty-one keys is about two days or 49 hours. Anton, my reference for the printer, states that this can be sped up to about 42 hours for all thirty-one keys if necessary. Due to the alterations made to the printer, this can be a 42 hour print straight through with only adding extra time to remove the print from the bed. This indicates that there will be zero issues regarding timing when it comes to our prints considering we have approximately three months to print and assemble this device.
+
+\textbf{Iteration Two}
+
+As the reader may notice, there are many references from the first iteration to the third iteration. This is because iteration two did not have many major changes, was quickly discussed, and transformed into Iteration Three which is as follows.
+
+\textbf{Iteration Three}
+
+From the results of Iteration One and Iteration Two we decided to alter the length of the non-natural keys to prevent actuation interference between the non-natural and the natural keys. In this design, the non-natural key is 72 mm in base length and 69 mm in tip length. Although this design decreases the length of the non-natural key by about 10%, we figured this difference would not be an issue as there are no standardized key lengths and this is a collegiate level project. Obviously the base and key-rail design needed to account for this change, but this is not the only change which helped develop this model into the third iteration.
+
+\textit{Figure \ref{fig:base_model3}} shows the file KeyRail3b.SLDPRT. It is obvious when compared to the first iteration that many changes occurred. The comparison of the two versions can be seen in \textit{Figure \ref{fig:base_model2}}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/BaseModel2.png}
+  \caption{}
+  \label{fig:base_model2}
+\end{figure}
+
+The first major change in iteration three compared to that of iteration one is the absence of a key rail. After witnessing the performance of the 3D printed rail and noticing the deformities and the overhangs, we decided to completely eliminate the idea of a 3D printed rail. Instead of a printed rail we are choosing to purchase a stainless steel rod which is discussed in the Component Selection section of this document. By eliminating the rod from being printed we are able to not only utilize a smoother rod to create smoother actuation, but also allow the model to be printed from the base up with only one overhanging section: the spring hook slots. From the model of the natural keys and its test print, however, we know we do not need to worry about these overhangs as they are similar overhangs presented in that model. This is shown in \textit{Figure \ref{fig:print5}}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/BaseModel3.png}
+  \caption{}
+  \label{fig:base_model3}
+\end{figure}
+
+Furthermore, discussing the width of the holes for the springs to attach, we have reduced the width from five millimeters to 2.5 mm on both the keyrail base and the keys themselves. This thinner design will allow the springs to hook around the plastic, through the holes, and prevent slipping of the springs. From the test which we observed the different tolerances of the key rail connection to the keys, we have decided to allow a .15 mm diameter tolerance for the metal rod to snap into the chassis. This model, seen in \textit{Figure \ref{fig:base_model3}}, also features a 5 mm wide platform raised 21.83 mm from the base behind the rail itself to prevent the key from rotating past the horizontal plane in the opposite direction. We also changed the support which holds the rod from a 2.5x2 mm pole to a 2x8 mm pole to increase structural integrity. Although, when viewing the keyboard from the players perspective, there is less support in the x axis for these poles, there is significantly more support in the z direction which is where more of the force of the player will be applied. In addition, because we are using a stainless steel rod in the x direction, our device should have more than enough support to operate under normal playing conditions easily.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/Print5.png}
+  \caption{}
+  \label{fig:print5}
+\end{figure}
+
+Continuing to discuss \textit{Figure \ref{fig:base_model3}}, the non-natural key incline next to the guiding holes has been altered to 15 degree to better account for the angle of actuation those keys will encounter. We also increased the hole width from 6 mm to 10 mm to provide ample room for the guiding plane on the black to actuate through. Increasing this hole size was also only possible by shortening the key size of the non-natural key and allowing 2.75 mm of 5 mm thick support between the guiding holes for the non-natural keys and the start of the key rail’s base incline for the natural keys.
+
+The final major change shown in \textit{Figure \ref{fig:base_model3}} are the odd protrusions and extruded cuts on the far left and right of the base. After reviewing the printing size limitation of 220x220x300 mm, we knew we could not print the entire keyboard base at once as one octave alone is 192 mm in width and we aim to have a 2.5 octave keyboard. To combat this, we decided to create a design such that the different base pieces could attach like a puzzle. After these pieces attach, we plan to glue the model together using a ‘3D print-safe’ adhesive and attach a thin vinyl layer to the bottom of the base to create a more professional look.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/BaseModel4.png}
+  \caption{}
+  \label{fig:base_model4}
+\end{figure}
+
+Since we are creating a keyboard that is two and a half octaves wide, we also need to create a model for the half octave keyrail shown in \textit{Figure \ref{fig:base_model4}}. This model shares the same measurements as the other keyrail and base model, but terminates at the fifth key’s support beam.
+The other change made after observing the print was manually centering the hook hole for each one of the key models. This is shown in \textit{Figure \ref{fig:key_models}}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/KeyModels.png}
+  \caption{}
+  \label{fig:key_models}
+\end{figure}
+
+After testing and reiterating the initial print models, we were finally able to move on to the body of the keyboard itself. Much like the previous prints, we now realized the importance of being able to print from one face up with zero overhangs and this is something we achieved. We also knew our limitation from the printer itself and therefore, the body model is as follows. We needed an elevated base to allow the keys to actuate, a group of printed parts that follow our restrictions as well as attach together, and an area to house the electronics and display.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/BodyModel1.png}
+  \caption{}
+  \label{fig:body_model1}
+\end{figure}
+
+For the front left base body print we created the model shown in \textit{Figure \ref{fig:body_model1}}. From the player’s perspective, at the very front is a 31 mm tall wall, followed by an 11 mm gap, and then a 16 mm tall wall. This is to help guide the natural key’s actuation and prevent the player from seeing the electronics within the device. It is also a standard set up that most portable electric keyboards have. Within the center are seven poles, each 16 mm tall, and a 16 mm tall wall in the back. Each 16 mm high structure was designed to hold the keyrail above the base, shown in \textit{Figure \ref{fig:body_model2}}, which allows each key the space it needs to actuate. The front and side walls are also equipped with a 1 mm protrusion along the vertical axis of the inner wall, and protrusions similar to that of puzzle pieces to all each section to easily be connected and glued together.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/BodyModel2.png}
+  \caption{}
+  \label{fig:body_model2}
+\end{figure}
+
+As can be seen in \textit{Figure \ref{fig:body_model2}}, the key rail, base, and body fit together perfectly, allowing space in the front for the guiding plane of the natural keys.
+
+To the left of the base we see a divot that is 4 mm wide at a variable depth. This divot is to allow the cover to sit comfortably on the full assembly without sliding off. The bases of each model is 5 mm from the ground up. The front and inner wall are 4 mm, while the outside walls are all 8 mm thick to provide a robust shell for the device. Also, from \textit{Figure \ref{fig:body_model2}}, we can see that the puzzle-piece like protrusions do not align from the base to the body. This was intentional to produce a more rigid structure when the device is fully assembled.
+
+\textbf{Assembly}
+
+The full keyboard is about 483 mm wide, 322 mm deep, and 93.89 mm tall. From our printer restrictions of 220x220x300 it is obvious we cannot print this as one full device. To counter the limitations, we divided the keyboard into six different sections in the style of a 2x3 matrix. For our design, the first row is dedicated to the electronics housing and the second row is dedicated to the keys. The body pieces which make up this arrangement are shown below. In \textit{Figure \ref{fig:body_parts}(a)}, we have the 1x1 body piece, in \textit{Figure \ref{fig:body_parts}(b)}, we have the 1x2 body piece, in \textit{Figure \ref{fig:body_parts}(c)}, we have the 2x1 body piece, in \textit{Figure \ref{fig:body_parts}(d)}, in \textit{Figure \ref{fig:body_parts}(e)}, we have the 1x3 body piece, we have the 2x2 body piece, and in \textit{Figure \ref{fig:body_parts}(f)}, we have the 2x3 body piece.
+
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{image/BodyModel3.png}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.45\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{image/BodyModel4.png}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.45\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{image/BodyModel5.png}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.45\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{image/BodyModel6.png}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.45\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{image/BodyModel7.png}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.45\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{image/BodyModel8.png}
+    \end{subfigure}
+    \caption{}
+    \label{fig:body_parts}
+\end{figure}
+
+As can be seen from these figures, each piece has been specially crafted to fit into each other like a puzzle. We can see the full arrangement of the assembled body in \textit{Figure \ref{fig:assembled_body}}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/AssembledBody.png}
+  \caption{}
+  \label{fig:assembled_body}
+\end{figure}
+
+This body allows for the keys to be elevated, keeps the bottom of the device level, maximizes the space for the electrical components, and protects the components inside. The front of the device starts at a max height of 63.42 mm and creates a 10 degree incline until the back of the device maxing out at 93.89 mm in height.
+
+The cover or front panel of this device is 483x196.5 mm. There is absolutely no way to print this with our at home printer. Our front panel is shown in \textit{Figure \ref{fig:display_model}} and features five separate extruded cuts.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/DisplayModel.png}
+  \caption{}
+  \label{fig:display_model}
+\end{figure}
+
+In the center of the front panel is a 149 mm by 107 mm hole to house the seven inch capacitive touchscreen display. To the right of the display slot is a 5 x 75 mm slot designed to house the sliding potentiometer which will be used to control the volume of the device. Below the screen are the two holes where the octave up and octave down buttons will be placed and in the button left of the cover is where the audio jack for the user’s headphones to plug in will be installed.
+
+Since the user interface will be controlled by a touch sensitive screen, we placed the slot equally spaced from the left and right of the cover to be able to equally treat left and right handed individuals. All the buttons and potentiometers surround closely as well for ease of use. The headphone jack was placed in its location because many over-ear headphone companies produce headphones with the wire extending from the left ear in hopes to avoid obstructing the right hand, which is the majority of the population’s dominant hand. Ultimately, everything needed a place and we felt these locations were the best fit.
+
+When all the parts are connected and in place, the intended design of the body can be seen in \textit{Figure \ref{fig:final_model1}}. With the keys in place, the full assembly and design on the keyboard can be seen in \textit{Figure \ref{fig:final_model2}}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\linewidth]{image/FinalModel1.png}
+  \caption{}
+  \label{fig:final_model1}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\linewidth]{image/FinalModel2.png}
+  \caption{}
+  \label{fig:final_model2}
+\end{figure}
 
 \subsubsection{DAW: Static}
 
@@ -126,7 +474,7 @@ handles pitch values 60-83. To translate these pitch values into a vertical posi
 implemented the following formula:
 
 \begin{equation} \label{note_vert}
-top_{note} = \Big((height_{note} + key\:gap) * 23 - \big((pitch_{note} -  60) * (height_{note} + key\:gap)\big)\Big)\:pixels
+  top_{note} = \Big((height_{note} + key\:gap) * 23 - \big((pitch_{note} -  60) * (height_{note} + key\:gap)\big)\Big)\:pixels
 \end{equation}
 
 Because the vertical position is measured in the number of pixels between the top of the parent
@@ -143,7 +491,7 @@ with a width of 64 pixels, so the horizontal position of the note is determined 
 formula:
 
 \begin{equation} \label{note_vert}
-left_{note} = \frac{start\:time * 60}{tempo} * 64\:pixels
+  left_{note} = \frac{start\:time * 60}{tempo} * 64\:pixels
 \end{equation}
 
 The multiplication of the start time by 60 and subsequent division by the playback tempo
@@ -154,7 +502,7 @@ of a whole note - places the note at the corresponding beat on the piano roll.
 The width of the note is similarly calculated based on the start time, end time, and tempo:
 
 \begin{equation} \label{note_vert}
-width_{note} = \frac{(end\:time - start\:time) * 60}{tempo} * 64\:pixels
+  width_{note} = \frac{(end\:time - start\:time) * 60}{tempo} * 64\:pixels
 \end{equation}
 
 The difference between the start and end time is converted to some decimal number of whole note
