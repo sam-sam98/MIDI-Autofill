@@ -672,7 +672,7 @@ ways to approach this connection, and we have explored a few such approaches for
 project.
 
 
-\subsubsection{Linux USB Gadget}
+\subsubsection{USB-C Connection}
 
 Under this approach, the connection will happen through a USB-C to USB-A cable from the
 Raspberry Pi to the computer. The Raspberry Pi is typically powered from the USB-C port
@@ -775,6 +775,20 @@ question of if the Pi can be simultaneously powered by the 5 volt GPIO port whil
 being plugged in with USB-C. This may be possible, but there are no resources online that
 show how this can be done. It is not worth the time to figure out how this can be done.
 
+\paragraph{Pros}
+
+\begin{itemize}
+  \item Lowest latency
+  \item Simplest setup, only requiring the end-user to plug in the device
+\end{itemize}
+
+\paragraph{Cons}
+
+\begin{itemize}
+  \item Wired
+  \item Implementation is too complex
+\end{itemize}
+
 \subsubsection{RTP-MIDI Over WIFI}
 
 RTP-MIDI is an open source protocol to send and recieve MIDI messages over standard
@@ -804,6 +818,22 @@ is a NodeJS library called \url{node-rtpmidi} which would make RTP-MIDI trivial 
 implement on the Raspberry Pi. It would be a matter of simply making the connection and
 using the library to send MIDI messages.
 
+\paragraph{Pros}
+
+\begin{itemize}
+  \item Wireless
+  \item Simplest implementation
+  \item Lower latency than the Bluetooth solution
+\end{itemize}
+
+\paragraph{Cons}
+
+\begin{itemize}
+  \item Higher latency than USB
+  \item Requires the user to download additional software
+  \item Most difficult for the end-user to setup
+\end{itemize}
+
 \subsubsection{MIDI Over Bluetooth Low Energy}
 
 Bluetooth Low Energy (BLE) is a wireless technology standard that enables BLE compatible
@@ -816,7 +846,9 @@ ability to move the device freely and without needing to manage another cable.
 
 Most computers also support BLE, or can be made to support BLE through the use of a
 Bluetooth USB Dongle. While BLE is not as prevalent as USB, compatibility should not be a
-concern for the majority of devices.
+concern for the majority of devices. Bluetooth is also easy for the end-user to setup,
+only requiring the end-user to connect to the device through the operating system's
+interface.
 
 BLE can be used for a wide variety of devices. BLE devices communicate through profiles,
 which specify the BLE  application and the communication specifications. There is a long
@@ -859,6 +891,21 @@ GPIO events, and sends the corresponding MIDI commands to the ALSA sequencer por
 connection is abstracted away in this configuration, allowing us to just focus on writing
 MIDI code.
 
+\paragraph{Pros}
+
+\begin{itemize}
+  \item Wireless
+  \item Widely supported by all operating systems
+  \item Simple implementation
+\end{itemize}
+
+\paragraph{Cons}
+
+\begin{itemize}
+  \item Highest latency
+  \item Extra connection step required from the end-user
+\end{itemize}
+
 \subsubsection{Conclusion}
 
 We have decided to go with the MIDI over Bluetooth Low Energy approach. This approach does
@@ -869,6 +916,7 @@ through the operating system's Bluetooth interface. The latency is higher than U
 it is within our specifications. The implementation is also simpler than using USB-C.
 
 \subsection{Application Architecture}
+\label{sec:app_architecture}
 
 Our application will be composed of components that will need to interact with each other.
 These components are the UI, music generator, and the MIDI device interface. These
