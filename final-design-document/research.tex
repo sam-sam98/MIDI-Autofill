@@ -106,7 +106,7 @@ the AI-generated outputs are sufficiently competent in melodic structure, but al
 \subsubsection{Harmonics}
 
 Scales are not the only markers for tonal intervals. Another factor that plays a role in the
-consonance of pitch is harmoncics. The Lipps-Meyer law, for example, proposes that the consonance
+consonance of pitch is harmonics. The Lipps-Meyer law, for example, proposes that the consonance
 of a melodic interval can generally be determined by whether or not the end tone of the interval
 can be represented by a power of two.\autocite{musiciansArithmetic} These numbers which represent
 the tones are not their scale intervals, but instead are derived from the Harmonic Series.
@@ -201,7 +201,7 @@ before switching it as opposed to having notes rapidly alternate between ascensi
 
 The artificial intelligence of this project should be able to generate a melody using
 a piece of original melody as input. Ideally, it would be able to extend the input at a
-similar lenght and with similar tonality, mood, tension. For this, we research
+similar length and with similar tonality, mood, tension. For this, we research
 a couple of different alternatives, with their own sets of advantages, disadvantages, and
 trade-offs.
 
@@ -300,7 +300,7 @@ file into a piano roll visualization which is rotated 90 degrees clockwise.
 
 Before starting to develop a solution, we checked on existent libraries, researches and
 open source projects. This gave us a broader idea about the possible factors that can
-become in major challeges. Examples of these factors could be: find and prepare datasets,
+become in major challenges. Examples of these factors could be: find and prepare datasets,
 choose the correct AI prediction model, and what resources are required for training. We
 found that Google AI has released in 2018 an extensive library for art and music
 applications: Magenta.
@@ -317,31 +317,31 @@ can be applied to our project.
 autocomplete functionality. This module contains models for generating and performing
 sections of melodies \autocite{musicRNN}. The models of interest are MelodyRNN, ImprovRNN,
 and PerformanceRNN. All these models, as their name implies, are based on recurrent neural
-netoworks (RNN) produced with Google's TensorFlow.
+networks (RNN) produced with Google's TensorFlow.
 
-\subparagraph{Recursive Neural Network (RNN)} In constrast with the already mentioned CNN,
+\subparagraph{Recursive Neural Network (RNN)} In contrast with the already mentioned CNN,
 that processes grid values without contextual information, RNN processes sequential data
-as string of caracthers, words, or in our case of interest, melody representations. RNN
-also considers proccesed information along large sequnces of data, and not purely local
+as string of characters, words, or in our case of interest, melody representations. RNN
+also considers proccesed information along large sequences of data, and not purely local
 extent as CNN.\autocite{fundamentalML}
 
 \paragraph{MelodyRNN.}
 MelodyRNN model generates melody based on an input melody. To achieve this, it uses
 language modeling (probability distribution over a sequence of data) with long short-term
 memory (LMST) networks. This is a variant of RNN design to improve the performance of
-regulr RNN across large sequnces of data. The main issues that LMST adress are those
+regular RNN across large sequences of data. The main issues that LMST address are those
 related to the exploding and vanishing gradients magnified on any recursive network due to
 the accumulation of errors on the successive feedbacks of data analysis. This models also
-have four configurations to assists determining the range of pitches, indentifying
+have four configurations to assists determining the range of pitches, identifying
 recursive patterns, and pay special attention on specific sections of the input melody
 \autocite{melodyRNN}. This model alone could be in charge of the autocomplete feature we
 are looking to achieve in our project.
 
 \paragraph{ImprovRNN.}
 ImprovRNN generate melodies in the same fashion of MelodyRNN. The main difference with the
-before model is the conditionment of the generated melody to a chord progression. This
+before model is the conditioning of the generated melody to a chord progression. This
 model counts with similar set of configurations than MelodyRNN, but with the addition of
-usign as inputs vectors representing chords of the progression. Although, this can be a
+using as inputs vectors representing chords of the progression. Although, this can be a
 interesting feature to generate melodies, the model requires to encode the full input
 melody in XML format, not supporting direct MIDI input \autocite{improvRNN}.This model
 would not be directly applied to our project, but still could add interesting features for
@@ -357,13 +357,13 @@ This model add a nice to have feature, but is not fundamental for our first apro
 
 \paragraph{Datasets.}
 Magenta project offers a set of collections of data that has been used to pre-train
-models. From ths collection, seems that the MAESTRO (MIDI and Audio Edited for Synchronous
-TRacks and Organization) dataset could be the most useful for this project. It contains
+models. From this collection, seems that the MAESTRO (MIDI and Audio Edited for Synchronous
+Tracks and Organization) dataset could be the most useful for this project. It contains
 over 200 hours of key annotated piano performing. Other set that can be useful for our
-classical music appoach is the Bach Doodle Set. A large audio dataset (over 6 years of
+classical music approach is the Bach Doodle Set. A large audio dataset (over 6 years of
 total audio), collected by Google using its Bach Doodle. \autocite{magentaData}
 
-The selction of the dataset would be conditioned by the available trianing capabilities
+The selection of the dataset would be conditioned by the available trianing capabilities
 for this project.
 
 \subsubsection{Third Approach: Develop out own RNN. LSTM.}
