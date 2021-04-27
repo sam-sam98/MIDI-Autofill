@@ -374,7 +374,49 @@ for this project.
 \subsection{Embedded Controller Comparisons}
 \label{sec:embedded_controllers}
 
-\blindtext
+\subsubsection{Raspberry Pi 4 Model B}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/raspberry-pi.png}
+  \caption{The Raspberry Pi 4B \autocite{raspberry-pi-4b}}
+  \label{fig:rpi4b}
+\end{figure}
+
+The Raspberry Pi is a mini-computer which can act as an embedded controller using GPIO
+pins. This is an appealing option to us, as it is easy to use and members of our group
+have previous experience with it, and one of our members already owning a Raspberry Pi to
+test on. What makes the Raspberry Pi more than just a embedded controller is the GPIO pins
+that are located in the top of the board as seen in \autoref{fig:rpi4b}. These pins are
+designed to allow the Pi to interface with other electronics, such as buttons attached to
+our keys. Each pin serve a different purpose, and we will be using a few of them.
+Otherwise the Raspberry Pi 4 functions as a normal computer, with the ability to plug in a
+keyboard, mouse and monitor. The Raspberry Pi can run any armv7 Linux distro. The
+operating system is loaded onto it using an SD card. The Raspberry Pi is typically powered
+using USB-C and a power supply, but it can also be powered through one of the GPIO ports,
+with a 5V connection. The Raspberry Pi also features an ethernet port and a headphone
+jack.
+
+The Raspberry Pi has a baseline cost of \$35 for the 2GB of RAM edition, \$55 for the 4GB
+edition, and \$75 for the 8GB edition. We intend to use the 4GB edition, which will meet
+our memory requirements for running an electron app and an AI. This price is within our
+budget constraints.
+
+The Raspberry Pi can be seen as overkill for many projects, where a cheaper embedded
+controller, such as an adruino, could be used instead. Our project is computationally
+expensive, so it makes sense for us to use good hardware. Although it may be possible to
+do this project with a cheaper embedded controller, it would be risky to design our
+prototype with cheaper hardware. We know from preliminary testing that the Raspberry Pi
+will provide the computation power and memory our project needs. We prefer to start with
+hardware we know will meet our specifications from the start.
+
+\subsubsection{Conclusion}
+
+We have decided to use the Raspberry Pi 4 for our project. We know from our research that
+the Raspberry Pi will meet our specifications. Our previous experience with Raspberry Pi
+is a big advantage, and working with a full blown Linux environment will save us valuable
+development time.
+
 
 \subsection{DAW Frontend Technologies}
 
