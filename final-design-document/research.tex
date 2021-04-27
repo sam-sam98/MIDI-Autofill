@@ -867,7 +867,7 @@ factor is convenient for the end user.
 With wireless connections, there is always a question of if it can achieve acceptable
 latencies. RTP-MIDI over WIFI is fast, and latency is not a major concern. RTP-MIDI Over
 WIFI has a latency of around 8.5 ms with a standard deviation of 8 ms
-\autocite{inproceedings}.
+\autocite{ble-latency}.
 
 A major disadvantage of RTP-MIDI is that it is not supported out of the box in Windows 10.
 Since RTP-MIDI are just simple UDP network messages, this can be worked around by
@@ -923,7 +923,7 @@ which specify the BLE  application and the communication specifications. There i
 list of standardized BLE profiles, with one such profile being BLE MIDI. While support for
 BLE is very common, support for certain BLE profiles is not, as its up to each BLE
 implementor to support whatever profiles are needed by the device. However, BLE MIDI is
-supported by Windows 10, MacOS, Linux, iOS, and Android \autocite{inproceedings}. With BLE
+supported by Windows 10, MacOS, Linux, iOS, and Android \autocite{ble-latency}. With BLE
 MIDI being supported by every major operating system, we are confident that we will not
 run into any compatibility issues with this approach, except for on older computers.
 
@@ -931,7 +931,7 @@ We initially thought that using BLE would incur too much input latency to be pra
 musicians. Using Bluetooth audio is notorious for its latency. But the latency situation
 with BLE MIDI is much better than Bluetooth audio. BLE MIDI has higher latency than USB
 MIDI, but the numbers are acceptable. BLE MIDI events have a delay of approximately 12
-milliseconds one-way and 26ms round-trip time \autocite{inproceedings}. We find this
+milliseconds one-way and 26ms round-trip time \autocite{ble-latency}. We find this
 latency number to be acceptable for our project.
 
 The Raspberry Pi runs Linux, which means that it needs to work through the BlueZ stack in
@@ -945,15 +945,18 @@ connected to a variety of targets. In combination with BlueZ, we can create an A
 sequencer port to send MIDI events over BLE. BlueZ provides a binary called
 \url{bt-midi-server}, which creates an ALSA sequencer port that is connected to a BLE MIDI
 output. From there, we can send MIDI events over BLE by simply using the ALSA APIs for
-sequencer ports. This is a nice abstraction which allows us to write MIDI code without
-needing to consider Bluetooth in the code itself. The \url{bt-midi-server} can be run at
-startup using a systemd service. Our code will simply need to check for the existence of
-the sequencer port to see if we're connected to Bluetooth.
+sequencer ports. When \url{bt-midi-server} is started, any MIDI Bluetooth connections will
+automatically get connected to an ALSA sequencer port. This is a nice abstraction which
+allows us to write MIDI code without needing to consider Bluetooth in the code itself. The
+\url{bt-midi-server} can be run at startup using a systemd service. Our code will simply
+need to check for the existence of the sequencer port to see if we're connected to
+Bluetooth.
 
 ALSA sequences are programmed using a C API. This C API can be called from JavaScript
-using the Foreign Function Interface (FFI). In this library, clients send sequencer events
+using the Foreign Function Interface (FFI). In this API, clients send sequencer events
 through the port, which can encode various MIDI events, such as note on/off, with data
-such as the pitch and velocity.
+such as the pitch and velocity. This API is simple to use, and will be easy to integrate
+into our application.
 
 With this interface, it is easy to create a program that creates a ALSA connection to the
 BLE MIDI sequencer port, listens for the keypresses from GPIO events, interprets those

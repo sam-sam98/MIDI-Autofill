@@ -2,6 +2,95 @@
 
 \subsection{Build plan}
 
+\subsection{Development Workflow}
+
+Finding a good development workflow is critical for assuring developer productivity and
+quality, and ensuring milestones are completed on time. To this end, we have created a
+workflow that we believe is well suited to our project. We have decided upon Software
+Development Life Cycle (SDLC), a project management system, coding conventions, and how to
+conduct meetings and track our progress. We believe sticking to this process will help us
+finish our milestones on schedule, and to ensure the project is high quality.
+
+\subsubsection{Software Development Life Cycle}
+
+We have chosen the Agile SDLC for our project. We picked Agile for its advantages for time
+contrained projects and adaptabilty for when requirements change. Another advantage for us
+is our team familiarity with the Agile process. The Agile principles of testing in the
+same phase as development will be highly beneficial for us to rapidly prototype our
+project.
+
+\subsubsection{Project Management}
+
+Keeping track of progress dividing up the work between us is essential for keeping the
+project in check and ensuring deadlines are hit. We use GitHub issues and project
+management functionality to track progress and divide up the work. For each task that
+needs to be done, we create a GitHub issue and assign a member of the team for that task.
+We have large meta-issues with many subtasks that are other issues. These meta-issues are
+used to keep track of our milestones. We link these meta-issues to a GitHub milestone,
+which is essentially a list of tickets linked with a target completion date. In edition to
+these large meta issues, we create issues for any tasks that come up during the
+development process. This is an open process where any team member can create and assign
+issues as problems come up.
+
+We use the GitHub kanban board to get an overview of the process. The Kanban board is a
+visualization of progress using three columns: one for the backlog, one for issues in
+progress, and issues that are completed. This makes it easier to know our overall
+progress, and where we should focus our attention to getting the project done in a timely
+manner. During our sprint meetings, we look over the kanban board and decide which issues
+from the backlog to work on next.
+
+\subsubsection{Coding Conventions}
+
+We follow a set of coding conventions to ensure consistency and quality of our code. This
+includes code style, testing conventions, development practices and general guidelines.
+Research has shown that following coding standards and coding style reduces the number of
+errors overall, which justifies adding coding standards to the development process
+\autocite{codingstyle}.
+
+\paragraph{Coding Style}
+
+Coding style dictates how the code should look visually. This includes topics such as tabs
+versus spaces, camelCase versus underscores, capitalization, etc. While these topics are
+unimportant to the functionality of the code, it is important for developer productivity
+to ensure code remains readable. Some languages have a standard coding style, such as
+python, with PEP-8 being the convention. However, our project is based in JavaScript,
+which does not have a standard coding style, so we must choose which coding style we like
+the best and stick with it. We have decided to stick with the AirBnB JavaScript coding
+style, as we like the look of it the best.
+
+\paragraph{Testing Conventions}
+
+Developers are encouraged to write unit tests where appropriate. The code base for this
+project is rapidly changing, and new code will often break older code in unexpected ways.
+When code breaks, it slows other developers productivity, as they have to find out what
+went wrong, sometimes in code they have not dealed with. While writing unit tests itself
+costs development time, we hope that these unit tests will save more time overall, by
+preventing bugs that will have to be fixed later.  These unit tests will do sanity checks
+on small units of code to ensure proper functionality.
+
+Developers are also encouraged to write longer integration tests for their subsystems.
+Integration tests will ensure the health of the system overall, rather than small units of
+code. It is important to have these tests in addition to unit tests, as there can be bugs
+in the interactions between smaller pieces of code that will not be picked up by the unit
+tests.
+
+\subsubsection{Version Control Workflow}
+
+Developers will use git for version control of the source code. The \url{main} branch
+will be used for versioned releases of the software. Developers will mainly use the
+\url{develop} branch for rapid development, and use feature branches for big tasks that
+benefit from being developed separately from the \url{develop} branches. The reason for
+using a develop branch is to allow us to work efficiently with each other, while still
+keeping the main branch stable. Everytime the code is in a stable state, ready for a new
+version, the \url{develop} branch will be merged into the \url{main} branch.
+
+Initially we used the Git Flow approach, where each developer codes features and bug fixes
+on a separate branch, and only merges when the feature is entirely complete. We found this
+approach to be too burdensome for us to collaborate with, as feature branches only get
+merged in when they are completed. Often times we found ourselves needing to use code from
+another branch that was not available on the main branch. We believe this approach will be
+ideal after the project is mostly completed and is in a maintenance state.
+
 \subsubsection{Background}
 
 Any project centered around musicians or their instruments cannot avoid the term ‘feel’. Unlike math or physics where the goal is to arrive at a concrete and unified solution, music is often abstract and expressed through emotions or feelings. There are certainly wrong answers in music, but very few objectively correct answers, and this concept plays a huge role in how musicians choose their instruments.
@@ -32,25 +121,25 @@ Our key design was created by referencing two different electric keyboards: the 
 \begin{table}[]
   \centering
   \resizebox{\textwidth}{!}{%
-  \begin{tabular}{|l|l|l|l|}
-    \hline
-    Keyboard                & Roland DP-90 & Keylab MkII & Our Choice \\ \hline
-    Black Key               &              &             &            \\ \hline
-    Base Width (mm)         & 12           & 12          & 12         \\ \hline
-    Base Length (mm)        & 95           & 80          & 80         \\ \hline
-    Top Width (mm)          & 9            & 9           & 9          \\ \hline
-    Top Height (mm)         & 88           & 72          & 72         \\ \hline
-    Standard White          &              &             &            \\ \hline
-    Base Width (mm)         & 22           & 22          & 22         \\ \hline
-    Base Length (mm)        & 150          & 130         & 130        \\ \hline
-    b cut-in (mm)           & 9            & 8           & 8          \\ \hline
-    t cut-in (mm)           & 4.5 / 4.5    & 4 / 4       & 4 / 4      \\ \hline
-    d cut-in (mm)           & 9            & 8           & 8          \\ \hline
-    tb cut-in (mm)          & 3 / 6        & 3 / 6       & 3 / 6      \\ \hline
-    td cut-in (mm)          & 6 / 3        & 6 / 3       & 6 / 3      \\ \hline
-    Key Separation (mm)     & 1.5          & 2           & 2          \\ \hline
-    Trigger Angle (Degrees) & 6.972        & 8.296       & 5          \\ \hline
-  \end{tabular}}
+    \begin{tabular}{|l|l|l|l|}
+      \hline
+      Keyboard                & Roland DP-90 & Keylab MkII & Our Choice \\ \hline
+      Black Key               &              &             &            \\ \hline
+      Base Width (mm)         & 12           & 12          & 12         \\ \hline
+      Base Length (mm)        & 95           & 80          & 80         \\ \hline
+      Top Width (mm)          & 9            & 9           & 9          \\ \hline
+      Top Height (mm)         & 88           & 72          & 72         \\ \hline
+      Standard White          &              &             &            \\ \hline
+      Base Width (mm)         & 22           & 22          & 22         \\ \hline
+      Base Length (mm)        & 150          & 130         & 130        \\ \hline
+      b cut-in (mm)           & 9            & 8           & 8          \\ \hline
+      t cut-in (mm)           & 4.5 / 4.5    & 4 / 4       & 4 / 4      \\ \hline
+      d cut-in (mm)           & 9            & 8           & 8          \\ \hline
+      tb cut-in (mm)          & 3 / 6        & 3 / 6       & 3 / 6      \\ \hline
+      td cut-in (mm)          & 6 / 3        & 6 / 3       & 6 / 3      \\ \hline
+      Key Separation (mm)     & 1.5          & 2           & 2          \\ \hline
+      Trigger Angle (Degrees) & 6.972        & 8.296       & 5          \\ \hline
+    \end{tabular}}
   \caption{}
   \label{Tab:key_dimensions}
 \end{table}
@@ -67,7 +156,7 @@ In our application we are looking to distinguish which note is being pressed, th
 
 After basic functionality, our next concern is key feel. With the time allotted for this project, what is possible to craft at this level of expertise, and our desire for ease of portability, it is obvious from observing \textit{Figure \ref{fig:key_mechanism}} that we will not attempt to replicate the full counter-weighted key design. To keep costs low and durability high, we are also avoiding any semi-weighted keys or the usual expensive key material such as ivory or wood. By utilizing 3D printed plastics, we are able to create custom, robust designs at a cheaper cost than the alternatives.
 
-    INSERT COST OF MATERIAL AND STRENGTH OF MATERIAL TABLE
+INSERT COST OF MATERIAL AND STRENGTH OF MATERIAL TABLE
 
 To provide the actuation action for the key itself, we will be using tension springs to hold the key in place as it sits on a lever.
 
@@ -285,33 +374,33 @@ To the left of the base we see a divot that is 4 mm wide at a variable depth. Th
 The full keyboard is about 483 mm wide, 322 mm deep, and 93.89 mm tall. From our printer restrictions of 220x220x300 it is obvious we cannot print this as one full device. To counter the limitations, we divided the keyboard into six different sections in the style of a 2x3 matrix. For our design, the first row is dedicated to the electronics housing and the second row is dedicated to the keys. The body pieces which make up this arrangement are shown below. In \textit{Figure \ref{fig:body_parts}(a)}, we have the 1x1 body piece, in \textit{Figure \ref{fig:body_parts}(b)}, we have the 1x2 body piece, in \textit{Figure \ref{fig:body_parts}(c)}, we have the 2x1 body piece, in \textit{Figure \ref{fig:body_parts}(d)}, in \textit{Figure \ref{fig:body_parts}(e)}, we have the 1x3 body piece, we have the 2x2 body piece, and in \textit{Figure \ref{fig:body_parts}(f)}, we have the 2x3 body piece.
 
 \begin{figure}[h!]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
-    \begin{subfigure}[b]{0.45\textwidth}
-      \centering
-      \includegraphics[width=\textwidth]{image/BodyModel3.png}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.45\textwidth}
-      \centering
-      \includegraphics[width=\textwidth]{image/BodyModel4.png}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.45\textwidth}
-      \centering
-      \includegraphics[width=\textwidth]{image/BodyModel5.png}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.45\textwidth}
-      \centering
-      \includegraphics[width=\textwidth]{image/BodyModel6.png}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.45\textwidth}
-      \centering
-      \includegraphics[width=\textwidth]{image/BodyModel7.png}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.45\textwidth}
-      \centering
-      \includegraphics[width=\textwidth]{image/BodyModel8.png}
-    \end{subfigure}
-    \caption{}
-    \label{fig:body_parts}
+    \includegraphics[width=\textwidth]{image/BodyModel3.png}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{image/BodyModel4.png}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{image/BodyModel5.png}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{image/BodyModel6.png}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{image/BodyModel7.png}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{image/BodyModel8.png}
+  \end{subfigure}
+  \caption{}
+  \label{fig:body_parts}
 \end{figure}
 
 As can be seen from these figures, each piece has been specially crafted to fit into each other like a puzzle. We can see the full arrangement of the assembled body in \textit{Figure \ref{fig:assembled_body}}.
@@ -593,15 +682,15 @@ and proceeds to reactivate all other notes and buttons and revert the selected n
 function to null.
 
 \begin{align} \label{move_horz}
-  left_{note} = \max( & 0, \\
-  & \min(left_{expand\:btn} - width_{note}, \\
-  & x_{cursor} - (width_{guide\:keys} + left_{guide\:keys} - scroll) - \frac{width_{note}}{2})) \;pixels &
+  left_{note} = \max( & 0,                                                                                                     \\
+                      & \min(left_{expand\:btn} - width_{note},                                                                \\
+                      & x_{cursor} - (width_{guide\:keys} + left_{guide\:keys} - scroll) - \frac{width_{note}}{2})) \;pixels &
 \end{align}
 
 \begin{align} \label{move_vert}
-  top_{note} = \max( & 0, \\
-  & \min(23 * (height_{note} + key\:gap), \\
-  & y_{cursor} - top_{piano\:roll} - \frac{width_{note}}{2})) \;pixels &
+  top_{note} = \max( & 0,                                                                   \\
+                     & \min(23 * (height_{note} + key\:gap),                                \\
+                     & y_{cursor} - top_{piano\:roll} - \frac{width_{note}}{2})) \;pixels &
 \end{align}
 
 This first set of equations are used to move the note along with the cursor. In the following
@@ -668,9 +757,9 @@ function returns to null and all other buttons are enabled once again.
 This function also uses similar math to determine the note’s new width.
 
 \begin{align} \label{stretch}
-  width_{note} = \max( & 64 * quantization, \\
-  & \min(left_{expand\:btn} - left_{note}, \\
-  & x_{cursor} - (left_{note} + width_{guide\:keys} + left_{guide\:keys}))) \;pixels &
+  width_{note} = \max( & 64 * quantization,                                                                 \\
+                       & \min(left_{expand\:btn} - left_{note},                                             \\
+                       & x_{cursor} - (left_{note} + width_{guide\:keys} + left_{guide\:keys}))) \;pixels &
 \end{align}
 
 Once again, the first line uses a $ \max $ function to set the minimum extreme. The smallest a note
@@ -757,16 +846,16 @@ initially opened.
 \paragraph{Undo}
 
 Whenever an interaction is made in any edit mode, before any changes are made to the notes, the
- current state is saved to a queue in the application’s backend. This process of saving the state
- uses the same conversions as the save function. When the undo function is called, it pops a state
- off the queue and converts the MIDI data back into a piano roll configuration using the same
- conversions used when the piano roll was initialized with the default melody. Additionally, when
- states are saved to the queue and the queue is at length 10, it will shift before pushing the new
- state into the queue. This limits the user’s number of successive reversions to 10, after which
- the undo button will be disabled until new edits are made to repopulate the queue. This
- limitation was imposed to prevent the application from having to store an infinite number of
- states into memory. Because we are operating on standalone hardware, memory is limited and must be
- consumed shrewdly.
+current state is saved to a queue in the application’s backend. This process of saving the state
+uses the same conversions as the save function. When the undo function is called, it pops a state
+off the queue and converts the MIDI data back into a piano roll configuration using the same
+conversions used when the piano roll was initialized with the default melody. Additionally, when
+states are saved to the queue and the queue is at length 10, it will shift before pushing the new
+state into the queue. This limits the user’s number of successive reversions to 10, after which
+the undo button will be disabled until new edits are made to repopulate the queue. This
+limitation was imposed to prevent the application from having to store an infinite number of
+states into memory. Because we are operating on standalone hardware, memory is limited and must be
+consumed shrewdly.
 
 \paragraph{Redo}
 
