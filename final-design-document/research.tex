@@ -440,29 +440,69 @@ process that is out of the scope of this project. But what we can do is modify a
 distro to suite our needs. We plan to do this process using a tool called Packer,
 described in more detail in Section \ref{sec:packer}.
 
-The most common operating system used for Raspberry Pi is Raspberry Pi OS. This is a
-specially tailored version of Debian for the Raspberry Pi. This is a common choice for any
-general purpose usage the Pi. It can be used like a normal desktop computer when a mouse,
-keyboard, and monitor are plugged in. This is a "batteries included" distro that includes
-many things we will never use. The bloatware from this distro can hinder performance and
-waste SD card space. There is a lightweight alternative known as Raspberry Pi OS Lite.
-This version does not include any desktop environment. We think it would be better to
-start with an even lighter weight distro, such as DietPi.
+\paragraph{Raspberry Pi OS}
+
+The most common operating system used for Raspberry Pi is Raspberry Pi OS, which is
+developed by the Raspberry Pi Foundation. This is a specially tailored version of Debian
+for the Raspberry Pi. This is a common choice for any general purpose usage the Pi. It can
+be used like a normal desktop computer when a mouse, keyboard, and monitor are plugged in.
+This is a "batteries included" distro that includes things we do not need, such as a
+desktop environment, login manager, and various desktop apps. The extra software from this
+distro can hinder performance and waste SD card space.
+
+Raspberry Pi Foundation is aware that this distro is too heavy for a lot of Raspberry Pi
+projects. To mitigate this issue, they provide lightweight edition known as Raspberry Pi
+OS Lite. This version does not include any desktop environment or other extraneous
+software. As a result, Raspberry Pi OS Lite fits in 442 MB, which is a big improvement
+over Raspberry Pi OS, which is 1175 MB. This makes Raspberry Pi OS Lite a better choice
+for our use case, as it would be easier for us to build up to what we need rather than to
+cut what we do not need.
+
+\subparagraph{Pros}
+\begin{itemize}
+  \item Very well documented
+  \item Has the best support for Raspberry Pi
+\end{itemize}
+
+\subparagraph{Cons}
+\begin{itemize}
+  \item Comes with unnecessary software
+\end{itemize}
+
+\paragraph{DietPI}
 
 DietPi is like Raspberry Pi OS Lite in that it is a lightweight distro. DietPi's claims to
-be even lighter than Raspberry Pi Os Lite. It occupies 589 Mb on the SD card, while
+be even lighter than Raspberry Pi OS Lite. It occupies 589 Mb on the SD card, while
 Raspberry Pi OS occupies 1424 MB. There are other system optimizations in place to improve
 general performance as well. After boot, there are 11 total processes, versus 18 total
 processes running on Raspberry Pi OS. This is a good choice for base system. It is easier
 for us to start lightweight and add what we need, rather than to start with a bloated
 system and strip it down. DietPi comes with a flexible configuration utility that allows
 the system to be customized for a specific use case, as show in \autoref{fig:dietpi}.
-DietPi includes an easy way to run chromium in kiosk mode using the \url{dietpi-autostart}
-utility, which we'll need to have configured anyways, as described in Section
-\ref{sec:research:subsec:os_config}. DietPi also supports a fully automated installation
-process, which we intend to take advantage of, as it is tedious to have to flash the
-Raspberry Pi and go through the distro's installation process every time we change the
-operating system configuration.
+
+DietPi includes a configuration menu in the installation for software that runs after
+boot. In this menu there is a way to run chromium in kiosk mode. This is an item that we
+need to configured anyways, as described in Section \ref{sec:research:subsec:os_config},
+which also makes DietPi an appealing choice. DietPi also supports a fully automated
+installation process, which we intend to take advantage of, as will save us time from
+needing to flash the Raspberry Pi and go through the installation process whenever we
+change the operating system configuration.
+
+The main downside to using DietPI over Raspberry PI OS is that there are many tutorials
+and documentation for using the Raspberry PI with Raspberry PI OS, that may not apply to
+using DietPI, or will be a different process.
+
+\subparagraph{Pros}
+\begin{itemize}
+  \item Lightweight
+  \item Automated installation
+  \item Flexible and easy configuration
+\end{itemize}
+
+\subparagraph{Cons}
+\begin{itemize}
+  \item Not as much documentation as Raspberry Pi OS
+\end{itemize}
 
 \begin{figure}[h!]
   \centering
@@ -471,10 +511,14 @@ operating system configuration.
   \label{fig:dietpi}
 \end{figure}
 
+\paragraph{Conclusion}
+
 From our research, we have decided to use DietPi as a baseline operating system for our
 project. The lightweight aspect suits us well, as we only need to boot a single
-application. The easy chromium kiosk mode configuration is also a big bonus, as it
-relieves us from a configuration burden.
+application. The high degree of customization makes it easy to have a minimal system
+tailored to our application. The easy chromium kiosk mode configuration is also a big
+bonus, as it relieves us from a configuration burden. The installation of DietPi will be
+automated using the automated install process, and further customized using Packer.
 
 \subsubsection{Operating System Configuration}
 \label{sec:research:subsec:os_config}
@@ -647,13 +691,13 @@ of notes.
 
 The input duration is the biggest factor affecting generation time. The number of
 generation steps are the next biggest factor. With this data, we know that we will most
-likely need to truncate the input melody's duration to less than a 40 seconds of music.
-The generation steps need to be accounted for when determining the duration of music to
-accept as input for our AI. As the generation steps increase we need make up for that
-amount of extra time by decreasing the input duration even further. We added in a
-benchmark for increasing duration and generation steps simultaneously to see if this would
-lead to exponential behavior, but found that it remained linear. So we can simply subtract
-the estimated added time from the input melody duration.
+likely need to truncate the input melody's duration to less than 40 seconds of music. The
+generation steps need to be accounted for when determining the duration of music to accept
+as input for our AI. As the generation steps increase we need make up for that amount of
+extra time by decreasing the input duration even further. We added in a benchmark for
+increasing duration and generation steps simultaneously to see if this would lead to
+exponential behavior, but found that it remained linear. So we can simply subtract the
+estimated added time from the input melody duration.
 
 With these benchmark results, we are confident that the Raspberry Pi 4B is capable of
 handling the computational load that this project requires, without the need for any
