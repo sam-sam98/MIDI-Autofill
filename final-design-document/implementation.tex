@@ -369,7 +369,7 @@ The first step in constructing the DAW was to establish all of the static elemen
 the piano roll (which is displayed inside a horizontally-scrolling container), the guide keys, and
 the menu buttons.
 
-\textbf{The piano roll} is the space in which the user can design their MIDI by adding,
+\paragraph{The piano roll} is the space in which the user can design their MIDI by adding,
 moving, and removing notes. It appears as a rectangular space adorned with horizontal stripes. Each
 white stripe corresponds to the vertical position that represents a white key on the keyboard, and
 the same goes for the black stripes corresponding to black keys. Progressing upward in the pattern
@@ -399,7 +399,7 @@ attribute relative to the result. This means that the dimensions may not functio
 window is resized after opening, but this is not expected to be a problem because there will be
 no way for the user to change the window size on the final keyboard.
 
-\textbf{The menu buttons} were added below the scroll container, separated into one group which is flush
+\paragraph{The menu buttons} were added below the scroll container, separated into one group which is flush
 left, and another which is flush right. The left button group deals with the state of the piano
 roll; these buttons allow the user to save the state, reset it to its last save, and utilize undo and
 redo functions to return the piano roll to a previous state. There is also a tempo button which
@@ -498,7 +498,7 @@ playing over top of the first. Finally, each of the mode buttons (Add, Delete, M
 is disabled when its mode is active, to indicate to the user which edit mode the application is
 currently running.
 
-\textbf{The MIDI notes} have been implemented in the form of buttons. These buttons have their own CSS
+\paragraph{The MIDI notes} have been implemented in the form of buttons. These buttons have their own CSS
 class, appropriately named "note," that give them a polished uniform look. For cohesion, the note
 border is the same color as the buttons and the fill color is a slightly lighter shade. They also
 have rounded corners to maintain the same polished feel as the menu buttons. The fill color
@@ -554,7 +554,7 @@ lengths, and this is translated into the width of the note in pixels.
 
 \subsubsection{DAW: Functional}
 
-\textbf{Move}
+\paragraph{Move}
 
 Once the visual layout of the DAW had been established, we added interactivity in JavaScript. The
 first function implemented was editing the note sequence by moving the notes, because this is
@@ -651,7 +651,7 @@ because 64 is the width of a whole note, and the quantization is the desired not
 of a whole note) to snap to. For the vertical axis, the unit is $ height_{note} + key\:gap $ to
 keep the notes in line with the rows in the piano roll.
 
-\textbf{Stretch}
+\paragraph{Stretch}
 
 The stretch function is similar to the move function in both mechanics and importance. Because of
 these similarities, the stretch function also has the click-and-drag and click-to-select variations.
@@ -695,7 +695,7 @@ cursor. Taking the ceiling in the stretch function ensures that the width is alw
 equal to the distance between the cursor and the start of the note. This means the cursor will
 always be encompassed by the note.
 
-\textbf{Add}
+\paragraph{Add}
 
 The remaining edit functions are comparatively simple. The add function sets all note on-click
 functions to null to prevent from spawning a note directly on top of another note. It then sets the
@@ -706,13 +706,13 @@ piano roll and maintain its position relative to other notes. Its width is set e
 quantized unit, and its position is determined using the same technique as the move function. First
 it is centered over where the mouse was clicked, then it snaps to the nearest valid position.
 
-\textbf{Delete}
+\paragraph{Delete}
 
 The delete function is the simplest among the edit functions. It simply sets the notes’ on-click
 function to JavaScript’s element remove method. When a note is clicked, it is removed from the
 application, along with all references to it.
 
-\textbf{Save}
+\paragraph{Save}
 
 Next, we will discuss the state functions. These functions handle the “state” of the piano roll,
 meaning its current configuration of notes. The save function saves the current melody sequence
@@ -747,14 +747,14 @@ seconds.
 The end time of the note is offset by the start time, then uses the same pixel-to-note-value and
 tempo-to-time conversions to determine the duration.
 
-\textbf{Reset}
+\paragraph{Reset}
 
 The reset function loads the saved state and converts the MIDI data back into a piano roll
 configuration. To start, it deletes all of the existing notes. Then it simply repopulates the piano
 roll using the same steps the application originally used to convert the default melody when it was
 initially opened.
 
-\textbf{Undo}
+\paragraph{Undo}
 
 Whenever an interaction is made in any edit mode, before any changes are made to the notes, the
  current state is saved to a queue in the application’s backend. This process of saving the state
@@ -768,7 +768,7 @@ Whenever an interaction is made in any edit mode, before any changes are made to
  states into memory. Because we are operating on standalone hardware, memory is limited and must be
  consumed shrewdly.
 
-\textbf{Redo}
+\paragraph{Redo}
 
 Whenever the undo function is called, before the piano roll state is reverted, it is saved to a
 second queue. This queue behaves much like that used by the undo function. When the redo function
@@ -776,14 +776,14 @@ is called, it pops a state off and translates it onto the piano roll. However, w
 made besides a call on the undo function, the redo queue empties itself and is disabled until the
 undo function is called.
 
-\textbf{Expand}
+\paragraph{Expand}
 
 The expand button is the button at the end of the piano roll labelled simply with a “+.” Clicking
 this button edits the piano roll attribute to increase its width by 256 pixels. This pixel width
 is equal to four whole notes, or one bar of music.
 
 
-\textbf{Play}
+\paragraph{Play}
 
 Finally, we get to discuss MIDI playback. The playback process begins by reading the piano roll
 back into a MIDI sequence using the same methods as the state functions. The application then
