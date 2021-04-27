@@ -776,6 +776,13 @@ is called, it pops a state off and translates it onto the piano roll. However, w
 made besides a call on the undo function, the redo queue empties itself and is disabled until the
 undo function is called.
 
+\textbf{Expand}
+
+The expand button is the button at the end of the piano roll labelled simply with a “+.” Clicking
+this button edits the piano roll attribute to increase its width by 256 pixels. This pixel width
+is equal to four whole notes, or one bar of music.
+
+
 \textbf{Play}
 
 Finally, we get to discuss MIDI playback. The playback process begins by reading the piano roll
@@ -814,8 +821,72 @@ press play again.
 
 \subsection{Testing}
 
+\subsubsection{DAW}
+
+Because there is no way of measuring performance of the DAW, testing it was difficult. Simply, the
+quality of the DAW is largely based on the look and feel of it, as well as its ability to handle
+edge cases. However, there is no way of simply knowing what edge cases there are, especially for
+an application with so many moving parts. Our ultimate method of testing was to allow team members
+Brian and Sam, who have sufficient experience producing music using DAWs, to experiment with its
+functionality and try to find edge cases by using unconventional methods.
+
+\subsubsection{Keyboard}
+
+\blindtext
+
+\subsubsection{AI}
+
 \blindtext
 
 \subsection{Evaluation}
+
+\subsubsection{DAW}
+
+After receiving feedback from our test group, we have found that the overall look and feel of the
+DAW has achieved sufficient polish. The UI design is clean and the fluidness of interactions is
+comparable to other simple browser-based DAWs, such as Soundtrap.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/Soundtrap.png}
+  \caption{A snapshot of the Soundtrap MIDI editor displaying the \textit{Twinkle, Twinkle, Little Star} melody.}
+  \label{fig:soundtrap}
+\end{figure}
+
+Our test group did manage to find edge cases regarding the snap-to-grid functionality in the use
+of the move edit mode. Because the snap moves the note after centering it under the mouse, if the
+quantized unit size is large enough, the note is occasionally not under the cursor. In the
+click-to-place version of the move function, if the user clicks in this condition, the note will
+release its on-mouse-move function making it static but not exiting the move mode. When this
+happens, the user will no longer be able to interact with any of the notes until they click the
+note they had originally selected. If the user cannot remember which note that is, they can get
+stuck on a frozen piano roll. The final iteration of this project will address this issue by only
+making the note snap to position if the cursor is within a note-width of a grid marker.
+
+Other test sessions found that the transition of states between the state functions is flawed.
+Occasionally, the "Undo" and "Redo" buttons would disable when they should have been enabled. This
+issue will be addressed in the final version by refactoring the flow of saved states between the
+functions.
+
+Our test group also remarked on quality-of-life features that could be added to improve the user
+experience. For example, a time scroller which allows the user to manually skip backward and
+forward in MIDI playback. Another suggestion was to have the notes and guide keys play a
+one-second sample of the note when clicked so that the user can get an idea of the melody they
+are constructing. It was also suggested that the piano roll could include vertical markers that
+show where each quarter-/half-/whole-note increment lies, similar to what Soundtrap implements in
+\textit{Figure \ref{fig:soundtrap}}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{image/Scroller.png}
+  \caption{An example of a DAW time scroller}
+  \label{fig:scroller}
+\end{figure}
+
+\subsubsection{Keyboard}
+
+\blindtext
+
+\subsubsection{AI}
 
 \blindtext
