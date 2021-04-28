@@ -309,7 +309,7 @@ training data. For this model to work for our purposes, we would have to convert
 file into a piano roll visualization which is rotated 90 degrees clockwise.
 
 
-\subsection{Second Approach: Already existent libraries. Magenta.}
+\subsubsection{Second Approach: Already existent libraries. Magenta.}
 
 Before starting to develop a solution, we checked on existent libraries, academia
 research and open source projects. This gave us a broader idea about the possible
@@ -322,15 +322,8 @@ applications: Magenta Project (\url{https://magenta.tensorflow.org/}).
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=\linewidth]{image/PixelMask.png}
-  \caption{PixelCNN's unique mask prevents the AI from peeking ahead.}
-  \label{fig:pixel_mask}
-\end{figure}
-
-\begin{figure}[h!]
-  \centering
-  \caption{Home Page of Magenta Project From Google AI}
   \includegraphics[width=\linewidth]{image/fig_JDF01.png}
+  \caption{Home Page of Magenta Project From Google AI}
 \end{figure}
 
 \paragraph{Magenta Project}
@@ -374,10 +367,10 @@ network implementation to translate regular piano sound into MIDI format. In oth
 takes raw piano audio as input and return a MIDI file format with the an equivalent
 pattern of digital audio.
 
-\begin{figure}[]h!]
+\begin{figure}[h!]
   \centering
-  \caption{This model translate raw audio to MIDI format.}
   \includegraphics[width=\linewidth]{image/fig_JDF02.png}
+  \caption{This model translate raw audio to MIDI format.}
 \end{figure}
 
 \paragraph{MusicRNN} Implements a series of recurrent neural networks models based on long
@@ -446,18 +439,11 @@ using a hi-level library such as TensorFlow.
 first step is to convert them to NoteSequence buffer protocol (see Appendix). This will
 allows the faster and more efficient way to work with data than MIDI files.
 
-\begin{figure}[]h!]
-  \centering
-  \caption{This model translate raw audio to MIDI format.}
-  \includegraphics[width=\linewidth]{image/fig_JDF02.png}
-\end{figure}
-
 \begin{figure}[h!]
   \centering
-  \caption{Example of converting a folder with MIDI files to NoteSequence protocol buffers.}
   \includegraphics[width=\linewidth]{image/fig_JDF03.png}
+  \caption{Example of converting a folder with MIDI files to NoteSequence protocol buffers.}
 \end{figure}
-
 
 %fig_JDF03
 
@@ -468,8 +454,8 @@ collection.
 
 \begin{figure}[h!]
   \centering
-  \caption{Example of converting a folder with MIDI files to NoteSequence protocol buffers.}
   \includegraphics[width=\linewidth]{image/fig_JDF04.png}
+  \caption{Example of converting a folder with MIDI files to NoteSequence protocol buffers.}
 \end{figure}
 
 
@@ -483,8 +469,8 @@ layers, previous steps in the data sequence to have into account during the trai
 hidden stages, etc.
 
 \begin{figure}[h!]
-  \caption{Example of training model command: \url{melody_rnn_train}}
   \includegraphics[width=\linewidth]{image/fig_JDF05.png}
+  \caption{Example of training model command: \url{melody_rnn_train}}
 \end{figure}
 
 It is possible to run evaluation in parallel with the trining to simultaneously measure
@@ -492,8 +478,8 @@ the progress in the trining of the model. This is indicated to the framework red
 the parameter \url{--sequence_example_file} to a separate set of evaluation data.
 
 \begin{figure}[h!]
-  \caption{Example of training model with evaluation in parallel command: —eval}
   \includegraphics[width=\linewidth]{image/fig_JDF06.png}
+  \caption{Example of training model with evaluation in parallel command: —eval}
 \end{figure}
 
 
@@ -502,9 +488,9 @@ possible to run the log command and access to the local host (\url{http://localh
 with any browser.
 
 \begin{figure}[h!]
+  \includegraphics[width=\linewidth]{image/fig_JDF07.png}
   \caption{Command to activate the log register (tensorboard) during train evaluation
     cycles.}
-  \includegraphics[width=\linewidth]{image/fig_JDF07.png}
 \end{figure}
 
 
@@ -520,8 +506,8 @@ melodies will be placed. To start the generation of the melody, at least one not
 required as seed.
 
 \begin{figure}[h!]
-  \caption{Command to generate a melody using a single note C4 in the \url{—primer_melody} parameter}
   \includegraphics[width=\linewidth]{image/fig_JDF08.png}
+  \caption{Command to generate a melody using a single note C4 in the \url{—primer_melody} parameter}
 \end{figure}
 
 
@@ -532,8 +518,8 @@ between neurons), and other metadata that will be required to reconstruct the mo
 afterwards.
 
 \begin{figure}[h!]
-  \caption{Command to generate a bundle file with the information of the model: \url{—save_generator_bundle}}
   \includegraphics[width=\linewidth]{image/fig_JDF09.png}
+  \caption{Command to generate a bundle file with the information of the model: \url{—save_generator_bundle}}
 \end{figure}
 
 \paragraph{Converting Python Trained Models to TensorFlow.js.} In order to work in a JavaScript
@@ -542,11 +528,11 @@ format into TensorFlow.js format. For this, it will be used \url{tensorflowjs_co
 command in the following fashion:
 
 \begin{figure}[h!]
-  \caption{Command to convert TensorFlow SavedModel into TensorFlow.js comptible format}
   \includegraphics[width=\linewidth]{image/fig_JDF10.png}
+  \caption{Command to convert TensorFlow SavedModel into TensorFlow.js comptible format}
 \end{figure}
 
-\subsection{Third Approach: Develop our own RNN. LSTM.}
+\subsubsection{Third Approach: Develop our own RNN. LSTM.}
 
 On our first approach in section 5.3.1, the data was planned to be treated as a spacial
 2D disposition as is in a picture. For this reason, the solution was planned to be
@@ -588,8 +574,8 @@ coefficients used to calculate the prediction are never ‘seen’ and they are 
 being updated during training stage, for this reason they are called ‘hidden states’.
 
 \begin{figure}[h!]
-  \caption{Latent Autoregressive Model}
   \includegraphics[width=\linewidth]{image/fig_JDF12.png}
+  \caption{Latent Autoregressive Model}
 \end{figure}
 
 
@@ -603,8 +589,8 @@ function start performing after 4-steps ahead, to finally converging to constant
 in just 64-steps predictions:
 
 \begin{figure}[h!]
-  \caption{Experiment of Latent Autoregressive Model Prediction}
   \includegraphics[width=\linewidth]{image/fig_JDF13.png}
+  \caption{Experiment of Latent Autoregressive Model Prediction}
 \end{figure}
 
 
@@ -624,8 +610,8 @@ creation of long short-term memory (LSTM) networks.
 LSMT introduces a new type of neural network architecture unit: the LSMT cell.
 
 \begin{figure}[h!]
-  \caption{Experiment of Latent Autoregressive Model Prediction}
   \includegraphics[width=\linewidth]{image/fig_JDF14.png}
+  \caption{Experiment of Latent Autoregressive Model Prediction}
 \end{figure}
 
 
@@ -641,8 +627,8 @@ For the gathering of large collection of data, it is possible to use large MIDI 
 like the one located at https://www.mutopiaproject.org/.
 
 \begin{figure}[h!]
-  \caption{Mutopia Project contains large free-to-use collection of music in MIDI format }
   \includegraphics[width=\linewidth]{image/fig_JDF15.png}
+  \caption{Mutopia Project contains large free-to-use collection of music in MIDI format }
 \end{figure}
 
 
@@ -651,8 +637,8 @@ a script for ‘web scrapping’ a large quantity of these files. This can be do
 major challenges using a Python implementation as follow:
 
 \begin{figure}[h!]
-  \caption{Example of web scraping code for data collection }
   \includegraphics[width=\linewidth]{image/fig_JDF16.png}
+  \caption{Example of web scraping code for data collection }
 \end{figure}
 
 
@@ -668,8 +654,8 @@ converter, pitch, and interval. Later, we can loop through all the MIDI files lo
 single directory with a code as follows:
 
 \begin{figure}[h!]
-  \caption{Example of converting from MIDI to scores from local directory }
   \includegraphics[width=\linewidth]{image/fig_JDF17.png}
+  \caption{Example of converting from MIDI to scores from local directory }
 \end{figure}
 
 
@@ -679,18 +665,18 @@ significant amount of noise in the data set, producing undesirable predictions. 
 reason it is needed to convert any polyphonic MIDI to a monophonic format, extracting the
 main melody in a single instrument. That can be done by the next function:
 
-\begin{figure}[]h!]
-  \caption{Example of converting from polyphonic score to monophonic }
+\begin{figure}[h!]
   \includegraphics[width=\linewidth]{image/fig_JDF18.png}
+  \caption{Example of converting from polyphonic score to monophonic }
 \end{figure}
 
 
 Finally, all the converted score are possible to convert to three separate lists: notes,
 chords, and duration. This is an example of this processing code:
 
-\begin{figure}[]h!]
-  \caption{Code to place in lists notes, chords and duration }
+\begin{figure}[h!]
   \includegraphics[width=\linewidth]{image/fig_JDF19.png}
+  \caption{Code to place in lists notes, chords and duration }
 \end{figure}
 
 
@@ -705,9 +691,9 @@ melodies into stream of equal length sequences. An example of the code to perfor
 action to a dataset that was transposed to C major key as part of feature reduction
 follows like:
 
-\begin{figure}[]h!]
-  \caption{Code used to segment the data in equal length. In this case 32 keys.}
+\begin{figure}[h!]
   \includegraphics[width=\linewidth]{image/fig_JDF20.png}
+  \caption{Code used to segment the data in equal length. In this case 32 keys.}
 \end{figure}
 
 Additionally, it will be needed to serialize all these streams into a file format to be
@@ -722,9 +708,9 @@ starting point, we could use an existent architecture that is already tested and
 published. For illustrating the case in the current documentation, we will describe the
 architecture used at this location:
 
-\begin{figure}[]h!]
-  \caption{Possible architecture to be implemented as starting point for our LSTM RNN }
+\begin{figure}[h!]
   \includegraphics[width=\linewidth]{image/fig_JDF21.png}
+  \caption{Possible architecture to be implemented as starting point for our LSTM RNN }
 \end{figure}
 
 
@@ -751,9 +737,9 @@ network for all the different patterns: first chord and duration concatenated, a
 in separate way to be processed by a softmax activation function that returns the
 probability of the prediction in the output layer.
 
-\begin{figure}[]h!]
-  \caption{Example of the code to implement a double input, double output LSTM RNN }
+\begin{figure}[h!]
   \includegraphics[width=\linewidth]{image/fig_JDF22.png}
+  \caption{Example of the code to implement a double input, double output LSTM RNN }
 \end{figure}
 
 
@@ -764,9 +750,9 @@ training step can be initialized defining the size of the training batch and the
 epochs (training iterations). An example of the code that implements these two steps as
 follows:
 
-\begin{figure}[]h!]
-  \caption{Example of compilation and training of Tensorflow LSTM RNN }
+\begin{figure}[h!]
   \includegraphics[width=\linewidth]{image/fig_JDF23.png}
+  \caption{Example of compilation and training of Tensorflow LSTM RNN }
 \end{figure}
 
 \paragraph{Using Model to Generate Melody.}
@@ -778,9 +764,9 @@ indefinitely for as long as desired. As example of this implementation, the foll
 uses a 32 chord sequence as initial input, and generate 100 segments of equal size as
 output:
 
-\begin{figure}[]h!]
-  \caption{Example of newly generate melody with model }
+\begin{figure}[h!]
   \includegraphics[width=\linewidth]{image/fig_JDF24.png}
+  \caption{Example of newly generate melody with model }
 \end{figure}
 
 This step will generate the melody in the format that was parsed the MIDI file for
@@ -792,9 +778,9 @@ already described to parse MIDI into lists to use as data set for TensorFlow mod
 is simply the reversion of that steps. For this, it is used again the music21 library as
 follows:
 
-\begin{figure}[]h!]
-  \caption{Example of constructing a new MIDI file with the prediction generated}
+\begin{figure}[h!]
   \includegraphics[width=\linewidth]{image/fig_JDF25.png}
+  \caption{Example of constructing a new MIDI file with the prediction generated}
 \end{figure}
 
 
@@ -822,9 +808,9 @@ of TensorFlow/Keras framework that we trust is largely test as part of those lib
 As dataset for this stage a collection of well known melody sequence will be used for
 benchmark.
 
-\begin{figure}[]h!]
-  \caption{Addition of monitoring parameters to save the best model}
+\begin{figure}[h!]
   \includegraphics[width=\linewidth]{image/fig_JDF26.png}
+  \caption{Addition of monitoring parameters to save the best model}
 \end{figure}
 
 \subsection{Embedded Controller Comparisons}
