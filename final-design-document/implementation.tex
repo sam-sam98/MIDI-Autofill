@@ -36,8 +36,8 @@ We use the GitHub kanban board to get an overview of the process. The Kanban boa
 visualization of progress using three columns: one for the backlog, one for issues in
 progress, and issues that are completed. This makes it easier to know our overall
 progress, and where we should focus our attention to getting the project done in a timely
-manner. During our sprint meetings, we look over the kanban board and decide which issues
-from the backlog to work on next.
+manner. During our weekly sprint meetings, we look over the kanban board and decide which
+issues from the backlog to work on next.
 
 \subsubsection{Coding Conventions}
 
@@ -74,6 +74,16 @@ code. It is important to have these tests in addition to unit tests, as there ca
 in the interactions between smaller pieces of code that will not be picked up by the unit
 tests.
 
+Developers are also expected to independently conduct their own tests on their code after
+writing. This falls in line with the Agile ideas of developing and testing in the same
+phase of the development cycle.
+
+With these testing steps, it will be easier to keep our code high quality, while still
+allowing for the rapid development we need to get this device operational within our
+timeframe. Additionally, developers will be able to write code with some assurance that
+their new code will not break other developers code, which would cause an interruption to
+both developers' productivity.
+
 \subsubsection{Version Control Workflow}
 
 Developers will use git for version control of the source code. The \url{main} branch
@@ -81,15 +91,21 @@ will be used for versioned releases of the software. Developers will mainly use 
 \url{develop} branch for rapid development, and use feature branches for big tasks that
 benefit from being developed separately from the \url{develop} branches. The reason for
 using a develop branch is to allow us to work efficiently with each other, while still
-keeping the main branch stable. Everytime the code is in a stable state, ready for a new
-version, the \url{develop} branch will be merged into the \url{main} branch.
+keeping the main branch in a stable state. Everytime the code is in a stable state, ready
+for a new version, the \url{develop} branch will be merged into the \url{main} branch.
 
 Initially we used the Git Flow approach, where each developer codes features and bug fixes
-on a separate branch, and only merges when the feature is entirely complete. We found this
-approach to be too burdensome for us to collaborate with, as feature branches only get
-merged in when they are completed. Often times we found ourselves needing to use code from
-another branch that was not available on the main branch. We believe this approach will be
-ideal after the project is mostly completed and is in a maintenance state.
+on a separate branch, and only merges when the feature is entirely complete. We would have
+each feature branch tied to a GitHub issue, with the naming convention
+\url{issue-\#-description}. The feature branches would go to a pull request linked with
+the issue, and upon merging, the issue would be automatically closed using the GitHub
+project management automations. While this approach is good in theory, we found it to be
+too burdensome for us to collaborate with, as feature branches only get merged in when
+they are completed. Often times we found ourselves needing to use code from another branch
+that was not available on the main branch. We settled on the develop and main branch
+strategy, which allows us to keep the main branch pure, while still rapidly prototyping
+our project in the develop branch. We believe this approach will be ideal after the
+project is mostly completed and is in a bug fix and maintenance state.
 
 \subsubsection{Background}
 
