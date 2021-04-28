@@ -996,15 +996,16 @@ run into any issues with these undervolts as of now. The Pi does not encounter a
 voltage warnings when running a CPU stress test, but it could lead to stability issues
 later.
 
-This approach runs into a wall when considering how to allow the device to function as a
-standalone device, while also being able to receive power through the USB-C connection.
-USB gadgets are supposed to be powered through the USB-C port, but when not connected, the
-USB device will operate off of a battery. The standalone operation requirement makes this
-connection mode very difficult. There is another interface for powering the raspberry PI,
-which is the 5 volt GPIO pin. This could be connected to a battery. But then there is the
-question of if the Pi can be simultaneously powered by the 5 volt GPIO port while also
-being plugged in with USB-C. This may be possible, but there are no resources online that
-show how this can be done. It is not worth the time to figure out how this can be done.
+This approach was our preference, but we ran into a wall when considering how to allow the
+device to function as a standalone device, while also being able to receive power through
+the USB-C connection. USB gadgets are supposed to be powered through the USB-C port, but
+when not connected, the USB device will operate off of a battery. The standalone operation
+requirement makes this connection mode very difficult. There is another interface for
+powering the raspberry PI, which is the 5 volt GPIO pin. This could be connected to a
+battery. But then there is the question of if the Pi can be simultaneously powered by the
+5 volt GPIO port while also being plugged in with USB-C. This may be possible, but there
+are no resources online that show how this can be done. It is not worth the time to figure
+out how this can be done.
 
 \paragraph{Pros}
 
