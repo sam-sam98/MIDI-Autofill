@@ -484,6 +484,13 @@ described in more detail in Section \ref{sec:packer}.
 
 \paragraph{Raspberry Pi OS}
 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/rpi-desktop.png}
+  \caption{The Raspberry PI OS Desktop \autocite{rpi-desktop}}
+  \label{fig:rpios}
+\end{figure}
+
 The most common operating system used for Raspberry Pi is Raspberry Pi OS, which is
 developed by the Raspberry Pi Foundation. This is a specially tailored version of Debian
 for the Raspberry Pi. This is a common choice for any general purpose usage the Pi. It can
@@ -561,6 +568,26 @@ application. The high degree of customization makes it easy to have a minimal sy
 tailored to our application. The easy chromium kiosk mode configuration is also a big
 bonus, as it relieves us from a configuration burden. The installation of DietPi will be
 automated using the automated install process, and further customized using Packer.
+
+\subsubsection{Operating System Installation}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/rpi-imager.png}
+  \caption{The Raspberry Pi Imager Utility}
+  \label{fig:rpi-imager}
+\end{figure}
+
+Installing the OS to the Raspberry PI is a simple process. The operating system is
+provided from the DietPi website as a \url{.iso} file. An \url{.iso} file is a
+representation of a disk archive in a file. In our case, we will be using a modified
+\url{.img} file from Packer, but the usage is exactly the same. This image from Packer can
+be flashed to an SD card using the Raspberry Pi Imaging utility (See
+\autoref{fig:rpi-imager}). We use a USB SD card reader for this purpose. Once the SD card
+is flashed, it can be inserted into the Raspberry Pi. Now, once the Raspberry Pi is
+powered on, the device will boot straight into the operating system. Typically this would
+be followed with a lengthy installation process, but we have already automated the install
+onto the image ahead of time using Packer and the DietPI installation automation process.
 
 \subsubsection{Operating System Configuration}
 \label{sec:research:subsec:os_config}
