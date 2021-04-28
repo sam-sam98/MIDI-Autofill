@@ -7,20 +7,20 @@ Since we want our project to feel as close to a professional MIDI controller as 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/Buttons.png}
-  \caption{A comparison of button options}
+  \caption{A comparison of button options.}
   \label{fig:buttons_fig}
 \end{figure}
 
 \begin{table}[h!]
   \centering
   \resizebox{\textwidth}{!}{%
-  \begin{tabular}{|l|l|l|l|}
-    \hline
-    Brand                           & Cost   & Quantity & Form Factor               \\ \hline
-    Odseven                         & \$1.17 & 10       & 7.8mm x 7.8mm x 4.9mm     \\ \hline
-    Nidec Copal Electronics         & \$0.54 & 1        & 5.9 mm x 7 mm x 9 mm      \\ \hline
-    Panasonic Electronic Components & \$1.31 & 1        & 7.9 mm x 7.8 mm x 17.5 mm \\ \hline
-  \end{tabular}}
+    \begin{tabular}{|l|l|l|l|}
+      \hline
+      Brand                           & Cost   & Quantity & Form Factor               \\ \hline
+      Odseven                         & \$1.17 & 10       & 7.8mm x 7.8mm x 4.9mm     \\ \hline
+      Nidec Copal Electronics         & \$0.54 & 1        & 5.9 mm x 7 mm x 9 mm      \\ \hline
+      Panasonic Electronic Components & \$1.31 & 1        & 7.9 mm x 7.8 mm x 17.5 mm \\ \hline
+    \end{tabular}}
   \caption{}
   \label{Tab:buttons_data}
 \end{table}
@@ -60,39 +60,39 @@ Obviously if the spring is starting at rest any distance traveled from rest woul
 \begin{table}[h!]
   \centering
   \resizebox{\textwidth}{!}{%
-  \begin{tabular}{|l|l|l|l|l|l|l|}
-    \hline
-    X initial (mm) & Constant K & Max Actuation (mm) & X Final (mm) & Force Initial (m N*m) & Force Final (N*m) & Force \% Change \\ \hline
-    5              & 2          & 4.92               & 9.92         & 10                    & 19.84             & 98.4            \\ \hline
-    10             & 2          & 4.92               & 14.92        & 20                    & 29.84             & 49.2            \\ \hline
-    20             & 2          & 4.92               & 24.92        & 40                    & 49.84             & 24.6            \\ \hline
-    30             & 2          & 4.92               & 34.92        & 60                    & 69.84             & 16.4            \\ \hline
-    50             & 2          & 4.92               & 54.92        & 100                   & 109.84            & 9.84            \\ \hline
-    100            & 2          & 4.92               & 104.92       & 200                   & 209.84            & 4.92            \\ \hline
-  \end{tabular}}
+    \begin{tabular}{|l|l|l|l|l|l|l|}
+      \hline
+      X initial (mm) & Constant K & Max Actuation (mm) & X Final (mm) & Force Initial (m N*m) & Force Final (N*m) & Force \% Change \\ \hline
+      5              & 2          & 4.92               & 9.92         & 10                    & 19.84             & 98.4            \\ \hline
+      10             & 2          & 4.92               & 14.92        & 20                    & 29.84             & 49.2            \\ \hline
+      20             & 2          & 4.92               & 24.92        & 40                    & 49.84             & 24.6            \\ \hline
+      30             & 2          & 4.92               & 34.92        & 60                    & 69.84             & 16.4            \\ \hline
+      50             & 2          & 4.92               & 54.92        & 100                   & 109.84            & 9.84            \\ \hline
+      100            & 2          & 4.92               & 104.92       & 200                   & 209.84            & 4.92            \\ \hline
+    \end{tabular}}
   \caption{}
   \label{Tab:x_force}
 \end{table}
 
 From the table it is obvious that, with a fixed maximum actuation, the percent change in force per $ x $ distance is inversely proportional to the initial $ x $ location.
 
-Although this information is valuable and shows the important aspect that we should be wary of the force percent change over distance, it is also important to take into consideration the strength of the material as well. In an ideal world, aiming for a zero percent change in force over distance would mean starting the initial $ x $ value at an infinite distance from its equilibrium. This is obviously not possible as the spring would break long before an infinite distance. We do not have to worry about starting at an infinite distance and we also recognize that the plastic holding the spring will break long before a metal spring breaks, but we do need to take into account the possibility of the spring deforming by being stretched too long. Therefore creating the best initial distance to reduce the percent change of force over distance is a balance act with the material properties of the spring itself.
+Although this information is valuable and shows the important aspect that we should be wary of the force percent change over distance, it is also important to take into consideration the strength of the material as well. In an ideal world, aiming for a zero percent change in force over distance would mean starting the initial $ x $ value at an infinite distance from its equilibrium. This is obviously not possible as the spring would break long before an infinite distance. We do not have to worry about starting at an infinite distance and we also recognize that the plastic holding the spring will break long before a metal spring breaks, but we do need to take into account the possibility of the spring deforming by being stretched too long. Therefore, creating the best initial distance to reduce the percent change of force over distance is a balance act with the material properties of the spring itself.
 
 Since we do not have any members with mechanical engineering experience on our team, we are more or less, attempting to do this by trial and error. Obviously we are utilizing common sense to make our decisions, but we find it difficult to justify all of our choices through complete objective reasoning. We decided to debate between six different types of springs under the following pretenses. First, the resting position should be less than the zero degree actuation distance of the key. Second, the starting force of the spring should be approximately one pound per square inch. Third, the maximum distance of the spring should not be below the maximum actuation distance necessary. By utilizing trusted websites our group decided on debating the springs shown in \textit{Table \ref{Tab:spring_brand}}.
 
 \begin{table}[h!]
   \centering
   \resizebox{\textwidth}{!}{%
-  \begin{tabular}{|l|l|l|l|l|l|l|}
-    \hline
-    Brand         & Cost    & Quantity & Initial Length & Max Length & Pounds per Distance & Starting Load \\ \hline
-    McMaster-Carr & \$13.80 & 2        & 30.2 mm        & 58.1 mm    & .241 lbs/mm         & 1.08 lbs      \\ \hline
-    McMaster-Carr & \$12.35 & 2        & 30.6 mm        & 49.2 mm    & .319 lbs/mm         & 1.49 lbs      \\ \hline
-    McMaster-Carr & \$10.90 & 2        & 31 mm          & 53.6 mm    & .13 lbs/mm          & .7 lbs        \\ \hline
-    WB Jones      & \$3.08  & 1        & .875 inch      & N/A        & .8 lbs/in           & .15 lbs       \\ \hline
-    WB Jones      & \$3.08  & 1        & 1 inch         & N/A        & 0.67 lbs/in         & 0.15 lbs      \\ \hline
-    WB Jones      & \$2.33  & 1        & 1 inch         & N/A        & 1.38 lbs/in         & .26 lbs       \\ \hline
-  \end{tabular}}
+    \begin{tabular}{|l|l|l|l|l|l|l|}
+      \hline
+      Brand         & Cost    & Quantity & Initial Length & Max Length & Pounds per Distance & Starting Load \\ \hline
+      McMaster-Carr & \$13.80 & 2        & 30.2 mm        & 58.1 mm    & .241 lbs/mm         & 1.08 lbs      \\ \hline
+      McMaster-Carr & \$12.35 & 2        & 30.6 mm        & 49.2 mm    & .319 lbs/mm         & 1.49 lbs      \\ \hline
+      McMaster-Carr & \$10.90 & 2        & 31 mm          & 53.6 mm    & .13 lbs/mm          & .7 lbs        \\ \hline
+      WB Jones      & \$3.08  & 1        & .875 inch      & N/A        & .8 lbs/in           & .15 lbs       \\ \hline
+      WB Jones      & \$3.08  & 1        & 1 inch         & N/A        & 0.67 lbs/in         & 0.15 lbs      \\ \hline
+      WB Jones      & \$2.33  & 1        & 1 inch         & N/A        & 1.38 lbs/in         & .26 lbs       \\ \hline
+    \end{tabular}}
   \caption{}
   \label{Tab:spring_brand}
 \end{table}
@@ -167,7 +167,7 @@ While debating on which screen to use, our group came up with two options, shown
 
 We were torn between utilizing a physical button oriented user interface and a touch screen oriented interface. As a group, we decided that allowing our end-users the option of a touch screen is more up-to-date with current technology. Not only that, the members of our CS division for this project felt the design and creation of a touch based user interface would be easier to code on the backend and easier to operate on the user’s end. Because of this, we eliminated the choice of any non-touch screens for this project. Next, we discussed whether a capacitive or resistive touch screen would be more appropriate. A general rule of thumb for touch screens are: capacitive touch screens are often more expensive, but offer multi-point touch recognition. Resistive touchscreens are often cheaper, but only allow single-point navigation. We felt resistive touch screens are outdated and decided that adding the extra cost of a capacitive touchscreen for the design would be worth the ease of use and a more professional feel to the finalized product.
 
-We also wanted to make sure there was enough room on the screen for the user to easily view the software user interface and be able to navigate the software. Sadly, none of the options offered by the group had a datasheet reliable enough to find the power usage of the screen. Luckily, each screen is designed to be operated by a Raspberry Pi and claims to work well with the device, therefore we can be assured that the current usage is within the limits a Raspberry Pi can offer. This is later discussed in the Batteries section of this paper. Ultimately, we decided to choose the seven inch display to offer the greatest experience for our end users that fits within our budget.
+We also wanted to make sure there was enough room on the screen for the user to easily view the software user interface and be able to navigate the software. Sadly, none of the options offered by the group had a datasheet reliable enough to find the power usage of the screen. Luckily, each screen is designed to be operated by a Raspberry Pi and claims to work well with the device, therefore we can be assured that the current usage is within the limits a Raspberry Pi can offer. This is later discussed in the Batteries section of this paper. Ultimately, we decided to choose the seven-inch display to offer the greatest experience for our end users that fits within our budget.
 
 \subsection{Octave Up/Down}
 
@@ -176,9 +176,9 @@ With almost every electric keyboard there is a trigger on the device for Octave 
 \begin{table}[]
   \centering
   \resizebox{\textwidth}{!}{%
-  \begin{tabular}{l}
-    \includegraphics{image/NoteFrequency}
-  \end{tabular}}
+    \begin{tabular}{l}
+      \includegraphics{image/NoteFrequency}
+    \end{tabular}}
   \caption{}
   \label{Tab:note_frequency}
 \end{table}
@@ -202,7 +202,7 @@ Most musicians who have worked in the synthetic side of music composition or per
 
 \subsection{Audio Jack}
 
-The audio jack, also known as the headphone jack or auxiliary jack, is the location where the user can input their headphones to listen to the audio being produced by the Raspberry Pi. There are two major types of audio jacks: mono and stereo. Mono headphone jacks are audio outputs that can only send one audio signal out. This means, if an individual is using headphones, the audio in the right ear will be the exact same audio produced in the left ear. Stereo is the counterpart to mono, and can channel two or more audio signals from a single jack. This means, if all is set up correctly, that the left and right speakers can produce two different signals and create a more full environment for the listener. This can be further understood in the mechanical drawing shown in \textit{Figure \ref{fig:mono}} and \textit{Figure \ref{fig:stereo}} which are the mono and stereo female drawings respectively.
+The audio jack, also known as the headphone jack or auxiliary jack, is the location where the user can input their headphones to listen to the audio being produced by the Raspberry Pi. There are two major types of audio jacks: mono and stereo. Mono headphone jacks are audio outputs that can only send one audio signal out. This means, if an individual is using headphones, the audio in the right ear will be the exact same audio produced in the left ear. Stereo is the counterpart to mono, and can channel two or more audio signals from a single jack. This means, if all is set up correctly, that the left and right speakers can produce two different signals and create a fuller environment for the listener. This can be further understood in the mechanical drawing shown in \textit{Figure \ref{fig:mono}} and \textit{Figure \ref{fig:stereo}} which are the mono and stereo female drawings respectively.
 
 \begin{figure}[h!]
   \centering
@@ -235,7 +235,7 @@ Considering our user interface is more about producing a new type of melody desi
 
 \subsection{T-Cobbler}
 
-One big misfortune about the Raspberry Pi compared to Arduino is that the Raspberry Pi model we chose is not as easily accessible to hardware prototyping as any of the Arduino boards. On the flip side, we still want to be able to connect many different analog devices such as the octave up and octave down buttons as well and the headphone jacks and hopefully speakers by the end of the project. To combat this, our group decided it would be in our best interest to purchase a Pi T-Cobbler Plus - GPIO breakout board for prototyping. This device costs less than ten dollars and will allow for easier prototyping by connecting the GPIO pins on the Pi to a breadboard, shown in \textit{Figure \ref{fig:tcobbler}}.
+One big misfortune about the Raspberry Pi compared to Arduino is that the Raspberry Pi model we chose is not as easily accessible to hardware prototyping as any of the Arduino boards. On the flip side, we still want to be able to connect many different analog devices such as the octave up and octave down buttons as well and the headphone jacks and hopefully speakers by the end of the project. To combat this, our group decided it would be in our best interest to purchase a Pi T-Cobbler Plus -- GPIO breakout board for prototyping. This device costs less than ten dollars and will allow for easier prototyping by connecting the GPIO pins on the Pi to a breadboard, shown in \textit{Figure \ref{fig:tcobbler}}.
 
 \begin{figure}[h!]
   \centering

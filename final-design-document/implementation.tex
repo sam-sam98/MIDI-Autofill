@@ -14,7 +14,7 @@ finish our milestones on schedule, and to ensure the project is high quality.
 \subsubsection{Software Development Life Cycle}
 
 We have chosen the Agile SDLC for our project. We picked Agile for its advantages for time
-contrained projects and adaptabilty for when requirements change. Another advantage for us
+constrained projects and adaptability for when requirements change. Another advantage for us
 is our team familiarity with the Agile process. The Agile principles of testing in the
 same phase as development will be highly beneficial for us to rapidly prototype our
 project.
@@ -27,16 +27,16 @@ management functionality to track progress and divide up the work. For each task
 needs to be done, we create a GitHub issue and assign a member of the team for that task.
 We have large meta-issues with many subtasks that are other issues. These meta-issues are
 used to keep track of our milestones. We link these meta-issues to a GitHub milestone,
-which is essentially a list of tickets linked with a target completion date. In edition to
-these large meta issues, we create issues for any tasks that come up during the
+which is essentially a list of tickets linked with a target completion date. In addition
+to these large meta issues, we create issues for any tasks that come up during the
 development process. This is an open process where any team member can create and assign
 issues as problems come up.
 
-We use the GitHub kanban board to get an overview of the process. The Kanban board is a
+We use the GitHub Kanban board to get an overview of the process. The Kanban board is a
 visualization of progress using three columns: one for the backlog, one for issues in
 progress, and issues that are completed. This makes it easier to know our overall
 progress, and where we should focus our attention to getting the project done in a timely
-manner. During our weekly sprint meetings, we look over the kanban board and decide which
+manner. During our weekly sprint meetings, we look over the Kanban board and decide which
 issues from the backlog to work on next.
 
 \subsubsection{Coding Conventions}
@@ -62,8 +62,8 @@ style, as we like the look of it the best.
 
 Developers are encouraged to write unit tests where appropriate. The code base for this
 project is rapidly changing, and new code will often break older code in unexpected ways.
-When code breaks, it slows other developers productivity, as they have to find out what
-went wrong, sometimes in code they have not dealed with. While writing unit tests itself
+When code breaks, it slows other developers' productivity, as they have to find out what
+went wrong, sometimes in code they have not dealt with. While writing unit tests itself
 costs development time, we hope that these unit tests will save more time overall, by
 preventing bugs that will have to be fixed later.  These unit tests will do sanity checks
 on small units of code to ensure proper functionality.
@@ -80,7 +80,7 @@ phase of the development cycle.
 
 With these testing steps, it will be easier to keep our code high quality, while still
 allowing for the rapid development we need to get this device operational within our
-timeframe. Additionally, developers will be able to write code with some assurance that
+time-frame. Additionally, developers will be able to write code with some assurance that
 their new code will not break other developers code, which would cause an interruption to
 both developers' productivity.
 
@@ -91,7 +91,7 @@ will be used for versioned releases of the software. Developers will mainly use 
 \url{develop} branch for rapid development, and use feature branches for big tasks that
 benefit from being developed separately from the \url{develop} branches. The reason for
 using a develop branch is to allow us to work efficiently with each other, while still
-keeping the main branch in a stable state. Everytime the code is in a stable state, ready
+keeping the main branch in a stable state. Every time the code is in a stable state, ready
 for a new version, the \url{develop} branch will be merged into the \url{main} branch.
 
 Initially we used the Git Flow approach, where each developer codes features and bug fixes
@@ -120,7 +120,7 @@ Any project centered around musicians or their instruments cannot avoid the term
 
 In a perfect world, the keys of any digital piano (also known as an electric keyboard, keyboard, or synthesizer) would feel, function, and look like an acoustic keyboard: if a player chooses to play a synthesizer, they have most likely played on an acoustic piano. Most keyboard players know that the tactile response of a key in any piano or synthesizer is important because it determines how each note reacts to the player’s touch. For example, lighter keys will respond more quickly to the touch, but will reduce the ease of creating a dynamic range in strike velocity compared to their heavier counterparts. Velocity-sensitive tension spring keys will provide a more uniform tension throughout the keystroke, while weighted keys are balanced on a “balance pin” that separates the user from its striking mechanism, shown in \textit{Figure \ref{fig:key_mechanism}}, and as a result varies in normal force as the key is pressed.
 
-In addition, each performer and use of the instrument plays a role in determining the desired preference of key feel. EDM or heavily synthesized music designers will care less about key feel because most of the work in writing this type of music, besides determining the melodic structure, will come in post production and adjusting the key inputs from the computer. On the opposite end of the spectrum, classically trained musicians will dramatically care about key feel because most of the work is dedicated to how they express the music through their performance.
+In addition, each performer and use of the instrument plays a role in determining the desired preference of key feel. EDM or heavily synthesized music designers will care less about key feel because most of the work in writing this type of music, besides determining the melodic structure, will come in post-production and adjusting the key inputs from the computer. On the opposite end of the spectrum, classically trained musicians will dramatically care about key feel because most of the work is dedicated to how they express the music through their performance.
 
 \begin{figure}[h!]
   \centering
@@ -132,7 +132,7 @@ In addition, each performer and use of the instrument plays a role in determinin
 On top of the key feel, the amount of keys available to the player has its own important role to the user and their desired end goal as well. To gather a better understanding, a single octave on a piano consists of twelve keys: seven white keys, and five black keys as shown in \textit{Figure \ref{fig:octave}}. A writer who is focused on beat making and synthesized music can craft most of their music with a single octave and the use of transposing that octave. A writer who is classically trained will most likely be adjusted to a standard 7 octave keyboard without the option of transposition. Weary of what will be possible for us, we used this information and decided our device should be modeled similarly to a professionally designed MIDI controller that is smaller than five octaves to keep the portability, but larger than one octave to provide a useful range to most players.
 
 \subsubsection{Key Size}
-Our key design was created by referencing two different electric keyboards: the \textit{Roland DP-90} and \textit{Arturia’s Keylab MkII - 61 key}. We chose to take our initial key measurements from these devices because our group has direct access to these and there are no official standardized key sizes. Although \textit{Figure \ref{fig:octave}} does not express the nuances in key design, there are six different key shapes that we have labeled: black, b, t, d, tb, and td, from the letter shapes they are most similar to. tb and tb are a hybrid of the t and b or t and d shape keys. The measurements taken from those devices are shown in \textit{Table \ref{Tab:key_dimensions}} .
+Our key design was created by referencing two different electric keyboards: the \textit{Roland DP-90} and \textit{Arturia’s Keylab MkII - 61 key}. We chose to take our initial key measurements from these devices because our group has direct access to these and there are no official standardized key sizes. Although \textit{Figure \ref{fig:octave}} does not express the nuances in key design, there are six different key shapes that we have labeled: black, b, t, d, tb, and td, from the letter shapes they are most similar to. tb and tb are a hybrid of the t and b or t and d shape keys. The measurements taken from those devices are shown in \textit{Table \ref{Tab:key_dimensions}}.
 
 \begin{table}[]
   \centering
@@ -156,23 +156,24 @@ Our key design was created by referencing two different electric keyboards: the 
       Key Separation (mm)     & 1.5          & 2           & 2          \\ \hline
       Trigger Angle (Degrees) & 6.972        & 8.296       & 5          \\ \hline
     \end{tabular}}
-  \caption{}
-  \label{Tab:key_dimensions}
+  \caption{Keyboard measurements.}
+  \label{tab:key_dimensions}
 \end{table}
 
 Our objective is to empower any creative or independent writer, so these devices were happily chosen in particular for their difference in range of use cases. The \textit{Roland DP-90} is designed such that it “performs and responds like a grand piano”, while the \textit{Keylab MkII} is designed as a “definitive MIDI controller keyboard ... a luxurious, expressive tool for your studio” . By taking measurements from two vastly different devices and noticing the minimal variation between their two key sizes, we were able to be confident that our key size choice would suffice. For the project, we chose to go with the cut-in and general measurements of the \textit{Keylab MkII} because the distance between each key was about 2 mm, compared to the 1.5 mm distance the \textit{DP-90} keeps. Since this project will be crafted without professional business assistance, we felt as much leeway to avoid collisions as possible would be beneficial. Additionally, we felt that using the smaller dimensions in key sizes would help reduce the overall form factor of the device and keep it as portable as possible.
 
 \subsubsection{Number of Keys}
 
-We chose to create a thirty-two key keyboard. We landed on this choice as a result of the following factors: first, when this device is in use we do not wish to limit our users to one octave. Our autocomplete AI is modeled from classical music and we understand that the input and output melodies will likely span over a wider range than one octave. We also recognize that this device is more useful in the post-production setting compared to a performance setting and therefore does not need the full seven octave range. Second, to keep the cost low and the form factor small, we wanted to keep the keys below three octaves. We are choosing to build this keyboard as a portable, stand-alone, robust piece of equipment and we believe our device should not cause struggle to carry around. With the measurements we took, each octave will accompany about 262 mm (10.315 inches) of space in keys alone. This means a thirty-two key keyboard is estimated to need 666 mm ($ \approx $ 2.185 ft) of lateral space in keys alone. We knew when multiplexing our signals that using a power of two for our set of inputs would be beneficial. A power-of-two inputs allows us to use the entirety of each multiplexor we implement. As a result, thirty-two keys provides a set of two and a half octaves and will utilize the entirety of each multiplexor without extending the keyboard to sixty-four keys, which is around five octaves. To compare, sixty-four keys would extend to 1290 mm ($ \approx $ 4.232 ft) and in our humble opinion, would no longer allow this device to be comfortably portable.
+We chose to create a thirty-two key keyboard. We landed on this choice as a result of the following factors: first, when this device is in use we do not wish to limit our users to one octave. Our autocomplete AI is modeled from classical music, and we understand that the input and output melodies will likely span over a wider range than one octave. We also recognize that this device is more useful in the post-production setting compared to a performance setting and therefore does not need the full seven octave range. Second, to keep the cost low and the form factor small, we wanted to keep the keys below three octaves. We are choosing to build this keyboard as a portable, stand-alone, robust piece of equipment and we believe our device should not cause struggle to carry around. With the measurements we took, each octave will accompany about 262 mm (10.315 inches) of space in keys alone. This means a thirty-two key keyboard is estimated to need 666 mm ($ \approx $ 2.185 ft) of lateral space in keys alone. We knew when multiplexing our signals that using a power of two for our set of inputs would be beneficial. A power-of-two inputs allows us to use the entirety of each multiplexor we implement. As a result, thirty-two keys provides a set of two and a half octaves and will utilize the entirety of each multiplexor without extending the keyboard to sixty-four keys, which is around five octaves. To compare, sixty-four keys would extend to 1290 mm ($ \approx $ 4.232 ft) and in our humble opinion, would no longer allow this device to be comfortably portable.
 
 \subsubsection{Key Functionality}
 
-In our application we are looking to distinguish which note is being pressed, the velocity that note was triggered, and which channel the device is communicating through. With the digital functionality of the key in mind, the physical key design only has to worry about how to communicate the velocity of the note to the Arduino, which will later be sent to the Pi. To be able to do this, we are using a two button trigger system for each key. As observed in \textit{Figure \ref{fig:key_mechanism}}, there are two rods extending from the bottom of the key of different lengths. In the full keyboard model, these rods are lined up with two silicone covered buttons, one of which is triggered at the start of the keystroke and the other is triggered near the conclusion of the keystroke. The difference in trigger time between the two buttons will determine the note velocity which is explained in greater detail from Section IDK YET .
+In our application we are looking to distinguish which note is being pressed, the velocity that note was triggered, and which channel the device is communicating through. With the digital functionality of the key in mind, the physical key design only has to worry about how to communicate the velocity of the note to the Arduino, which will later be sent to the Pi. To be able to do this, we are using a two button trigger system for each key. As observed in \textit{Figure \ref{fig:key_mechanism}}, there are two rods extending from the bottom of the key of different lengths. In the full keyboard model, these rods are lined up with two silicone covered buttons, one of which is triggered at the start of the keystroke and the other is triggered near the conclusion of the keystroke. The difference in trigger time between the two buttons will determine the note velocity.
 
 After basic functionality, our next concern is key feel. With the time allotted for this project, what is possible to craft at this level of expertise, and our desire for ease of portability, it is obvious from observing \textit{Figure \ref{fig:key_mechanism}} that we will not attempt to replicate the full counter-weighted key design. To keep costs low and durability high, we are also avoiding any semi-weighted keys or the usual expensive key material such as ivory or wood. By utilizing 3D printed plastics, we are able to create custom, robust designs at a cheaper cost than the alternatives.
 
-INSERT COST OF MATERIAL AND STRENGTH OF MATERIAL TABLE
+% INSERT COST OF MATERIAL AND STRENGTH OF MATERIAL TABLE
+% This would be a good thing to include to get the page count up
 
 To provide the actuation action for the key itself, we will be using tension springs to hold the key in place as it sits on a lever.
 
@@ -193,7 +194,7 @@ An associate of the team built the 3D printer we will be putting to use. Due to 
 
 The enhanced acceleration control as well as the jerk reduction are important parameters for the speed of the print. We will be sharing this printer with other groups and since we plan to print possibly more than thirty-one keys, the key rail configurations, and the electronics housing, it is important to make sure the prints will be executed accurately and produced in time to be added to the prototype. The enhanced acceleration control allows the device to change velocity with more precision and boost our confidence to ramp up the speed of the print where at all possible. As a result of attempting more speedy prints, the jerk, or change in acceleration, needed to be monitored more greatly as well. With the new control board, reducing the jerk and altering the extrusion rate of the filament with the newly enhanced parameters is finally possible. In addition to these parameters, the new board can signal using square waves as an output. This means the data that we are sending and monitoring is more consistent and reliable. All together, this means faster prints with a smaller rate of failure compared to the previous board.
 
-In addition to the hardware that boosts the software, this device is equipped with 2209 Stepper motor drivers which replaced the original drivers to add more smooth and consistent nozzle travel. The nozzle has also been replaced with an upgraded hot end titanium heatbreak nozzle that is designed to prevent heat creep. This is important when printing multiple prints in rapid succession to prevent any overheating or inconsistent filament extrusion. This also means that the printer can print twenty-four hours a day and seven days a week without a high risk of print failure.
+In addition to the hardware that boosts the software, this device is equipped with 2209 Stepper motor drivers which replaced the original drivers to add smoother and consistent nozzle travel. The nozzle has also been replaced with an upgraded hot end titanium heatbreak nozzle that is designed to prevent heat creep. This is important when printing multiple prints in rapid succession to prevent any overheating or inconsistent filament extrusion. This also means that the printer can print twenty-four hours a day and seven days a week without a high risk of print failure.
 
 The hardware Z-axis lead screw has also been replaced from four-hundred steps per millimeter to 1600 steps per millimeter, increasing the accuracy of layer size and decision variation. This device can print anything smaller than 220x220x400 mm, a line width that can be altered from .2 mm to .8 mm with as small as +/-.15 mm tolerance, and customizable infill percentages.
 
@@ -214,7 +215,7 @@ Next we can see the functional aspects of the design. Below the 28.73 mm 20 degr
 
 In the first iteration, the almost complete circle to the far left is five millimeters in diameter. This will be touched on later in this design section of the document. Above that circle is a divot, in the shape of an upside trapezoid, five millimeters at the base with 45 degree inclines to the top of the key. This divot is used to allow the cover of the keyboard to not only keep help guide the key and keep it in place, but also to once again prevent the user from clearly seeing the electronics hidden inside the full device. Finally, on the far top left of the key is a 3x2x5mm hole designed to hook onto the tension springs that help provide the pull-back of the actuation. Each natural key has the exact same cut-in values as given in \textit{Table \ref{Tab:key_dimensions}}.
 
-Next in the first iteration of key designs is the non-natural key, or black key, named after the sharp and flat notes these keys trigger. From a design standpoint, it is helpful that all of the non-natural keys share the same structure. To begin, the guiding plane and size of the connecting platform have the same measurements of the natural keys, fifteen millimeter plane and a ten millimeter platform. The divot, the hole beneath the divot, and the extruded cut where the spring attaches all have the same measurements as the natural keys as well. The original design has a playable length of 120.71 mm. Due to the shorter playing length and same guiding plane length, the actuation of the keys has been approximated to be around 15 degrees, compared to the 10 degree actuation of the natural keys. This key does not need any tip as a tip could obstruct any transition the player may have switching from the non-natural keys to the natural keys, instead the tip of the non-natural key has a 15 degree chamfer on all sides to allow the fingers to slide from the elevated top of the non-natural key to the lower natural keys. As a result, the top of the key is thinner than the base, as is expected from the measurements taken in Table 1. To gather a better understanding, the base of the key is the section which aligns with the elevation of the natural keys, while the tip elevates ten millimeters above the key. Between the base and the tip is what makes up the key itself.
+Next in the first iteration of key designs is the non-natural key, or black key, named after the sharp and flat notes these keys trigger. From a design standpoint, it is helpful that all the non-natural keys share the same structure. To begin, the guiding plane and size of the connecting platform have the same measurements of the natural keys, fifteen millimeter plane and a ten millimeter platform. The divot, the hole beneath the divot, and the extruded cut where the spring attaches all have the same measurements as the natural keys as well. The original design has a playable length of 120.71 mm. Due to the shorter playing length and same guiding plane length, the actuation of the keys has been approximated to be around 15 degrees, compared to the 10 degree actuation of the natural keys. This key does not need any tip as a tip could obstruct any transition the player may have switching from the non-natural keys to the natural keys, instead the tip of the non-natural key has a 15 degree chamfer on all sides to allow the fingers to slide from the elevated top of the non-natural key to the lower natural keys. As a result, the top of the key is thinner than the base, as is expected from the measurements taken in \autoref{tab:key_dimensions}. To gather a better understanding, the base of the key is the section which aligns with the elevation of the natural keys, while the tip elevates ten millimeters above the key. Between the base and the tip is what makes up the key itself.
 
 \begin{figure}[h!]
   \centering
@@ -232,7 +233,7 @@ The first iteration of the key rail and base was intended to be a completely 3D 
   \label{fig:base_model1}
 \end{figure}
 
-To allow an appropriate prototype test, I first chose to simulate the assembly with collision detection enabled. Luckily, while all keys were in their starting position, no collisions were detected. Sadly, when some keys were actuated, the simulate responded with a collision report. It was difficult, at first, to determine where the collisions were occurring. In some settings, it was evident that certain collisions only occurred when the keys were placed in positions that would not be possible in the final assembly and actual implementation of the device. In other cases, the collisions could not be easily seen in the model. Due to this, I decided to run a test print of some of the pieces present. I figured I would not need the entire model to determine where the problems were occurring as the difference in model pieces were not drastic.
+To allow an appropriate prototype test, I first chose to simulate the assembly with collision detection enabled. Luckily, while all keys were in their starting position, no collisions were detected. Sadly, when some keys were actuated, the simulation responded with a collision report. It was difficult, at first, to determine where the collisions were occurring. In some settings, it was evident that certain collisions only occurred when the keys were placed in positions that would not be possible in the final assembly and actual implementation of the device. In other cases, the collisions could not be easily seen in the model. Due to this, I decided to run a test print of some of the pieces present. I figured I would not need the entire model to determine where the problems were occurring as the difference in model pieces were not drastic.
 
 \begin{figure}[h!]
   \centering
@@ -268,7 +269,7 @@ The results of the model are shown in \textit{Figure \ref{fig:print1}} below.
   \label{fig:print1}
 \end{figure}
 
-At first glance, the model seemed really well produced. The results of the different tolerances for the connecting circular cut to rail are as follows. With a .15 mm tolerance, as exemplified from the non-natural keys, the keys snapped into place and connected with the keyrail. At a .3 mm tolerance, the t-key was able to slide, but with resistance. At a .45 mm tolerance, the b-key was able to slide with ease. Luckily, the .45 mm tolerance did not make the b-key feel shaky or disconnected from the rail which was an issue we hoped to avoid and learn about through this test. From this test, we knew that moving forward with a .45 mm tolerance was our best bet. The major issue with this test is that the rail itself is not perfectly round because it is constructed of linear layers and, although it provides a good idea for the final model, is not the best example of how rotational tolerances should be designed. This is addressed in Iteration Three of the prototype.
+At first glance, the model seemed really well produced. The results of the different tolerances for the connecting circular cut to rail are as follows. With a 0.15 mm tolerance, as exemplified from the non-natural keys, the keys snapped into place and connected with the keyrail. At a 0.3 mm tolerance, the t-key was able to slide, but with resistance. At a 0.45 mm tolerance, the b-key was able to slide with ease. Luckily, the 0.45 mm tolerance did not make the b-key feel shaky or disconnected from the rail which was an issue we hoped to avoid and learn about through this test. From this test, we knew that moving forward with a 0.45 mm tolerance was our best bet. The major issue with this test is that the rail itself is not perfectly round because it is constructed of linear layers and, although it provides a good idea for the final model, is not the best example of how rotational tolerances should be designed. This is addressed in Iteration Three of the prototype.
 
 \begin{figure}[h!]
   \centering
@@ -288,7 +289,7 @@ After toying with the model for some time, a few issues were brought to light. T
 
 The next minor fault was with the quality of the print. Due to the chamfered edges of the non-natural keys and the way the model was designed, the key needed support material between the base and the tip of the key. This support material, when removed, caused a rough edge to the key itself, shown in \textit{Figure \ref{fig:print3}}.  To fix this, our team debated a few different ideas. First, we thought about restructuring the key itself and removing the chamfer such that the key could print in a different orientation. This would be additionally helpful because it would allow the key to be printed from the top of the key down, meaning the top plane would be placed on the printing bed leading to a smoother key texture where the user plays. The biggest downside to this idea is that the key would lose its gradual shape from the top of the key and make the key itself look and feel more blocky to the player.
 
-An alternate idea, rather than changing the model, is to simply add a thin layer of epoxy resin to the surface of the key to create that smooth key feel the player will desire. This eliminates the option of a blocky key, but also adds additional work on our end and may cause an uneven surface finish. Another alternative idea is to manufacture these non-natural keys at a professional 3D printing company. This idea has already been debated by the team before the model was even completed, but comes with its own problems of shipping time and extra cost. These alternatives will be discussed and finalized in SECTION IDK YET.
+An alternate idea, rather than changing the model, is to simply add a thin layer of epoxy resin to the surface of the key to create that smooth key feel the player will desire. This eliminates the option of a blocky key, but also adds additional work on our end and may cause an uneven surface finish. Another alternative idea is to manufacture these non-natural keys at a professional 3D printing company. This idea has already been debated by the team before the model was even completed, but comes with its own problems of shipping time and extra cost.
 
 Continuing with the non-natural key, another issue reared its ugly head: actuation interference. Since the non-natural keys were designed to be only 3 mm shorter than the natural keys, the natural keys were unable to actuate fully without coming in contact with the guiding plane of the non-natural keys and stopping the actuation of the natural keys. The length of one or the other needed to change and this is discussed in Iteration Three of the prototype.
 
@@ -313,7 +314,7 @@ As the reader may notice, there are many references from the first iteration to 
 
 \textbf{Iteration Three}
 
-From the results of Iteration One and Iteration Two we decided to alter the length of the non-natural keys to prevent actuation interference between the non-natural and the natural keys. In this design, the non-natural key is 72 mm in base length and 69 mm in tip length. Although this design decreases the length of the non-natural key by about 10%, we figured this difference would not be an issue as there are no standardized key lengths and this is a collegiate level project. Obviously the base and key-rail design needed to account for this change, but this is not the only change which helped develop this model into the third iteration.
+From the results of Iteration One and Iteration Two we decided to alter the length of the non-natural keys to prevent actuation interference between the non-natural and the natural keys. In this design, the non-natural key is 72 mm in base length and 69 mm in tip length. Although this design decreases the length of the non-natural key by about 10\%, we figured this difference would not be an issue as there are no standardized key lengths and this is a collegiate level project. Obviously the base and key-rail design needed to account for this change, but this is not the only change which helped develop this model into the third iteration.
 
 \textit{Figure \ref{fig:base_model3}} shows the file KeyRail3b.SLDPRT. It is obvious when compared to the first iteration that many changes occurred. The comparison of the two versions can be seen in \textit{Figure \ref{fig:base_model2}}.
 
@@ -333,7 +334,7 @@ The first major change in iteration three compared to that of iteration one is t
   \label{fig:base_model3}
 \end{figure}
 
-Furthermore, discussing the width of the holes for the springs to attach, we have reduced the width from five millimeters to 2.5 mm on both the keyrail base and the keys themselves. This thinner design will allow the springs to hook around the plastic, through the holes, and prevent slipping of the springs. From the test which we observed the different tolerances of the key rail connection to the keys, we have decided to allow a .15 mm diameter tolerance for the metal rod to snap into the chassis. This model, seen in \textit{Figure \ref{fig:base_model3}}, also features a 5 mm wide platform raised 21.83 mm from the base behind the rail itself to prevent the key from rotating past the horizontal plane in the opposite direction. We also changed the support which holds the rod from a 2.5x2 mm pole to a 2x8 mm pole to increase structural integrity. Although, when viewing the keyboard from the players perspective, there is less support in the x axis for these poles, there is significantly more support in the z direction which is where more of the force of the player will be applied. In addition, because we are using a stainless steel rod in the x direction, our device should have more than enough support to operate under normal playing conditions easily.
+Furthermore, discussing the width of the holes for the springs to attach, we have reduced the width from five millimeters to 2.5 mm on both the keyrail base and the keys themselves. This thinner design will allow the springs to hook around the plastic, through the holes, and prevent slipping of the springs. From the test which we observed the different tolerances of the key rail connection to the keys, we have decided to allow a 0.15 mm diameter tolerance for the metal rod to snap into the chassis. This model, seen in \textit{Figure \ref{fig:base_model3}}, also features a 5 mm wide platform raised 21.83 mm from the base behind the rail itself to prevent the key from rotating past the horizontal plane in the opposite direction. We also changed the support which holds the rod from a 2.5x2 mm pole to a 2x8 mm pole to increase structural integrity. Although, when viewing the keyboard from the players perspective, there is less support in the x axis for these poles, there is significantly more support in the z direction which is where more of the force of the player will be applied. In addition, because we are using a stainless steel rod in the x direction, our device should have more than enough support to operate under normal playing conditions easily.
 
 \begin{figure}[h!]
   \centering
@@ -439,7 +440,7 @@ The cover or front panel of this device is 483x196.5 mm. There is absolutely no 
   \label{fig:display_model}
 \end{figure}
 
-In the center of the front panel is a 149 mm by 107 mm hole to house the seven inch capacitive touchscreen display. To the right of the display slot is a 5 x 75 mm slot designed to house the sliding potentiometer which will be used to control the volume of the device. Below the screen are the two holes where the octave up and octave down buttons will be placed and in the button left of the cover is where the audio jack for the user’s headphones to plug in will be installed.
+In the center of the front panel is a 149 mm by 107 mm hole to house the seven-inch capacitive touchscreen display. To the right of the display slot is a 5 x 75 mm slot designed to house the sliding potentiometer which will be used to control the volume of the device. Below the screen are the two holes where the octave up and octave down buttons will be placed and in the button left of the cover is where the audio jack for the user’s headphones to plug in will be installed.
 
 Since the user interface will be controlled by a touch sensitive screen, we placed the slot equally spaced from the left and right of the cover to be able to equally treat left and right handed individuals. All the buttons and potentiometers surround closely as well for ease of use. The headphone jack was placed in its location because many over-ear headphone companies produce headphones with the wire extending from the left ear in hopes to avoid obstructing the right hand, which is the majority of the population’s dominant hand. Ultimately, everything needed a place and we felt these locations were the best fit.
 
@@ -471,7 +472,7 @@ time. Additionally, this decision expedited the debugging process by removing th
 the full Electron application every time we wished to monitor the progress of the build. Instead,
 we could simply locate the HTML file in out directory and open it in a browser with a single click.
 
-The first step in constructing the DAW was to establish all of the static elements, which include
+The first step in constructing the DAW was to establish all the static elements, which include
 the piano roll (which is displayed inside a horizontally-scrolling container), the guide keys, and
 the menu buttons.
 
@@ -494,7 +495,7 @@ which established the appropriate pattern of black and white key items and set a
 one pixel between each key. The key items were then added as rectangular DIV objects with the
 appropriate background color and a standard height of ten pixels. The guide keys were assigned an
 additional class called "keys," which gave them a set width. Text was added in the center of each
-DIV, labelling it by note. The piano roll was assigned the additional class "roll," which lowered
+DIV, labeling it by note. The piano roll was assigned the additional class "roll," which lowered
 the opacity of the stripes to allow for better readability. The roll class also gave the piano roll
 the absolute position attribute which allowed it to scroll within the scroll container.
 
@@ -514,13 +515,13 @@ interaction. Depending on which of these buttons is selected, the users will be 
 between adding, deleting, moving, and stretching the notes on the roll. There are also play and
 stop buttons that control playback, and a quantization button that can change the size and
 positions the notes will snap to when editing. There is one additional button not included among
-the menu buttons. This button exists on the far right of the piano roll, labelled with a plus sign.
+the menu buttons. This button exists on the far right of the piano roll, labeled with a plus sign.
 It allows users to extend the piano roll so that they may create a longer melody.
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/Static.png}
-  \caption{A snapshot of the static assets of the DAW, the piano roll is empty}
+  \caption{A snapshot of the static assets of the DAW, the piano roll is empty.}
   \label{fig:static}
 \end{figure}
 
@@ -538,7 +539,7 @@ displayed at the standard size but with inverted colors.
   \includegraphics{image/StdUI.png}
   \includegraphics{image/HoverUI.png}
   \includegraphics{image/DisabledUI.png}
-  \caption{A sample of the styling of the menu buttons in their standard, hover, and disabled states respectively}
+  \caption{A sample of the styling of the menu buttons in their standard, hover, and disabled states respectively.}
   \label{fig:ui_variations}
 \end{figure}
 
@@ -560,21 +561,21 @@ immediately snap to the same units, as demonstrated in \textit{Figure \ref{fig:t
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/TwinkleOriginal.png}
-  \caption{A piano roll displaying the default \textit{Twinkle, Twinkle, Little Star} melody}
+  \caption{A piano roll displaying the default \textit{Twinkle, Twinkle, Little Star} melody.}
   \label{fig:twinkle_original}
 \end{figure}
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/TwinkleQuantized.png}
-  \caption{The same melody, now quantized to snap to half-note intervals}
+  \caption{The same melody, now quantized to snap to half-note intervals.}
   \label{fig:twinkle_quantized}
 \end{figure}
 
-The drop-down menus were achieved by adding a vertically-scrolling div containing all of the menu
+The drop-down menus were achieved by adding a vertically-scrolling div containing all the menu
 options positioned so that the top option layers exactly over the button. This div has an initial
 display attribute of “none,” so although all of its styling and position data are active, it is
-neither visible for interactable. Pressing the button sets the menu display attribute to “block,”
+neither visible nor interactable. Pressing the button sets the menu display attribute to “block,”
 which causes the menu to appear over the button and allows the user to interact. Clicking on a menu
 item will update the piano roll settings and reset the menu display to “none,” making it disappear
 and leaving only the button which will then be displaying the selected menu item.
@@ -582,7 +583,7 @@ and leaving only the button which will then be displaying the selected menu item
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.4\linewidth]{image/Dropdowns.png}
-  \caption{The expanded drop-down elements}
+  \caption{The expanded drop-down elements.}
   \label{fig:dropdowns}
 \end{figure}
 
@@ -631,7 +632,7 @@ Because the vertical position is measured in the number of pixels between the to
 window and the top of the element, the first section of this formula $ (height_{note} + keygap) * 23 $
 establishes that the search for the vertical position is based 23 keys from the top, which is
 the lowest key on a two-octave keyboard. The second section $ (pitch_{note} -  60) * (height_{note} + keygap) $
-shows that the base pitch is 60, and that the note's height above the the base key will be
+shows that the base pitch is 60, and that the note's height above the base key will be
 proportional to the difference between the note's pitch and the base pitch in units equal to the
 key height (maintaining the key gap in between).
 
@@ -646,8 +647,8 @@ formula:
 
 The multiplication of the start time by 60 and subsequent division by the playback tempo
 establishes the ratio between one second and one whole note. So through this, the number of
-seconds is translated into a number of whole notes, and the final multiplication by 64 - the width
-of a whole note - places the note at the corresponding beat on the piano roll.
+seconds is translated into a number of whole notes, and the final multiplication by 64 -- the width
+of a whole note -- places the note at the corresponding beat on the piano roll.
 
 The width of the note is similarly calculated based on the start time, end time, and tempo:
 
@@ -665,7 +666,7 @@ lengths, and this is translated into the width of the note in pixels.
 Once the visual layout of the DAW had been established, we added interactivity in JavaScript. The
 first function implemented was editing the note sequence by moving the notes, because this is
 arguably the most used and therefore most important feature of a DAW. At this phase of development,
-the methods of input were yet unknown - we intended to either use a single-touch touch screen or a
+the methods of input were yet unknown -- we intended to either use a single-touch touch screen or a
 cursor controlled by arrow keys. The important thing to consider about how this affects UI design
 is that moving an element in a 2D space requires a decent degree of freedom in the user inputs.
 Single-touch touchscreens and arrow key cursors both provide limited input, but each lending to a
@@ -699,14 +700,14 @@ and proceeds to reactivate all other notes and buttons and revert the selected n
 function to null.
 
 \begin{align} \label{move_horz}
-  left_{note} = &\max(0,                                                                                               \\
-                & \min(left_{expand\:btn} - width_{note},                                                              \\
+  left_{note} = & \max(0,                                                                                                \\
+                & \min(left_{expand\:btn} - width_{note},                                                                \\
                 & x_{cursor} - (width_{guide\:keys} + left_{guide\:keys} - scroll) - \frac{width_{note}}{2})) \;pixels &
 \end{align}
 
 \begin{align} \label{move_vert}
-  top_{note} = &\max(0,                                                             \\
-               & \min(23 * (height_{note} + key\:gap),                              \\
+  top_{note} = & \max(0,                                                              \\
+               & \min(23 * (height_{note} + key\:gap),                                \\
                & y_{cursor} - top_{piano\:roll} - \frac{width_{note}}{2})) \;pixels &
 \end{align}
 
@@ -722,7 +723,7 @@ by accidentally dragging it outside of the piano roll and forgetting that it is 
 The second line of each equation serves the same purpose as the first, but this time setting the
 bounds to the right and bottom of the piano roll, respectively. The first equation uses the left
 border of the expand button as its right-most extreme. It also subtracts the width of the note
-because this attribute sets the location of the left border of the note, so the prevent even part
+because this attribute sets the location of the left border of the note, so to prevent even part
 of the note from going out of bounds, we must account for the whole length of the note. The second
 equation uses $ 23*(height_{note} + key\: gap) $ as its minimum because that spaces the top of the
 note 23 keys from the top. As we established in the initial loading of the notes, this is where the
@@ -732,7 +733,7 @@ The third line of each equation moves the note to be centered under the cursor. 
 subtracts $ (width_{guide\:keys} +left_{guide keys} - scroll) $ from the cursor’s x position because
 the cursor position is read in relation to the application window, but the note position is set in
 relation to the piano roll. The sum of the guide key width and left position sets the base at the
-right border of the guide keys - right where the scroll container starts. Then subtracting the
+right border of the guide keys -- right where the scroll container starts. Then subtracting the
 horizontal scroll of the piano roll counters the piano roll’s offset relative to the scroll
 container. Finally, half the width of the note is subtracted to put the cursor over the center. The
 second equation accounts for the piano roll offset by subtracting the roll’s top position, then
@@ -774,8 +775,8 @@ function returns to null and all other buttons are enabled once again.
 This function also uses similar math to determine the note’s new width.
 
 \begin{align} \label{stretch}
-  width_{note} = &\max( 64 * quantization,                                                          \\
-                 & \min(left_{expand\:btn} - left_{note},                                           \\
+  width_{note} = & \max( 64 * quantization,                                                           \\
+                 & \min(left_{expand\:btn} - left_{note},                                             \\
                  & x_{cursor} - (left_{note} + width_{guide\:keys} + left_{guide\:keys}))) \;pixels &
 \end{align}
 
@@ -856,7 +857,7 @@ tempo-to-time conversions to determine the duration.
 \paragraph{Reset}
 
 The reset function loads the saved state and converts the MIDI data back into a piano roll
-configuration. To start, it deletes all of the existing notes. Then it simply repopulates the piano
+configuration. To start, it deletes all the existing notes. Then it simply repopulates the piano
 roll using the same steps the application originally used to convert the default melody when it was
 initially opened.
 
@@ -884,7 +885,7 @@ undo function is called.
 
 \paragraph{Expand}
 
-The expand button is the button at the end of the piano roll labelled simply with a “+.” Clicking
+The expand button is the button at the end of the piano roll labeled simply with a “+.” Clicking
 this button edits the piano roll attribute to increase its width by 256 pixels. This pixel width
 is equal to four whole notes, or one bar of music.
 
@@ -907,7 +908,7 @@ for A4) and 440. This sequence of operations represent moving the base to A4, an
 MIDI units to frequency units. The 12 represents semitonal units, so the division of 12 shows the
 difference in pitch is being converted to some number of semitones above A4. The base 2 is a
 conversion to the number of octaves above A4. As we saw in the research section on harmonics, the
-frequency difference between octaves of the same note is not constant. Instead octave frequencies
+frequency difference between octaves of the same note is not constant. Instead, octave frequencies
 increase exponentially by base 2.
 
 Once the frequency of the oscillator is set, it is scheduled to start and stop directly according
@@ -947,7 +948,7 @@ functionality and try to find edge cases by using unconventional methods.
 \subsubsection{DAW}
 
 After receiving feedback from our test group, we have found that the overall look and feel of the
-DAW has achieved sufficient polish. The UI design is clean and the fluidness of interactions is
+DAW has achieved sufficient polish. The UI design is clean and the fluidity of interactions is
 comparable to other simple browser-based DAWs, such as Soundtrap.
 
 \begin{figure}[h!]
@@ -983,7 +984,7 @@ show where each quarter-/half-/whole-note increment lies, similar to what Soundt
 \begin{figure}[h!]
   \centering
   \includegraphics{image/Scroller.png}
-  \caption{An example of a DAW time scroller}
+  \caption{An example of a DAW time scroller.}
   \label{fig:scroller}
 \end{figure}
 
