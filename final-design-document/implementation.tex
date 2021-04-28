@@ -458,6 +458,7 @@ When all the parts are connected and in place, the intended design of the body c
   \caption{}
   \label{fig:final_model2}
 \end{figure}
+\clearpage
 
 \subsubsection{DAW: Static}
 
@@ -698,15 +699,15 @@ and proceeds to reactivate all other notes and buttons and revert the selected n
 function to null.
 
 \begin{align} \label{move_horz}
-  left_{note} = \max( & 0,                                                                                                     \\
-                      & \min(left_{expand\:btn} - width_{note},                                                                \\
-                      & x_{cursor} - (width_{guide\:keys} + left_{guide\:keys} - scroll) - \frac{width_{note}}{2})) \;pixels &
+  left_{note} = &\max(0,                                                                                               \\
+                & \min(left_{expand\:btn} - width_{note},                                                              \\
+                & x_{cursor} - (width_{guide\:keys} + left_{guide\:keys} - scroll) - \frac{width_{note}}{2})) \;pixels &
 \end{align}
 
 \begin{align} \label{move_vert}
-  top_{note} = \max( & 0,                                                                   \\
-                     & \min(23 * (height_{note} + key\:gap),                                \\
-                     & y_{cursor} - top_{piano\:roll} - \frac{width_{note}}{2})) \;pixels &
+  top_{note} = &\max(0,                                                             \\
+               & \min(23 * (height_{note} + key\:gap),                              \\
+               & y_{cursor} - top_{piano\:roll} - \frac{width_{note}}{2})) \;pixels &
 \end{align}
 
 This first set of equations are used to move the note along with the cursor. In the following
@@ -773,9 +774,9 @@ function returns to null and all other buttons are enabled once again.
 This function also uses similar math to determine the note’s new width.
 
 \begin{align} \label{stretch}
-  width_{note} = \max( & 64 * quantization,                                                                 \\
-                       & \min(left_{expand\:btn} - left_{note},                                             \\
-                       & x_{cursor} - (left_{note} + width_{guide\:keys} + left_{guide\:keys}))) \;pixels &
+  width_{note} = &\max( 64 * quantization,                                                          \\
+                 & \min(left_{expand\:btn} - left_{note},                                           \\
+                 & x_{cursor} - (left_{note} + width_{guide\:keys} + left_{guide\:keys}))) \;pixels &
 \end{align}
 
 Once again, the first line uses a $ \max $ function to set the minimum extreme. The smallest a note

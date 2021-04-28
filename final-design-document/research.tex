@@ -50,6 +50,14 @@ forms, is highly subjective. There are no universal rules for right or wrong, an
 same time there are combinations of sound that could (almost) universally be considered bad music.
 So how does a computer decide what factors will most likely lead to a good melody?
 
+For the most part, it would be reasonable to say we could evaluate the AI outputs simply by how it
+“feels.” After all, the general point of music is to sound pleasing, and even without music
+education most people have at least some innate sense of what does and does not work melodically.
+However, for the sake of setting benchmarks of improvement, it is better to establish some basis of
+measurement. The following subsections will explore some concepts on the basics of melody
+construction that can be compiled into a sort of checklist of characteristics that we should strive
+for in our output.
+
 To start, the generally agreed upon definition of melody is that it is the linear succession
 of musical tones, with its primary components being pitch and rhythm. Occasionally, it also
 encompasses tonal color and other factors of expression.\autocite{melody} In music theory, parts
@@ -155,11 +163,12 @@ musical phrase on the tonic of the key.
 \end{table}
 
 Basically, in a roundabout way, we've affirmed a fairly core and commonly known principle of
-melody writing: resolve to the root. However, this is not the only way in which interval patterns
-and the Harmonic series are used to determine consonance. Octaves are not actually the only case to
-which the Lipps-Meyers law applies. Melodic intervals can be simplified the same was fractions can.\autocite{intervals}
-So then, an interval of 9:6, which correlate to the major second and major fifth respectively, could
-also be written as 3:2 and therefore follows the Lipps-Meyers law.
+melody writing: you can almost always resolve to the root. However, this is not the only way in
+which interval patterns and the Harmonic series are used to determine consonance. Octaves are
+not actually the only case to which the Lipps-Meyers law applies. Melodic intervals can be
+simplified the same was fractions can.\autocite{intervals} So then, an interval of 9:6, which
+correlate to the major second and major fifth respectively, could also be written as 3:2 and
+therefore follows the Lipps-Meyers law.
 
 Another theory on the relationship between harmonics and dissonance was proposed by physicist
 Herman von Helmholtz, who posited that the "beats" created by the resonance of two tones which are
@@ -428,16 +437,75 @@ limits of the MIDI controller, any modern device that is suited for a browser wi
 inherently be able to run the MIDI autofill software as well.
 
 We experimented with several options for a UI-building environment. Our first consideration was
-React. Considering our group's familiarity with JavaScript as well as HTML and similar markup
-languages, it would be easier to pick up. Electron offered a similar level of convenience, but with
-an added implementation of Node.js that would make our code more modular. Another strong candidate
-was Google's Flutter. Flutter's default stylization is sleek and fits in well with the modern
-aesthetic of technology. Plus, its widgets allow for more polish on a UI that also has more niche
-functionality.
+React, a JavaScript library for app development. One of the appealing features of React was that
+not only do the programs operate on an object-oriented basis, but the functionality of the
+application shell is also very object-oriented. This makes more flexible functionality simpler to
+achieve. For example, the render function allows the programmer to merge HTML and JS elements so
+they can add reactivity to the markup elements without having to repeatedly alter the properties
+in JS code.
 
-Our frontrunners after all options had been proposed were Electron and Flutter. Utlimately it was
-our hardware constraints that pointed us toward Electron because the HTML and JavaScript
-application was the most likely to be compatible to run on the Raspberry Pi.
+\begin{lstlisting}[language=JavaScript, caption={A simple program made to test React during the
+selection process; it focuses on demonstrating how React automatically updates the HTML layer},
+label=lis:react]
+class ChangeFruit extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = { seconds: 0, fruit: "apple" };
+  }
+
+  // updates params
+  tick() {
+    var fruits = ["apple", "banana", "orange"]
+    this.setState(state => ({
+      seconds: state.seconds + 1,
+      fruit: fruits[state.seconds % 3]
+    }));
+  }
+
+  // sets params to update every second (1000 milliseconds)
+  componentDidMount() {
+    this.interval = setInterval(() => this.tick(), 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  // markup template
+  render() {
+    return (
+      <div>
+        I like {this.state.fruit}s.
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <ChangeFruit />,
+  document.getElementById('react-example')
+);
+\end{lstlisting}
+
+However, its major downside is that as a new library, it implements a lot of functions and
+techniques our team are not familiar with in the core functionality of the program. While it would
+be possible to come to understand these concepts through trial and reading documentation, as
+mentioned in \textbf{\ref{sec:constraints} \nameref{sec:constraints}}, our choices are motivated by
+what is achievable on a strict timeline. For a project as complex as we plan to develop, it would
+be better to use a tool we have better mastery with.
+
+Our second consideration was Electron, a desktop app development API that’s based on website-style
+design. As many of our team members have encountered projects involving web development, this
+option was much more viable to learn at a proficient level. For the most part, the website
+functionality remains the same, but porting it into an Electron shell converts it into an
+application.
+
+Another strong candidate was Google’s Flutter. Flutter’s default stylization is sleek and fits in
+well with the modern aesthetic of technology. Plus, its widgets allow for more polish on a UI that
+also has more niche functionality. Our frontrunners after all options had been proposed were
+Electron and Flutter, but ultimately it was our hardware constraints that pointed us toward
+Electron because the HTML and JavaScript application was the most likely to be compatible to run on
+the Raspberry Pi.
 
 As established in \textbf{\ref{sec:daw} \nameref{sec:daw}}, the primary aspect of the UI
 will be the piano roll display. The frontend will be responsible for reading the MIDI
