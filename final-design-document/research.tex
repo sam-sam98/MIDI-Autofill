@@ -660,6 +660,34 @@ will allow us to ensure that the OS build is working before merging any new code
 upstream. This should give us the confidence to work on the code without fear that we will
 break the Raspberry Pi image builds every time.
 
+\subsubsection{GPIO}
+
+The Raspberry Pi includes a series of pins along the top of the device, known as GPIO
+(general-purpose input/output). These pins allows for the Pi to interface with other
+electronics. The pins serve different purposes, with some of the pins having very specific
+uses and others being generic. The purposes of these pins are visible in
+\autoref{fig:gpio}. There are two rows of pins, one for input and one for output, with 20
+pins each, making for a total of 40 pins. This makes the Raspberry Pi a flexible device
+that is suitable for many projects involving electronics.
+
+\begin{figure}
+  \centerline{ \includegraphics[width=\linewidth]{image/gpio.png} }
+  \caption{A diagram showing the GPIO pins and their purposes \autocite{gpio}}
+  \label{fig:gpio}
+\end{figure}
+
+These pins are easy to interface with in software. There is a JavaScript library
+that we will use for interfacing with GPIO called \url{rpi-gpio}. This library makes it
+trivial to read and write data to and from these pins using simple function calls.
+
+We will be using the GPIO pins extensively for the project for the following tasks:
+
+\begin{itemize}
+  \item Key presses
+  \item Key releases
+  \item Volume control
+\end{itemize}
+
 \subsubsection{Performance}
 
 Performance is always a concern when dealing with constrained embedded hardware. The
