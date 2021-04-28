@@ -11,8 +11,8 @@ this project we are primarily concerned with note ON/OFF and the timing clock. T
 ON/OFF tells which notes are playing during a certain event and at what velocity. The
 timing clock keeps track of when each event is scheduled to occur.
 
-Between these two features we can determine pitch, timing, and expression - the three
-components of a note which determine whether or not it is melodic in context.
+Between these two features we can determine pitch, timing, and expression -- the three
+components of a note which determine whether it is melodic in context.
 
 \subsubsection{DAW}
 \label{sec:daw}
@@ -25,13 +25,13 @@ foundation of the piano roll is a set of rows, each one representing a piano key
 corresponding note. The horizontal axis represents the timing clock data. For each note
 that plays in the MIDI, the piano roll displays a colored bar located in the row of the
 corresponding note and spanning the length of the corresponding timing clock data.
-Additionally, some DAWs show the velocity of the note by the color of the bar - most
+Additionally, some DAWs show the velocity of the note by the color of the bar -- most
 commonly, red denotes high velocity while blue/violet denotes low velocity.
 
 \begin{figure}[h!]
   \centering
   \includegraphics{image/PianoRoll.png}
-  \caption{Example of a piano roll display}
+  \caption{Example of a piano roll display.}
   \label{fig:piano_roll}
 \end{figure}
 
@@ -50,6 +50,14 @@ forms, is highly subjective. There are no universal rules for right or wrong, an
 same time there are combinations of sound that could (almost) universally be considered bad music.
 So how does a computer decide what factors will most likely lead to a good melody?
 
+For the most part, it would be reasonable to say we could evaluate the AI outputs simply by how it
+“feels.” After all, the general point of music is to sound pleasing, and even without music
+education most people have at least some innate sense of what does and does not work melodically.
+However, for the sake of setting benchmarks of improvement, it is better to establish some basis of
+measurement. The following subsections will explore some concepts on the basics of melody
+construction that can be compiled into a sort of checklist of characteristics that we should strive
+for in our output.
+
 To start, the generally agreed upon definition of melody is that it is the linear succession
 of musical tones, with its primary components being pitch and rhythm. Occasionally, it also
 encompasses tonal color and other factors of expression.\autocite{melody} In music theory, parts
@@ -63,18 +71,19 @@ qualitatively measure the success of our AI output.
 
 \subsubsection{Degrees}
 
-A basic pre-requisite as to whether or not a note is considered tonally consonant is whether or
-not it comes from the same scale and key as its context. Western music is traditionally tuned to
-the twelve-tone equal temperament (12TET). This tuning is where you get the twelve-note octave
-with seven natural tones - the exact same one which is reflected in the configuration of piano keys
-which have a repeating pattern consisting of seven white and five black keys. The seven natural
-tones make up the diatonic scale. Each tone in the scale can also be called by its degree, i.e.
-its role in the scale based on its scale step from the root note.
+A basic prerequisite as to whether a note is considered tonally consonant is whether it
+comes from the same scale and key as its context. Western music is traditionally tuned to
+the twelve-tone equal temperament (12TET). This tuning is where you get the twelve-note
+octave with seven natural tones -- the exact same one which is reflected in the
+configuration of piano keys which have a repeating pattern consisting of seven white and
+five black keys. The seven natural tones make up the diatonic scale. Each tone in the
+scale can also be called by its degree, i.e. its role in the scale based on its scale step
+from the root note.
 
 \begin{table}[h!]
   \centering
   \resizebox{\textwidth}{!}{%
-    \begin{tabular}{|l|l|l|l|}
+    \begin{tabular}{|S|M|M|S|}
       \hline
       Degree             & Name                                  & Meaning                                                                                        & Note (in C major) \\ \hline
       1                  & Tonic                                 & Tonal center, note of final resolution                                                         & C                 \\ \hline
@@ -87,7 +96,7 @@ its role in the scale based on its scale step from the root note.
                          & Leading tone (in the major scale)     & One half step below tonic. Melodically strong affinity for and leads to tonic                  & B                 \\ \hline
       1                  & Tonic (octave)                        & Tonal center, note of final resolution                                                         & C                 \\ \hline
     \end{tabular}}
-  \caption{The names and meanings of each degree in the diatonic scale}
+  \caption{The names and meanings of each degree in the diatonic scale.}
   \label{Tab:degrees}
 \end{table}
 
@@ -96,18 +105,18 @@ or release of tension. The tonic, for example, is colloquially known as "home" i
 because it is where most music starts and where most music can resolve and conclude to. In other
 words, it is a universal vehicle for tension release. The subtonic or leading tone is named as
 such because within the scale it sounds unstable on its own and often relies on the tonic to resolve
-it. Thus the subtonic plays the opposite function to the tonic in that it is a universal tension
+it. Thus, the subtonic plays the opposite function to the tonic in that it is a universal tension
 generator. Good melodies are constructed not to avoid generating tension, but to end the
 musical phrase with an equal release of tension.
 
-By being aware of the role of each note in a scale we can get a sense not only of whether or not
+By being aware of the role of each note in a scale we can get a sense not only of whether
 the AI-generated outputs are sufficiently competent in melodic structure, but also why that is so.
 
 \subsubsection{Harmonics}
 
 Scales are not the only markers for tonal intervals. Another factor that plays a role in the
 consonance of pitch is harmonics. The Lipps-Meyer law, for example, proposes that the consonance
-of a melodic interval can generally be determined by whether or not the end tone of the interval
+of a melodic interval can generally be determined by whether the end tone of the interval
 can be represented by a power of two.\autocite{musiciansArithmetic} These numbers which represent
 the tones are not their scale intervals, but instead are derived from the Harmonic Series.
 
@@ -116,7 +125,7 @@ is a sound wave oscillating at a specific frequency $ f $. Any sound wave with a
 that is an integer multiple of $ f $ is considered to be harmonic to $ t $.\autocite{intervals} For example,
 if $ f $ is the frequency of the tonic (the root note of a scale), the unison (no interval,
 so also the root note) would be the first harmonic because it has the same frequency. The second
-harmonic has a frequency of $ 2/f $ - this coincides with the tone that's exactly one octave
+harmonic has a frequency of $ 2/f $ -- this coincides with the tone that's exactly one octave
 above the root. In fact, every power of two falls on the root note of a different octave. Going
 back to the Lipps-Meyers law, this implies that proper consonance can be achieved by ending the
 musical phrase on the tonic of the key.
@@ -124,7 +133,7 @@ musical phrase on the tonic of the key.
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.5\linewidth]{image/Harmonics.png}
-  \caption{A comparison of the wavelengths of waves in a Harmonic Series \autocite{harmonicSeries}}
+  \caption{A comparison of the wavelengths of waves in a Harmonic Series \autocite{harmonicSeries}.}
 \end{figure}
 
 \begin{table}[h!]
@@ -150,52 +159,55 @@ musical phrase on the tonic of the key.
                                               &                         &   & 15 & 30 & \multirow{2}{*}{major seventh} \\ \cline{1-5}
                                               &                         &   &    & 31 &                                \\ \hline
     \end{tabular}}
-  \caption{The relationship between Harmonic and 12TET intervals}
+  \caption{The relationship between Harmonic and 12TET intervals.}
   \label{Tab:harmonic_intervals}
 \end{table}
 
 Basically, in a roundabout way, we've affirmed a fairly core and commonly known principle of
-melody writing: resolve to the root. However, this is not the only way in which interval patterns
-and the Harmonic series are used to determine consonance. Octaves are not actually the only case to
-which the Lipps-Meyers law applies. Melodic intervals can be simplified the same was fractions can.\autocite{intervals}
-So then, an interval of 9:6, which correlate to the major second and major fifth respectively, could
-also be written as 3:2 and therefore follows the Lipps-Meyers law.
+melody writing: you can almost always resolve to the root. However, this is not the only way in
+which interval patterns and the Harmonic series are used to determine consonance. Octaves are
+not actually the only case to which the Lipps-Meyers law applies. Melodic intervals can be
+simplified the same was fractions can \autocite{intervals}. So then, an interval of 9:6, which
+correlate to the major second and major fifth respectively, could also be written as 3:2 and
+therefore follows the Lipps-Meyers law.
 
 Another theory on the relationship between harmonics and dissonance was proposed by physicist
 Herman von Helmholtz, who posited that the "beats" created by the resonance of two tones which are
-close in frequency can help us quantify the dissonance of an interval.\autocite{intervals} Though it is now regarded
+close in frequency can help us quantify the dissonance of an interval \autocite{intervals}. Though it is now regarded
 that Helmholtz's theory incompletely addresses the nuances of modern physics and music, it is
 a valuable discussion because it provides a foundation from a simplified understanding. Because
 of its simplicity, we can more clearly view the connections between harmonics and dissonance and
 more easily frame it in a way we might be able to apply with computers which also lack such nuance.
 An important part of Helmholtz's theory was that harmonic intervals of smaller integers tend to
-create higher degrees of consonance.\autocite{intervals} This much is evident in common chord
+create higher degrees of consonance \autocite{intervals}. This much is evident in common chord
 structures. For example the major tonic is composed of harmonics 1, 3, and 5. Conversely, the
-diminished tonic - commonly viewed as more dissonant - is composed of the harmonics 1, 11, and 19.
+diminished tonic -- commonly viewed as more dissonant -- is composed of the harmonics 1, 11, and 19.
 
 \subsubsection{Contour}
 
 Intervals primarily address each note only in relation to the note directly prior; however, melody
 is also constructed upon more macroscopic contexts. This is where contour comes into play. Contour
-describes the "shape" of a melody by its repetition, conjunctness, and direction of motion.\autocite{contour}
+describes the "shape" of a melody by its repetition, conjunctness, and direction of motion
+\autocite{contour}.
 
 Repetition is straightforward; it describes the reoccurrence of a note or series of notes. Too much
 repetition in a melody tends to make it feel monotonous, while too little makes it erratic and
-difficult to follow.\autocite{contour}
+difficult to follow \autocite{contour}.
 
 Conjunct motion is also referred to as step-wise motion because it denotes that each note is within
-one diatonic step (a major or minor second interval) of the note prior. Its opposite - disjunct
-motion - refers to melodies containing intervals larger than the diatonic step. Disjunct motion can
+one diatonic step (a major or minor second interval) of the note prior. Its opposite -- disjunct
+motion -- refers to melodies containing intervals larger than the diatonic step. Disjunct motion can
 add a dynamic element to a melody, but when a melody jumps too large an interval in too short a
 time span, it not only generates a lot of tension, it also makes the melody more difficult for a
 human to play. For both of these reasons, we should aim to keep our AI outputs to a reduced degree
-of disjunctness.\autocite{contour}
+of disjunctness \autocite{contour}.
 
 Direction in a melody refers specifically to vertical direction. A melody is considered to be
 ascending when each note has a higher pitch than the previous and descending when each note is of a
 lower pitch than the previous. Fluid motion tends to come across more melodically in music. As
 such, it is more desirable to maintain the direction of a melody for a certain period of time
-before switching it as opposed to having notes rapidly alternate between ascension and descension.\autocite{contour}
+before switching it as opposed to having notes rapidly alternate between ascension and
+descension \autocite{contour}.
 
 \subsection{AI}
 
@@ -212,7 +224,7 @@ have had to develop a script which could convert between MIDI data and a PNG
 visualization. This image would be similar in structure to what might show on the piano
 roll display of a DAW. Each pixel along the vertical axis would represent a key on the
 MIDI controller, and each pixel along the horizontal axis would represent some small
-fraction of a beat - hypothetically the length of a sixty-forth note, as this is the
+fraction of a beat -- hypothetically the length of a sixty-forth note, as this is the
 shortest common time interval in music. The hue of each pixel would denote the velocity
 of the note being played at that time and pitch - a black pixel would mean no note is
 being played while a white pixel would show a note being played at maximum velocity.
@@ -223,7 +235,7 @@ a MIDI of a completed melody.
 \begin{figure}[h!]
   \centering
   \includegraphics{image/MIDIsample.png}
-  \caption{Example of a visualized MIDI file}
+  \caption{Example of a visualized MIDI file.}
   \label{fig:midi_sample}
 \end{figure}
 
@@ -239,7 +251,7 @@ context is generalized in that it works according to intervals as opposed to dis
 relationships between specific notes. MIDI files don't provide any information about
 scales or chords; they simply list which notes were played. It might take an AI a good bit
 of to recognize that the interval between C and E is the same as the interval between F
-and A - and even longer still to determine which intervals are musically dissonant or not,
+and A -- and even longer still to determine which intervals are musically dissonant or not,
 and in which contexts. When music is visualized, however, it can generalize the same way
 it does in abstract theory. Melodic intervals appear visually the same, regardless of the
 root note. So rather than having to learn separately that C pairs well with E and F pairs
@@ -260,23 +272,23 @@ PixelCNN processes its image inputs primarily through layers of masked convoluti
 The "masks" used in the convolution layer are square matrices, and each element of the matrix
 is a numerical value that denotes the weight of that element. These masks are iterated over the
 input image, convolving with the brightness of the pixels under the mask. In colored images,
-the process is repeated once for each color channel: red, green, and blue.\autocite{pixelCNN} Depending on the
+the process is repeated once for each color channel: red, green, and blue \autocite{pixelCNN}. Depending on the
 configuration of the weights in the matrix, different masks can be used to identify different
 visual patterns. Each convolution with each mask outputs a two-dimensional array of values
 called a feature map.
 
 Unlike a standard CNN, however, PixelCNN specifically uses masks that only allows it to read
-one pixel at a time: row by row, and left to right in each row.\autocite{pixelCNN} This enforces that each pixel
+one pixel at a time: row by row, and left to right in each row \autocite{pixelCNN}. This enforces that each pixel
 is dependent upon only those above and to the left of itself. Using this unique relationship,
 PixelCNN has a unique use-case in predicting the bottom half of an image after processing the
 top half as input. The AI uses the probability distribution of visual features found in all pixels
 iterated through prior to inform the probability distribution it creates to predict the pixels that
-will follow.\autocite{pixelRNN}
+will follow \autocite{pixelRNN}.
 
 \begin{figure}[h!]
   \centering
   \includegraphics{image/PixelMask.png}
-  \caption{PixelCNN's unique mask prevents the AI from peeking ahead}
+  \caption{PixelCNN's unique mask prevents the AI from peeking ahead.}
   \label{fig:pixel_mask}
 \end{figure}
 
@@ -285,11 +297,11 @@ because completing an image after processing the first half is exactly the mecha
 planned to use to achieve the melody autofill. All we would have to do is rotate the input
 image such that the time axis propagates top to bottom as opposed to left to right.
 Additionally, the dependencies that PixelCNN establishes simulate dependencies in music
-really well. Whether or not a note is melodic depends on its context - specifically, the
+really well. Whether a note is melodic depends on its context -- specifically, the
 notes that came before it in time as well as the other notes being played at the same
 time. Adjusting the axes, PixelCNN's dependency upon all pixels above equates to the
 current note being dependent on all notes that were played before it. As for its left to
-right dependency, chords are typically built upward from the root - which, when rotated,
+right dependency, chords are typically built upward from the root -- which, when rotated,
 would be left to right.
 
 Our main challenge in the use of PixelCNN would be the collection and preprocessing of
@@ -309,7 +321,7 @@ applications: Magenta.
 creation. It contains already trained AI models, different tools for MIDI handling, API
 and datasets that can be directly used to solve our problem. Although, the level of
 functionalities already included in the main API can defeat the academic purpose of the
-current project. Still, some of this elements can be valuable tools to create, train, and
+current project. Still, some of these elements can be valuable tools to create, train, and
 use our own autocomplete AI model. Either way, here we analyze the parts of the library that
 can be applied to our project.
 
@@ -322,14 +334,14 @@ networks (RNN) produced with Google's TensorFlow.
 \subparagraph{Recursive Neural Network (RNN)} In contrast with the already mentioned CNN,
 that processes grid values without contextual information, RNN processes sequential data
 as string of characters, words, or in our case of interest, melody representations. RNN
-also considers proccesed information along large sequences of data, and not purely local
-extent as CNN.\autocite{fundamentalML}
+also considers processed information along large sequences of data, and not purely local
+extent as CNN \autocite{fundamentalML}.
 
 \paragraph{MelodyRNN.}
 MelodyRNN model generates melody based on an input melody. To achieve this, it uses
 language modeling (probability distribution over a sequence of data) with long short-term
-memory (LMST) networks. This is a variant of RNN design to improve the performance of
-regular RNN across large sequences of data. The main issues that LMST address are those
+memory (LSTM) networks. This is a variant of RNN design to improve the performance of
+regular RNN across large sequences of data. The main issues that LSTM address are those
 related to the exploding and vanishing gradients magnified on any recursive network due to
 the accumulation of errors on the successive feedbacks of data analysis. This models also
 have four configurations to assists determining the range of pitches, identifying
@@ -343,17 +355,17 @@ before model is the conditioning of the generated melody to a chord progression.
 model counts with similar set of configurations than MelodyRNN, but with the addition of
 using as inputs vectors representing chords of the progression. Although, this can be a
 interesting feature to generate melodies, the model requires to encode the full input
-melody in XML format, not supporting direct MIDI input \autocite{improvRNN}.This model
+melody in XML format, not supporting direct MIDI input \autocite{improvRNN}. This model
 would not be directly applied to our project, but still could add interesting features for
 an expanded instance.
 
 \paragraph{PerformanceRNN.}
-PerformanceRNN generates melodies using dynamic and expressing timing. This allows to
-generate more natural feeling as if a real player is adding to the expression of the
+PerformanceRNN generates melodies using dynamic and expressing timing. This allows us to
+generate a more natural feeling as if a real player is adding to the expression of the
 performance. Although, this came with some trade off as some keys can fall outside the
-proper timing. \autocite{performanceRNN}
+proper timing \autocite{performanceRNN}.
 
-This model add a nice to have feature, but is not fundamental for our first aproach.
+This model adds a nice to have feature, but is not fundamental for our first approach.
 
 \paragraph{Datasets.}
 Magenta project offers a set of collections of data that has been used to pre-train
@@ -363,7 +375,7 @@ over 200 hours of key annotated piano performing. Other set that can be useful f
 classical music approach is the Bach Doodle Set. A large audio dataset (over 6 years of
 total audio), collected by Google using its Bach Doodle. \autocite{magentaData}
 
-The selection of the dataset would be conditioned by the available trianing capabilities
+The selection of the dataset would be conditioned by the available training capabilities
 for this project.
 
 \subsubsection{Third Approach: Develop out own RNN. LSTM.}
@@ -374,7 +386,49 @@ for this project.
 \subsection{Embedded Controller Comparisons}
 \label{sec:embedded_controllers}
 
-\blindtext
+\subsubsection{Raspberry Pi 4 Model B}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/raspberry-pi.png}
+  \caption{The Raspberry Pi 4B \autocite{raspberry-pi-4b}.}
+  \label{fig:rpi4b}
+\end{figure}
+
+The Raspberry Pi is a mini-computer which can act as an embedded controller using GPIO
+pins. This is an appealing option to us, as it is easy to use and members of our group
+have previous experience with it, and one of our members already owning a Raspberry Pi to
+test on. What makes the Raspberry Pi more than just an embedded controller is the GPIO
+pins that are located in the top of the board as seen in \autoref{fig:rpi4b}. These pins
+are designed to allow the Pi to interface with other electronics, such as buttons attached
+to our keys. Each pin serve a different purpose, and we will be using a few of them.
+Otherwise, the Raspberry Pi 4 functions as a normal computer, with the ability to plug in
+a keyboard, mouse and monitor. The Raspberry Pi can run any armv7 Linux distro. The
+operating system is loaded onto it using an SD card. The Raspberry Pi is typically powered
+using USB-C and a power supply, but it can also be powered through one of the GPIO ports,
+with a 5V connection. The Raspberry Pi also features an ethernet port and a headphone
+jack.
+
+The Raspberry Pi has a baseline cost of \$35 for the 2 GB of RAM edition, \$55 for the 4
+GB edition, and \$75 for the 8 GB edition. We intend to use the 4 GB edition, which will
+meet our memory requirements for running an electron app and an AI. This price is within
+our budget constraints.
+
+The Raspberry Pi can be seen as overkill for many projects, where a cheaper embedded
+controller, such as an Adruino, could be used instead. Our project is computationally
+expensive, so it makes sense for us to use good hardware. Although it may be possible to
+do this project with a cheaper embedded controller, it would be risky to design our
+prototype with cheaper hardware. We know from preliminary testing that the Raspberry Pi
+will provide the computation power and memory our project needs. We prefer to start with
+hardware we know will meet our specifications from the start.
+
+\subsubsection{Conclusion}
+
+We have decided to use the Raspberry Pi 4 for our project. From our research , we know
+that the Raspberry Pi will meet our specifications. Our previous experience with Raspberry
+Pi is a big advantage, and working with a full-blown Linux environment will save us
+valuable development time.
+
 
 \subsection{DAW Frontend Technologies}
 
@@ -386,21 +440,80 @@ limits of the MIDI controller, any modern device that is suited for a browser wi
 inherently be able to run the MIDI autofill software as well.
 
 We experimented with several options for a UI-building environment. Our first consideration was
-React. Considering our group's familiarity with JavaScript as well as HTML and similar markup
-languages, it would be easier to pick up. Electron offered a similar level of convenience, but with
-an added implementation of Node.js that would make our code more modular. Another strong candidate
-was Google's Flutter. Flutter's default stylization is sleek and fits in well with the modern
-aesthetic of technology. Plus, its widgets allow for more polish on a UI that also has more niche
-functionality.
+React, a JavaScript library for app development. One of the appealing features of React was that
+not only do the programs operate on an object-oriented basis, but the functionality of the
+application shell is also very object-oriented. This makes more flexible functionality simpler to
+achieve. For example, the render function allows the programmer to merge HTML and JS elements so
+they can add reactivity to the markup elements without having to repeatedly alter the properties
+in JS code.
 
-Our frontrunners after all options had been proposed were Electron and Flutter. Utlimately it was
-our hardware constraints that pointed us toward Electron because the HTML and JavaScript
-application was the most likely to be compatible to run on the Raspberry Pi.
+\begin{lstlisting}[language=JavaScript, caption={A simple program made to test React during the
+selection process; it focuses on demonstrating how React automatically updates the HTML layer.},
+label=lis:react]
+class ChangeFruit extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = { seconds: 0, fruit: "apple" };
+  }
+
+  // updates params
+  tick() {
+    var fruits = ["apple", "banana", "orange"]
+    this.setState(state => ({
+      seconds: state.seconds + 1,
+      fruit: fruits[state.seconds % 3]
+    }));
+  }
+
+  // sets params to update every second (1000 milliseconds)
+  componentDidMount() {
+    this.interval = setInterval(() => this.tick(), 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  // markup template
+  render() {
+    return (
+      <div>
+        I like {this.state.fruit}s.
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <ChangeFruit />,
+  document.getElementById('react-example')
+);
+\end{lstlisting}
+
+However, its major downside is that as a new library, it implements a lot of functions and
+techniques our team are not familiar with in the core functionality of the program. While it would
+be possible to come to understand these concepts through trial and reading documentation, as
+mentioned in \textbf{\ref{sec:constraints} \nameref{sec:constraints}}, our choices are motivated by
+what is achievable on a strict timeline. For a project as complex as we plan to develop, it would
+be better to use a tool we have better mastery with.
+
+Our second consideration was Electron, a desktop app development API that’s based on website-style
+design. As many of our team members have encountered projects involving web development, this
+option was much more viable to learn at a proficient level. For the most part, the website
+functionality remains the same, but porting it into an Electron shell converts it into an
+application.
+
+Another strong candidate was Google’s Flutter. Flutter’s default stylization is sleek and fits in
+well with the modern aesthetic of technology. Plus, its widgets allow for more polish on a UI that
+also has more niche functionality. Our frontrunners after all options had been proposed were
+Electron and Flutter, but ultimately it was our hardware constraints that pointed us toward
+Electron because the HTML and JavaScript application was the most likely to be compatible to run on
+the Raspberry Pi.
 
 As established in \textbf{\ref{sec:daw} \nameref{sec:daw}}, the primary aspect of the UI
 will be the piano roll display. The frontend will be responsible for reading the MIDI
 messages and converting the note ON/OFF and timing clock features into the position and
-dimensions of an arbitrary number of UI elements - each representing a note which can be
+dimensions of an arbitrary number of UI elements -- each representing a note which can be
 edited.
 
 \subsection{Raspberry Pi}
@@ -440,41 +553,112 @@ process that is out of the scope of this project. But what we can do is modify a
 distro to suite our needs. We plan to do this process using a tool called Packer,
 described in more detail in Section \ref{sec:packer}.
 
-The most common operating system used for Raspberry Pi is Raspberry Pi OS. This is a
-specially tailored version of Debian for the Raspberry Pi. This is a common choice for any
-general purpose usage the Pi. It can be used like a normal desktop computer when a mouse,
-keyboard, and monitor are plugged in. This is a "batteries included" distro that includes
-many things we will never use. The bloatware from this distro can hinder performance and
-waste SD card space. There is a lightweight alternative known as Raspberry Pi OS Lite.
-This version does not include any desktop environment. We think it would be better to
-start with an even lighter weight distro, such as DietPi.
+\paragraph{Raspberry Pi OS}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/rpi-desktop.png}
+  \caption{The Raspberry PI OS Desktop \autocite{rpi-desktop}.}
+  \label{fig:rpios}
+\end{figure}
+
+The most common operating system used for Raspberry Pi is Raspberry Pi OS, which is
+developed by the Raspberry Pi Foundation. This is a specially tailored version of Debian
+for the Raspberry Pi. This is a common choice for any general purpose usage the Pi. It can
+be used like a normal desktop computer when a mouse, keyboard, and monitor are plugged in.
+This is a "batteries included" distro that includes things we do not need, such as a
+desktop environment, login manager, and various desktop apps. The extra software from this
+distro can hinder performance and waste SD card space.
+
+Raspberry Pi Foundation is aware that this distro is too heavy for many Raspberry Pi
+projects. To mitigate this issue, they provide lightweight edition known as Raspberry Pi
+OS Lite. This version does not include any desktop environment or other extraneous
+software. As a result, Raspberry Pi OS Lite fits in 442 MB, which is a big improvement
+over Raspberry Pi OS, which is 1175 MB. This makes Raspberry Pi OS Lite a better choice
+for our use case, as it would be easier for us to build up to what we need rather than to
+cut what we do not need.
+
+\subparagraph{Pros}
+\begin{itemize}
+  \item Very well documented
+  \item Has the best support for Raspberry Pi
+\end{itemize}
+
+\subparagraph{Cons}
+\begin{itemize}
+  \item Comes with unnecessary software
+\end{itemize}
+
+\paragraph{DietPI}
 
 DietPi is like Raspberry Pi OS Lite in that it is a lightweight distro. DietPi's claims to
-be even lighter than Raspberry Pi Os Lite. It occupies 589 Mb on the SD card, while
+be even lighter than Raspberry Pi OS Lite. It occupies 589 Mb on the SD card, while
 Raspberry Pi OS occupies 1424 MB. There are other system optimizations in place to improve
 general performance as well. After boot, there are 11 total processes, versus 18 total
 processes running on Raspberry Pi OS. This is a good choice for base system. It is easier
 for us to start lightweight and add what we need, rather than to start with a bloated
 system and strip it down. DietPi comes with a flexible configuration utility that allows
 the system to be customized for a specific use case, as show in \autoref{fig:dietpi}.
-DietPi includes an easy way to run chromium in kiosk mode using the \url{dietpi-autostart}
-utility, which we'll need to have configured anyways, as described in Section
-\ref{sec:research:subsec:os_config}. DietPi also supports a fully automated installation
-process, which we intend to take advantage of, as it is tedious to have to flash the
-Raspberry Pi and go through the distro's installation process every time we change the
-operating system configuration.
+
+DietPi includes a configuration menu in the installation for software that runs after
+boot. In this menu there is a way to run chromium in kiosk mode. This is an item that we
+need to configured anyways, as described in Section \ref{sec:research:subsec:os_config},
+which also makes DietPi an appealing choice. DietPi also supports a fully automated
+installation process, which we intend to take advantage of, as will save us time from
+needing to flash the Raspberry Pi and go through the installation process whenever we
+change the operating system configuration.
+
+The main downside to using DietPI over Raspberry PI OS is that there are many tutorials
+and documentation for using the Raspberry PI with Raspberry PI OS, that may not apply to
+using DietPI, or will be a different process.
+
+\subparagraph{Pros}
+\begin{itemize}
+  \item Lightweight
+  \item Automated installation
+  \item Flexible and easy configuration
+\end{itemize}
+
+\subparagraph{Cons}
+\begin{itemize}
+  \item Not as much documentation as Raspberry Pi OS
+\end{itemize}
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/dietpi-config.png}
-  \caption{DietPi's Installation Menu}
+  \caption{DietPi's Installation Menu.}
   \label{fig:dietpi}
 \end{figure}
 
+\paragraph{Conclusion}
+
 From our research, we have decided to use DietPi as a baseline operating system for our
 project. The lightweight aspect suits us well, as we only need to boot a single
-application. The easy chromium kiosk mode configuration is also a big bonus, as it
-relieves us from a configuration burden.
+application. The high degree of customization makes it easy to have a minimal system
+tailored to our application. The easy chromium kiosk mode configuration is also a big
+bonus, as it relieves us from a configuration burden. The installation of DietPi will be
+automated using the automated install process, and further customized using Packer.
+
+\subsubsection{Operating System Installation}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/rpi-imager.png}
+  \caption{The Raspberry Pi Imager Utility.}
+  \label{fig:rpi-imager}
+\end{figure}
+
+Installing the OS to the Raspberry PI is a simple process. The operating system is
+provided from the DietPi website as a \url{.iso} file. An \url{.iso} file is a
+representation of a disk archive in a file. In our case, we will be using a modified
+\url{.img} file from Packer, but the usage is exactly the same. This image from Packer can
+be flashed to an SD card using the Raspberry Pi Imaging utility (See
+\autoref{fig:rpi-imager}). We use a USB SD card reader for this purpose. Once the SD card
+is flashed, it can be inserted into the Raspberry Pi. Now, once the Raspberry Pi is
+powered on, the device will boot straight into the operating system. Typically, this would
+be followed with a lengthy installation process, but we have already automated the install
+onto the image ahead of time using Packer and the DietPI installation automation process.
 
 \subsubsection{Operating System Configuration}
 \label{sec:research:subsec:os_config}
@@ -516,7 +700,7 @@ using the \url{dietpi-autostart} configuration utility (See
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/dietpi-autostart.png}
-  \caption{DietPi's Autostart Menu with Chromium Kiosk Option}
+  \caption{DietPi's Autostart Menu with Chromium Kiosk Option.}
   \label{fig:dietpi-autostart}
 \end{figure}
 
@@ -548,7 +732,7 @@ packer-builder-arm, which builds ARM images and is suitable for a Raspberry Pi.
 Packer is configured through simple JSON files. These JSON files contain information about
 the original operating system's image, such as the URL it's hosted on, as well as other
 metadata about the image. The JSON file also configures provisioners to modify the
-operating system. With this provisioners, we can create our own packer json config file to
+operating system. With these provisioners, we can create our own packer json config file to
 setup all the tasks described in \nameref{sec:research:subsec:os_config}.
 
 One of the provisioners we will use is the file provisioner, which copies files from the
@@ -574,6 +758,34 @@ will allow us to ensure that the OS build is working before merging any new code
 upstream. This should give us the confidence to work on the code without fear that we will
 break the Raspberry Pi image builds every time.
 
+\subsubsection{GPIO}
+
+The Raspberry Pi includes a series of pins along the top of the device, known as GPIO
+(general-purpose input/output). With these pins, the Pi can interface with other
+electronics. The pins serve different purposes, with some pins having specific uses and
+others being generic. The purposes of these pins are visible in \autoref{fig:gpio}. There
+are two rows of pins, one for input and one for output, with 20 pins each, making for a
+total of 40 pins. This makes the Raspberry Pi a flexible device that is suitable for many
+projects involving electronics.
+
+\begin{figure}
+  \centerline{ \includegraphics[width=\linewidth]{image/gpio.png} }
+  \caption{A diagram showing the GPIO pins and their purposes \autocite{gpio}.}
+  \label{fig:gpio}
+\end{figure}
+
+These pins are easy to interface with in software. There is a JavaScript library
+that we will use for interfacing with GPIO called \url{rpi-gpio}. This library makes it
+trivial to read and write data to and from these pins using simple function calls.
+
+We will be using the GPIO pins extensively for the project for the following tasks:
+
+\begin{itemize}
+  \item Key presses
+  \item Key releases
+  \item Volume control
+\end{itemize}
+
 \subsubsection{Performance}
 
 Performance is always a concern when dealing with constrained embedded hardware. The
@@ -583,7 +795,7 @@ machine learning model and a UI application, both of which are computationally e
 tasks. This is a critical part of our project, so we have conducted extensive research to
 ensure that what we want to do is possible on the Raspberry Pi.
 
-\paragraph{Magenta.}
+\paragraph{Magenta}
 
 Magenta serves as a good baseline for measuring performance of music generating AI.
 Magenta ships with two machine learning models: MusicRNN and MusicVAE. We have performance
@@ -647,13 +859,13 @@ of notes.
 
 The input duration is the biggest factor affecting generation time. The number of
 generation steps are the next biggest factor. With this data, we know that we will most
-likely need to truncate the input melody's duration to less than a 40 seconds of music.
-The generation steps need to be accounted for when determining the duration of music to
-accept as input for our AI. As the generation steps increase we need make up for that
-amount of extra time by decreasing the input duration even further. We added in a
-benchmark for increasing duration and generation steps simultaneously to see if this would
-lead to exponential behavior, but found that it remained linear. So we can simply subtract
-the estimated added time from the input melody duration.
+likely need to truncate the input melody's duration to less than 40 seconds of music. The
+generation steps need to be accounted for when determining the duration of music to accept
+as input for our AI. As the generation steps increase we need make up for that amount of
+extra time by decreasing the input duration even further. We added in a benchmark for
+increasing duration and generation steps simultaneously to see if this would lead to
+exponential behavior, but found that it remained linear. So we can simply subtract the
+estimated added time from the input melody duration.
 
 With these benchmark results, we are confident that the Raspberry Pi 4B is capable of
 handling the computational load that this project requires, without the need for any
@@ -662,7 +874,7 @@ checkpoints or models that we will further into the project's development.
 
 \begin{figure}
   \centerline{ \includegraphics[width=.95\linewidth]{image/perf.pdf} }
-  \caption{Magenta Generation Time on the Raspberry Pi 4B}
+  \caption{Magenta Generation Time on the Raspberry Pi 4B.}
   \label{fig:magentaperf}
 \end{figure}
 
@@ -672,7 +884,7 @@ Since we have not developed the DAW at this point, we have tested an existing we
 MIDI editor in the Raspberry Pi.
 
 We used an online MIDI editor called signal (\url{https://signal.vercel.app/}) to get a
-subjective feel for the performance. The test was ran in the chromium web browser on
+subjective feel for the performance. The test was run in the chromium web browser on
 Raspberry Pi OS. The performance was acceptable, with some actions feeling slow.
 Dragging around notes had a small but noticeable latency between the mouse cursor's
 movement and the notes position. There was also a small but noticeable latency between
@@ -688,10 +900,10 @@ exceptional performance on the Raspberry Pi.
 \subsection{MIDI Peripheral}
 \label{sec:midi_peripheral}
 
-The Pi needs to function as a MIDI peripheral, i.e. connect the device into a computer and
-it functions as a device that sends MIDI commands to the DAW. There are a few different
-ways to approach this connection, and we have explored a few such approaches for this
-project.
+The Pi needs to function as a MIDI peripheral, with the user being able to connect the
+device into a computer and have it function as a device that sends MIDI commands to the
+DAW. There are a few different ways to approach this connection, and we have explored a
+few such approaches for this project.
 
 
 \subsubsection{USB-C Connection}
@@ -721,7 +933,7 @@ machine.
 
   \begin{lstlisting}[language=bash,
   label={lst:bootconfig},
-  caption=Lines added to /boot/config.txt \autocite{raspberryPiGadgetSetup, raspberryPiHDMIFix}]
+  caption=Lines added to /boot/config.txt \autocite{raspberryPiGadgetSetup, raspberryPiHDMIFix}.]
 dtoverlay=dwc2
 hdmi_force_hotplug=1
 hdmi_group=2
@@ -730,11 +942,11 @@ hdmi_cvt=800 480 60 6 0 0 0
 hdmi_drive=1
   \end{lstlisting}
 
-  \begin{lstlisting}[language=bash, label={lst:bootcmdline}, caption=DietPi /boot/cmdline.txt modified to allow a USB Gadget \autocite{raspberryPiGadgetSetup}, breaklines=true]
+  \begin{lstlisting}[language=bash, label={lst:bootcmdline}, caption=DietPi /boot/cmdline.txt modified to allow a USB Gadget \autocite{raspberryPiGadgetSetup}., breaklines=true]
 console=ttyS0,115200 console=tty1 root=PARTUUID=8f4dbd00-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet net.ifnames=0 modules-load=dwc2,g_ether
   \end{lstlisting}
 
-  \begin{lstlisting}[label={lst:usb_gadget}, caption=Bash procedure to setup a MIDI Gadget\, modified for our device \autocite{raspberryPiGadgetSetup}, breaklines=true]
+  \begin{lstlisting}[label={lst:usb_gadget}, caption=Bash procedure to setup a MIDI Gadget\, modified for our device \autocite{raspberryPiGadgetSetup}., breaklines=true]
 cd /sys/kernel/config/usb_gadget/
 mkdir -p midi_over_usb
 cd midi_over_usb
@@ -787,15 +999,16 @@ run into any issues with these undervolts as of now. The Pi does not encounter a
 voltage warnings when running a CPU stress test, but it could lead to stability issues
 later.
 
-This approach runs into a wall when considering how to allow the device to function as a
-standalone device, while also being able to receive power through the USB-C connection.
-USB gadgets are supposed to be powered through the USB-C port, but when not connected, the
-USB device will operate off of a battery. The standalone operation requirement makes this
-connection mode very difficult. There is another interface for powering the raspberry PI,
-which is the 5 volt GPIO pin. This could be connected to a battery. But then there is the
-question of if the Pi can be simultaneously powered by the 5 volt GPIO port while also
-being plugged in with USB-C. This may be possible, but there are no resources online that
-show how this can be done. It is not worth the time to figure out how this can be done.
+This approach was our preference, but we ran into a wall when considering how to allow the
+device to function as a standalone device, while also being able to receive power through
+the USB-C connection. USB gadgets are supposed to be powered through the USB-C port, but
+when not connected, the USB device will operate off of a battery. The standalone operation
+requirement makes this connection mode very difficult. There is another interface for
+powering the raspberry PI, which is the 5 volt GPIO pin. This could be connected to a
+battery. But then there is the question of if the Pi can be simultaneously powered by the
+5 volt GPIO port while also being plugged in with USB-C. This may be possible, but there
+are no resources online that show how this can be done. It is not worth the time to figure
+out how this can be done.
 
 \paragraph{Pros}
 
@@ -813,7 +1026,7 @@ show how this can be done. It is not worth the time to figure out how this can b
 
 \subsubsection{RTP-MIDI Over WIFI}
 
-RTP-MIDI is an open source protocol to send and recieve MIDI messages over standard
+RTP-MIDI is an open source protocol to send and receive MIDI messages over standard
 networking interfaces. RTP-MIDI is built over Real-time Transport Protocol (RTP), which is
 a protocol for real-time communication over the network. RTP typically works through UDP
 messages over IP. RTP-MIDI can be used over a LAN network. When used over WIFI, the MIDI
@@ -823,7 +1036,7 @@ factor is convenient for the end user.
 With wireless connections, there is always a question of if it can achieve acceptable
 latencies. RTP-MIDI over WIFI is fast, and latency is not a major concern. RTP-MIDI Over
 WIFI has a latency of around 8.5 ms with a standard deviation of 8 ms
-\autocite{inproceedings}.
+\autocite{ble-latency}.
 
 A major disadvantage of RTP-MIDI is that it is not supported out of the box in Windows 10.
 Since RTP-MIDI are just simple UDP network messages, this can be worked around by
@@ -878,8 +1091,8 @@ BLE can be used for a wide variety of devices. BLE devices communicate through p
 which specify the BLE  application and the communication specifications. There is a long
 list of standardized BLE profiles, with one such profile being BLE MIDI. While support for
 BLE is very common, support for certain BLE profiles is not, as its up to each BLE
-implementor to support whatever profiles are needed by the device. However, BLE MIDI is
-supported by Windows 10, MacOS, Linux, iOS, and Android \autocite{inproceedings}. With BLE
+implementation to support whatever profiles are needed by the device. However, BLE MIDI is
+supported by Windows 10, MacOS, Linux, iOS, and Android \autocite{ble-latency}. With BLE
 MIDI being supported by every major operating system, we are confident that we will not
 run into any compatibility issues with this approach, except for on older computers.
 
@@ -887,7 +1100,7 @@ We initially thought that using BLE would incur too much input latency to be pra
 musicians. Using Bluetooth audio is notorious for its latency. But the latency situation
 with BLE MIDI is much better than Bluetooth audio. BLE MIDI has higher latency than USB
 MIDI, but the numbers are acceptable. BLE MIDI events have a delay of approximately 12
-milliseconds one-way and 26ms round-trip time \autocite{inproceedings}. We find this
+milliseconds one-way and 26ms round-trip time \autocite{ble-latency}. We find this
 latency number to be acceptable for our project.
 
 The Raspberry Pi runs Linux, which means that it needs to work through the BlueZ stack in
@@ -901,18 +1114,21 @@ connected to a variety of targets. In combination with BlueZ, we can create an A
 sequencer port to send MIDI events over BLE. BlueZ provides a binary called
 \url{bt-midi-server}, which creates an ALSA sequencer port that is connected to a BLE MIDI
 output. From there, we can send MIDI events over BLE by simply using the ALSA APIs for
-sequencer ports. This is a nice abstraction which allows us to write MIDI code without
-needing to consider Bluetooth in the code itself. The \url{bt-midi-server} can be run at
-startup using a systemd service. Our code will simply need to check for the existence of
-the sequencer port to see if we're connected to Bluetooth.
+sequencer ports. When \url{bt-midi-server} is started, any MIDI Bluetooth connections will
+automatically get connected to an ALSA sequencer port. This is a nice abstraction which
+allows us to write MIDI code without needing to consider Bluetooth in the code itself. The
+\url{bt-midi-server} can be run at startup using a systemd service. Our code will simply
+need to check for the existence of the sequencer port to see if we're connected to
+Bluetooth.
 
 ALSA sequences are programmed using a C API. This C API can be called from JavaScript
-using the Foreign Function Interface (FFI). In this library, clients send sequencer events
+using the Foreign Function Interface (FFI). In this API, clients send sequencer events
 through the port, which can encode various MIDI events, such as note on/off, with data
-such as the pitch and velocity.
+such as the pitch and velocity. This API is simple to use, and will be easy to integrate
+into our application.
 
 With this interface, it is easy to create a program that creates a ALSA connection to the
-BLE MIDI sequencer port, listens for the keypresses from GPIO events, interprets those
+BLE MIDI sequencer port, listens for the key presses from GPIO events, interprets those
 GPIO events, and sends the corresponding MIDI commands to the ALSA sequencer port. The BLE
 connection is abstracted away in this configuration, allowing us to just focus on writing
 MIDI code.
@@ -967,8 +1183,8 @@ Another advantage is simpler maintenance. With a multi-process approach, when on
 component changes, often it is necessary to update other components to work with these
 changes.
 
-The main problem with this approach is that some of the components are done better in
-other languages and with different environments. For our UI, we are going for a web-based
+The main problem with this approach is that some components are done better in other
+languages and with different environments. For our UI, we are going for a web-based
 approach, which would mean using a NodeJS stack. We can generate the notes using
 JavaScript as well, as there is Tensorflow for JavaScript. But tensorflow is mainly
 intended to be used with python, and there is an ecosystem of AI tools and documentation
@@ -1017,7 +1233,7 @@ case as our operating system configuration is tailored to our application. Anoth
 approach we consider is to use Unix domain sockets, which works over networking interfaces
 (sockets), but works over a file instead of ports. This approach has less overhead and
 doesn't have a port conflict issue. The downside here is more implementation complexity,
-as there are less libraries and resources for communicating over domain sockets instead of
+as there are fewer libraries and resources for communicating over domain sockets instead of
 TCP. If we intended to go with this architecture, this is the IPC mechanism we would
 choose.
 
@@ -1042,7 +1258,7 @@ applications in python.
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/multiprocess.png}
-  \caption{Proposed Multi-process Architecture}
+  \caption{Proposed Multi-process Architecture.}
   \label{fig:multiprocess}
 \end{figure}
 
@@ -1090,7 +1306,7 @@ Where this approach falls apart is creating a binding to python for the music ge
 component. Python is an interpreted language, meaning that it is evaluated at runtime
 rather than precompiled to a binary. To use python in another language, rather than using
 a traditional library, python must be embedded into other languages. Embedding allows a
-program written in another language to have parts implemented in a scripting langauge.
+program written in another language to have parts implemented in a scripting language.
 Python provides a C library for embedding python code. This is commonly used in games, for
 example, where the bulk of the game is implemented in C++ and then simpler tasks are
 implemented in a high-level language such as Python for developer productivity. This would
@@ -1117,7 +1333,7 @@ development time.
 
 \begin{minipage}{\linewidth}
 
-  \begin{lstlisting}[language=JavaScript, label={lst:node_ffi}, caption=Example of using \url{node-ffi} to call a C library \autocite{node-ffi}, breaklines=true]
+  \begin{lstlisting}[language=JavaScript, label={lst:node_ffi}, caption=Example of using \url{node-ffi} to call a C library \autocite{node-ffi}., breaklines=true]
 var ffi = require('ffi');
 
 var libm = ffi.Library('libm', {
@@ -1136,7 +1352,7 @@ current.atoi('1234'); // 1234
 
 \begin{minipage}{\linewidth}
 
-  \begin{lstlisting}[language=Python, label={lst:pynode}, caption=Example of using \url{pynode} to embed python in JavaScript \autocite{pynode}, breaklines=true]
+  \begin{lstlisting}[language=Python, label={lst:pynode}, caption=Example of using \url{pynode} to embed python in JavaScript \autocite{pynode}., breaklines=true]
 const pynode = require('@fridgerator/pynode')
 
 // Workaround for linking issue in linux:

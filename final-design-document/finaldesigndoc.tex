@@ -20,6 +20,13 @@
 \usepackage{adjustbox}
 \usepackage{appendix}
 \usepackage{amsmath}
+\usepackage{array}
+
+\newcolumntype{L}{>{\centering\arraybackslash}m{5cm}}
+\newcolumntype{S}{>{\centering\arraybackslash}m{2cm}}
+\newcolumntype{M}{>{\centering\arraybackslash}m{7cm}}
+
+\DeclareMathOperator{\round}{round}
 
 \renewcommand{\familydefault}{\sfdefault}
 
@@ -95,7 +102,6 @@ frame = single, }
 \input{budget.tex}
 \input{milestones.tex}
 \input{divisionoflabor.tex}
-\input{projectsummary.tex}
 \input{conclusions.tex}
 
 \input{appendix.tex}
