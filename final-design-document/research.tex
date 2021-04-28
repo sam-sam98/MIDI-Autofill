@@ -308,80 +308,524 @@ Our main challenge in the use of PixelCNN would be the collection and preprocess
 training data. For this model to work for our purposes, we would have to convert each MIDI
 file into a piano roll visualization which is rotated 90 degrees clockwise.
 
-\subsubsection{Second Approach: Already existent libraries. Magenta.}
 
-Before starting to develop a solution, we checked on existent libraries, researches and
-open source projects. This gave us a broader idea about the possible factors that can
-become in major challenges. Examples of these factors could be: find and prepare datasets,
-choose the correct AI prediction model, and what resources are required for training. We
-found that Google AI has released in 2018 an extensive library for art and music
-applications: Magenta.
+\subsection{Second Approach: Already existent libraries. Magenta.}
 
-\paragraph{Magenta Project} This collection of libraries is specific for music and art
-creation. It contains already trained AI models, different tools for MIDI handling, API
-and datasets that can be directly used to solve our problem. Although, the level of
-functionalities already included in the main API can defeat the academic purpose of the
-current project. Still, some of these elements can be valuable tools to create, train, and
-use our own autocomplete AI model. Either way, here we analyze the parts of the library that
-can be applied to our project.
+Before starting to develop a solution, we checked on existent libraries, academia
+research and open source projects. This gave us a broader idea about the possible
+factors that can become major challenges such as finding and preparing datasets,
+choosing the correct machine learning prediction model, processing hardware
+resources, etc.
 
-\subparagraph{MusicRNN} The module MusicRNN offers a close to ideal solution for the
-autocomplete functionality. This module contains models for generating and performing
-sections of melodies \autocite{musicRNN}. The models of interest are MelodyRNN, ImprovRNN,
-and PerformanceRNN. All these models, as their name implies, are based on recurrent neural
-networks (RNN) produced with Google's TensorFlow.
+We found that Google AI has released in 2018 an extensive library for art and music
+applications: Magenta Project (\url{https://magenta.tensorflow.org/}).
 
-\subparagraph{Recursive Neural Network (RNN)} In contrast with the already mentioned CNN,
-that processes grid values without contextual information, RNN processes sequential data
-as string of characters, words, or in our case of interest, melody representations. RNN
-also considers processed information along large sequences of data, and not purely local
-extent as CNN \autocite{fundamentalML}.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{image/PixelMask.png}
+  \caption{PixelCNN's unique mask prevents the AI from peeking ahead.}
+  \label{fig:pixel_mask}
+\end{figure}
 
-\paragraph{MelodyRNN.}
-MelodyRNN model generates melody based on an input melody. To achieve this, it uses
-language modeling (probability distribution over a sequence of data) with long short-term
-memory (LSTM) networks. This is a variant of RNN design to improve the performance of
-regular RNN across large sequences of data. The main issues that LSTM address are those
-related to the exploding and vanishing gradients magnified on any recursive network due to
-the accumulation of errors on the successive feedbacks of data analysis. This models also
-have four configurations to assists determining the range of pitches, identifying
-recursive patterns, and pay special attention on specific sections of the input melody
-\autocite{melodyRNN}. This model alone could be in charge of the autocomplete feature we
-are looking to achieve in our project.
+\begin{figure}[h!]
+  \centering
+  \caption{Home Page of Magenta Project From Google AI}
+  \includegraphics[width=\linewidth]{image/fig_JDF01.png}
+\end{figure}
 
-\paragraph{ImprovRNN.}
-ImprovRNN generate melodies in the same fashion of MelodyRNN. The main difference with the
-before model is the conditioning of the generated melody to a chord progression. This
-model counts with similar set of configurations than MelodyRNN, but with the addition of
-using as inputs vectors representing chords of the progression. Although, this can be a
-interesting feature to generate melodies, the model requires to encode the full input
-melody in XML format, not supporting direct MIDI input \autocite{improvRNN}. This model
-would not be directly applied to our project, but still could add interesting features for
-an expanded instance.
+\paragraph{Magenta Project}
 
-\paragraph{PerformanceRNN.}
-PerformanceRNN generates melodies using dynamic and expressing timing. This allows us to
-generate a more natural feeling as if a real player is adding to the expression of the
-performance. Although, this came with some trade off as some keys can fall outside the
-proper timing \autocite{performanceRNN}.
+This collection of libraries is specific for music and art (drawing) creation.
+For music application, Magenta API contains already trained AI models, tools for MIDI
+handling, and datasets that can be directly used to be directly implemented in our
+project or being uses as a good standard of reference for benchmark against more
+experimental and rudimentary models that can be develop by us.
+These collection of libraries are distributed in packages under two main frameworks
+and package management system: pip for Python (Magenta) and npm for JavaScript
+(Magenta.js). They respectively run on top of the machine learning platform TensorFlow
+(https://www.tensorflow.org/) and TensorFlow.js (https://www.tensorflow.org/js).
 
-This model adds a nice to have feature, but is not fundamental for our first approach.
+For this implementation we are designing a full monolithic JavaScript application. For
+this reason we will focus on Magenta.js and its machine learning platform,
+TensorFlow.js.
 
-\paragraph{Datasets.}
-Magenta project offers a set of collections of data that has been used to pre-train
-models. From this collection, seems that the MAESTRO (MIDI and Audio Edited for Synchronous
-Tracks and Organization) dataset could be the most useful for this project. It contains
-over 200 hours of key annotated piano performing. Other set that can be useful for our
-classical music approach is the Bach Doodle Set. A large audio dataset (over 6 years of
-total audio), collected by Google using its Bach Doodle. \autocite{magentaData}
+Although, Magenta.js is enough to run any of the supported models in the Magenta
+project, only the workflow for Python supports the training of new models. This
+requires a conversion work between trained models in Python environment and
+JavaScript environment. The following section will be dedicated to describe the
+supported models for Magenta.js and proposes a workflow to train our own model into
+Python environment and generate model checkpoints to be used into JavaScript
+environment.
 
-The selection of the dataset would be conditioned by the available training capabilities
-for this project.
+\subsubsection{Magenta Music API}
 
-\subsubsection{Third Approach: Develop out own RNN. LSTM.}
+This API is composed for a set of tools and models to deal with data in MIDI format, that
+is of interest for us. Additionally, the API counts with other tools for music
+transcription from analog sources of audio that are not considered in the scope of the
+present project. Also, this interface provides connection to pre-trained models remotely
+hosted that allows some level of training (only for MIDI format) over browser platform,
+but this is not considered for our implementation. For the scope of our project, the
+following sections of the API can be of special interest: \textbf{OnsetAndFrames} for
+translating raw sound to MIDI format, and \textbf{MusicRNN} for melody auto-generation.
 
-(This is under research by Jorge)
+\paragraph{OnsetsAndFrames} Described as “model for automatic polyphonic piano music
+transcription”(cite: \url{https://magenta.tensorflow.org/onsets-frames}), it is neural
+network implementation to translate regular piano sound into MIDI format. In other words,
+takes raw piano audio as input and return a MIDI file format with the an equivalent
+pattern of digital audio.
 
+\begin{figure}[]h!]
+  \centering
+  \caption{This model translate raw audio to MIDI format.}
+  \includegraphics[width=\linewidth]{image/fig_JDF02.png}
+\end{figure}
+
+\paragraph{MusicRNN} Implements a series of recurrent neural networks models based on long
+short-time memory language model or LSTM. This is used to predict notes based on long
+sequence of related data such is the case of melodies or percussion sets. For this project
+we will only consider melody related libraries. In this case, we can find \textbf{MelodyRNN},
+\textbf{ImprovRNN} and \textbf{PerformanceRNN}.
+
+\paragraph{MelodyRNN} LSTM implementation that generates melody using an input melody in
+MIDI format or generates a random melody without any input priming the model. To achieve
+this, the model uses similar techniques applied for natural language analysis. The model
+provides four configurations: \textbf{Basic}, \textbf{Mono}, \textbf{Loopback}, and
+\textbf{Attention}. Basic can accept as input and produce a baseline melody with a LSTM
+model in a reduced MIDI pitch range [48, 84].
+
+\paragraph{Mono} is similar to Basic, but handles full 128 MIDI pitches.
+
+\paragraph{Loopback} handles inputs with added custom labels to allow the model to more easily
+recognize patterns that can be periodically repeated across the track on durations of 1 or
+2 bars. This decreases the amount of data the model has to store across long sequences of
+data.
+
+\paragraph{Attention} is other technique that allows to handle long sequence of data with
+a mechanism of encoding-deconding segments of it without having to store the whole data
+sequence in coefficients of the RNN. Magenta also provides MusicRNN pre-trained models
+under each of the mentioned configuration that can be used as starting point of our
+application: \url{basic_rnn}, \url{mono_rnn}, \url{lookback_rnn} and \url{attention_rnn}.
+
+\paragraph{ImprovRNN} This model generate melodies in the same fashion that MelodyRNN, but
+incorporates the possibility of giving a progression of chords as input. Then the model
+generates melody fitting in the scale of that progression. This is typically done in music
+improvisation music execution. This model does not train on MIDI files, but requires the
+standard specific format for sharing sheet music files, MusicXML (see Appendix). This
+model provides three configurations: \textbf{Basic Improv}, \textbf{Attention Improve},
+and \textbf{Chord Pitches Improv}.
+
+\paragraph{Basic Improve} works in the same fashion than Basic MelodyRNN with the addition of
+providing a one-hot encoded vector with 48 triad (major, minor, augmented, diminished for
+each of the 12 root pitches).
+
+\paragraph{Attention Improve} works similarly to Attention MelodyRNN, providing the same
+encoding that the one on Basic Improve.
+
+\paragraph{Chord Pitches Improv} works in the same fashion that Basic Improve but as
+output provides a set of three vectors to encode root pitch, absence/presence of pitch
+class, and bass pitch class.
+
+\paragraph{PerformanceRNN}: This model intends to simulate the output of a live music
+performance. The model provides polyphonic output in PolyphonyRNN format (see Appendix)
+with the addition of dynamics and expressing timing. In addition to the parameters present
+in PolyphonyRNN format (similar to MIDI) this model also provides parameters representing
+note on, note off, time shift and velocity. This model slightly scapes the scope of our
+project, but if the implementation is simple enough it could add a nice to have feature
+with almost not significant workload.
+
+\paragraph{MusicRNN Python Workflow} Training, Evaluating, Using, and Saving the Model
+Although this library provides already pre-trained models, it is also available the option
+to train from scratch out own models. This opens the possibilities to generate highly
+dedicated models for specific music genre, style, instruments, and similar performance
+variables. Of course, on each of those cases, the challenge would be to collect high
+volume of data samples for each of the cited cases. However, this can be a good compromise
+solution between using an out-of-box solution and developing an entire model from scratch
+using a hi-level library such as TensorFlow.
+
+\paragraph{Training Data Processing.} Having a collection of MIDI files in a directory, the
+first step is to convert them to NoteSequence buffer protocol (see Appendix). This will
+allows the faster and more efficient way to work with data than MIDI files.
+
+\begin{figure}[]h!]
+  \centering
+  \caption{This model translate raw audio to MIDI format.}
+  \includegraphics[width=\linewidth]{image/fig_JDF02.png}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \caption{Example of converting a folder with MIDI files to NoteSequence protocol buffers.}
+  \includegraphics[width=\linewidth]{image/fig_JDF03.png}
+\end{figure}
+
+
+%fig_JDF03
+
+The second steps will the creation of SequenceExamples. This is the data format that will
+be fed by the model during the fitting stage. The outcome of this part of the process will
+be a collection of *.tfrecords files separated into a training collection and evaluation
+collection.
+
+\begin{figure}[h!]
+  \centering
+  \caption{Example of converting a folder with MIDI files to NoteSequence protocol buffers.}
+  \includegraphics[width=\linewidth]{image/fig_JDF04.png}
+\end{figure}
+
+
+For this stage, it is possible to use collections of MIDI files located at
+
+\paragraph{Training the Model.} This stage where the parameters of training are defined
+such is the before mentioned configuration of the model, amount of trining cycles, and
+data batch size (to limit the usage of memory and prevent out of memory issues training
+large models). Also, here is where model hyperparameters are defined such as amount of RNN
+layers, previous steps in the data sequence to have into account during the training,
+hidden stages, etc.
+
+\begin{figure}[h!]
+  \caption{Example of training model command: \url{melody_rnn_train}}
+  \includegraphics[width=\linewidth]{image/fig_JDF05.png}
+\end{figure}
+
+It is possible to run evaluation in parallel with the trining to simultaneously measure
+the progress in the trining of the model. This is indicated to the framework redirecting
+the parameter \url{--sequence_example_file} to a separate set of evaluation data.
+
+\begin{figure}[h!]
+  \caption{Example of training model with evaluation in parallel command: —eval}
+  \includegraphics[width=\linewidth]{image/fig_JDF06.png}
+\end{figure}
+
+
+To be able to visualize the progress of the training and evaluation of the model, it is
+possible to run the log command and access to the local host (\url{http://localhost:6006})
+with any browser.
+
+\begin{figure}[h!]
+  \caption{Command to activate the log register (tensorboard) during train evaluation
+    cycles.}
+  \includegraphics[width=\linewidth]{image/fig_JDF07.png}
+\end{figure}
+
+
+
+\paragraph{Generating Melodies with Trained Model.} During or after the training, it is
+possible to run the model and generate melodies with the latest generated coefficients or
+\url{checkpoint}. For this is the \url{—run_dir} parameters will point to the location
+where of the trining job, containing in a subdirectory within that location the most
+recent checkpoint file. All other parameters used to run the melody generation should be
+the same as in the training command in execution (if the model will be executed before the
+training ends). Also is needed to specify the output directory where all the generated
+melodies will be placed. To start the generation of the melody, at least one note is
+required as seed.
+
+\begin{figure}[h!]
+  \caption{Command to generate a melody using a single note C4 in the \url{—primer_melody} parameter}
+  \includegraphics[width=\linewidth]{image/fig_JDF08.png}
+\end{figure}
+
+
+\paragraph{Saving the Trained Model.} Magenta uses as output bundle format that can be
+produced with a single command, grouping all the data that will be required for reusing
+the model such as model checkpoint, metagraph (the information about the conection
+between neurons), and other metadata that will be required to reconstruct the model
+afterwards.
+
+\begin{figure}[h!]
+  \caption{Command to generate a bundle file with the information of the model: \url{—save_generator_bundle}}
+  \includegraphics[width=\linewidth]{image/fig_JDF09.png}
+\end{figure}
+
+\paragraph{Converting Python Trained Models to TensorFlow.js.} In order to work in a JavaScript
+environment, it is required to convert the bundle format or any of the TensorFlow/Keras
+format into TensorFlow.js format. For this, it will be used \url{tensorflowjs_converter}
+command in the following fashion:
+
+\begin{figure}[h!]
+  \caption{Command to convert TensorFlow SavedModel into TensorFlow.js comptible format}
+  \includegraphics[width=\linewidth]{image/fig_JDF10.png}
+\end{figure}
+
+\subsection{Third Approach: Develop our own RNN. LSTM.}
+
+On our first approach in section 5.3.1, the data was planned to be treated as a spacial
+2D disposition as is in a picture. For this reason, the solution was planned to be
+execute with convolutional neural networks to be able to parse the patterns on visual
+representation of small segments of melodies. This approach can be impractical if
+there is intention to process long sequence of ordered data such is music.
+
+As we seen in section 5.3.2, the most common model is based on recurrent neural
+networks. These kind of models were developed with the idea of processing sequential
+data that follows patterns and relations across long distances between different point
+in the sequence. Regular neural network cannot register these kind of patterns (see
+Regular Neural Networks Appendix). This feeding forward patter to process data is
+what gives the character of ‘recurrent’ to these models.
+
+A similar to music sequential interrelated pattern of data, but more complex case is the
+analysis of natural language. From this field is that many of these ideas are applied to
+music processing and modeling. This section will explain how those ideas were
+developed, and how that can be translated to music melody prediction. Also, we will
+explore TensorFlow API as our framework to develop for this approach.
+
+\paragraph{Autoregressive Model, RNN and LSTM.} Music is composed for a finite amount of
+combinations that follows structures such as harmony. As already was explained, these is
+based on concept as scales, progressions, and interval. For this reason, it is expected
+that for a determined sequence, there will be a distribution of probabilities function
+that describe what key will be the next one in the melody. Basically, we are calculating
+conditional probabilities related to already seen segment of data. In other words, the
+possibility that the following key in the melody, with be proportional to a determined
+preceded sequence:
+
+\begin{equation}
+  x_t \sim P \left( x_t \vert  x_{t - 1}, ..., x_1 \right)
+\end{equation}
+
+In order to capture these relations and probabilities, we can use a model that store
+probabilities coefficients of each possible sequence. These coefficients can be used to
+calculate the probability of the pitch at time ’t’ using the already known pitch at time
+’t-1’. If this is done recurrently, we are in presence of a autoregressive model. The
+coefficients used to calculate the prediction are never ‘seen’ and they are constantly
+being updated during training stage, for this reason they are called ‘hidden states’.
+
+\begin{figure}[h!]
+  \caption{Latent Autoregressive Model}
+  \includegraphics[width=\linewidth]{image/fig_JDF12.png}
+\end{figure}
+
+
+Still, this basic model has some issues: the storage overhead of the model for hidden
+stage can be unmanageable (imagine saving all possible combination of keys with not
+length limitation). Also, this model can perform well in producing interpolation of known
+data. On the contrary, experimental results shows that errors add-up and the model
+perform poorly or directly does not perform at all after relatively few predictions outside
+the known sequence. As an experimental example, the prediction of values of a
+function start performing after 4-steps ahead, to finally converging to constant values
+in just 64-steps predictions:
+
+\begin{figure}[h!]
+  \caption{Experiment of Latent Autoregressive Model Prediction}
+  \includegraphics[width=\linewidth]{image/fig_JDF13.png}
+\end{figure}
+
+
+This issue known is product of gradient explosion or vanishing. The first case is when
+the network coefficients diverges to infinity, not producing any learning effect on the
+network. The gradient vanishing occurs when the coefficients converges to zero and
+the training back propagation information is lost. This problem is common in common
+front-feeding/back-propagation RNN.
+
+To avoid vanishing, it is necessary to implement a network that can maintain the
+training information long back to the structure of the network. In other words, there
+should be an implementation that allows the flow the intact gradient information not
+only to the latest layer in the network, but also to some hidden layers in across the
+structure to be able to learn from this information. This is the motivation behind the
+creation of long short-term memory (LSTM) networks.
+
+LSMT introduces a new type of neural network architecture unit: the LSMT cell.
+
+\begin{figure}[h!]
+  \caption{Experiment of Latent Autoregressive Model Prediction}
+  \includegraphics[width=\linewidth]{image/fig_JDF14.png}
+\end{figure}
+
+
+This structure operates as a gate using as input the current data state and the hidden
+state from the before step in the network. From these inputs the cell takes state of
+modifying its own hidden state or keep it unmodified to be fed to the next cell.
+
+\paragraph{Data Gather and Processing} Before diving into the implementation of a model
+using LSTM cells, we need to gather and process data in a compatible format for our
+machine learning framework.
+
+For the gathering of large collection of data, it is possible to use large MIDI collection
+like the one located at https://www.mutopiaproject.org/.
+
+\begin{figure}[h!]
+  \caption{Mutopia Project contains large free-to-use collection of music in MIDI format }
+  \includegraphics[width=\linewidth]{image/fig_JDF15.png}
+\end{figure}
+
+
+Because the website does not support batch download collection, we would need to implement
+a script for ‘web scrapping’ a large quantity of these files. This can be done without
+major challenges using a Python implementation as follow:
+
+\begin{figure}[h!]
+  \caption{Example of web scraping code for data collection }
+  \includegraphics[width=\linewidth]{image/fig_JDF16.png}
+\end{figure}
+
+
+After the collection of the data, we need to process it to be used for training and
+evaluation. Knowing that Tensorflow model layer requires a vectorial representation of
+inputs, we need put in place a workflow to convert MIDI files into compatible vectors that
+represents a melody to be fed to the model.
+
+To process the MIDI collection, it is possible to use a library ‘music21’
+(https://web.mit.edu/music21/). The representation, as already explained, consist in the
+note and duration of each note. For this particular conversion, the classes required are:
+converter, pitch, and interval. Later, we can loop through all the MIDI files located in a
+single directory with a code as follows:
+
+\begin{figure}[h!]
+  \caption{Example of converting from MIDI to scores from local directory }
+  \includegraphics[width=\linewidth]{image/fig_JDF17.png}
+\end{figure}
+
+
+Still there is an issue with this data set: many of the MIDI files contains polyphonic
+song (many instruments). This could be resource intensive and also is probable to add a
+significant amount of noise in the data set, producing undesirable predictions. For this
+reason it is needed to convert any polyphonic MIDI to a monophonic format, extracting the
+main melody in a single instrument. That can be done by the next function:
+
+\begin{figure}[]h!]
+  \caption{Example of converting from polyphonic score to monophonic }
+  \includegraphics[width=\linewidth]{image/fig_JDF18.png}
+\end{figure}
+
+
+Finally, all the converted score are possible to convert to three separate lists: notes,
+chords, and duration. This is an example of this processing code:
+
+\begin{figure}[]h!]
+  \caption{Code to place in lists notes, chords and duration }
+  \includegraphics[width=\linewidth]{image/fig_JDF19.png}
+\end{figure}
+
+
+Some feature engineering can be done to reduce the amount of data is processed by the
+model, such as using just MIDI compositions executed in a specific instrument,
+compositions of single author, transposition of all songs to a single set of keys, etc.
+Also, it is possible to filter out identical sequences to decrease the chances of faster
+overfitting of the model. This will be researched during the execution of this project.
+
+The last step on the preparation of the data will be the separation of the converted
+melodies into stream of equal length sequences. An example of the code to perform this
+action to a dataset that was transposed to C major key as part of feature reduction
+follows like:
+
+\begin{figure}[]h!]
+  \caption{Code used to segment the data in equal length. In this case 32 keys.}
+  \includegraphics[width=\linewidth]{image/fig_JDF20.png}
+\end{figure}
+
+Additionally, it will be needed to serialize all these streams into a file format to be
+able to be retrieved later. This can be series of CSV files or some kind of buffer stream
+as the one mentioned in the before section.
+
+
+\paragraph{Implementation of LSTM with TensorFlow.} The implementation from scratch of a deep learning
+model can be daunting. The amount of possibilities are endless, and without a clear path
+to follow, but the moto “start simple and build-up from there”. For this reason, as
+starting point, we could use an existent architecture that is already tested and
+published. For illustrating the case in the current documentation, we will describe the
+architecture used at this location:
+
+\begin{figure}[]h!]
+  \caption{Possible architecture to be implemented as starting point for our LSTM RNN }
+  \includegraphics[width=\linewidth]{image/fig_JDF21.png}
+\end{figure}
+
+
+This architecture posses two inputs: chord input and duration input. The network should be
+able to train both parameters in parallel. Also, for the same reason, it will be needed
+two outputs for predicting exactly those same parameters.
+
+After each input, and embedding layer will be sequentially connected. This will transform
+each chord and duration to a compact format that allocate similar values to similar keys
+instead of a large one-hot encoded format with 64 elements where except for one all others
+are zero.
+
+The compact chord representation on one side, and the duration representation on the
+other, will be concatenated in a single input. This step will keep the association of each
+chord and duration placing them in a single data structures ready to be processed by the
+core layer of this data structure: the LSTM cell layer.
+
+The LSTM layer will be keep register of hidden coefficients that holds the information
+about the probabilities of the concatenated input sequences primed during the training
+stages.
+
+Finally, the set of dense layer should increase density of representative states of the
+network for all the different patterns: first chord and duration concatenated, and later
+in separate way to be processed by a softmax activation function that returns the
+probability of the prediction in the output layer.
+
+\begin{figure}[]h!]
+  \caption{Example of the code to implement a double input, double output LSTM RNN }
+  \includegraphics[width=\linewidth]{image/fig_JDF22.png}
+\end{figure}
+
+
+\paragraph{Training of the Model.} After the completed the architecture of the network, it is possible
+to start compilation and training of the model. For this case, it is required to define a
+loss function and optimizer technique, the will track the minimization of the loss. The
+training step can be initialized defining the size of the training batch and the amount of
+epochs (training iterations). An example of the code that implements these two steps as
+follows:
+
+\begin{figure}[]h!]
+  \caption{Example of compilation and training of Tensorflow LSTM RNN }
+  \includegraphics[width=\linewidth]{image/fig_JDF23.png}
+\end{figure}
+
+\paragraph{Using Model to Generate Melody.}
+Once the training is done, it is possible to feed the model with a sequence of notes and
+generate melody based on the input. This process can be done iteratively, in other words,
+the predicted output can be used again as input to generate a new output that will be
+concatenated at the end of the already existent piece of melody, repeating this stage
+indefinitely for as long as desired. As example of this implementation, the following code
+uses a 32 chord sequence as initial input, and generate 100 segments of equal size as
+output:
+
+\begin{figure}[]h!]
+  \caption{Example of newly generate melody with model }
+  \includegraphics[width=\linewidth]{image/fig_JDF24.png}
+\end{figure}
+
+This step will generate the melody in the format that was parsed the MIDI file for
+training and input. Still it is required to convert it back to MIDI to be able to
+reproduce it.
+
+\paragraph{Reconstructing MIDI File From Generated Melody.} This step is very similar to the one
+already described to parse MIDI into lists to use as data set for TensorFlow model. This
+is simply the reversion of that steps. For this, it is used again the music21 library as
+follows:
+
+\begin{figure}[]h!]
+  \caption{Example of constructing a new MIDI file with the prediction generated}
+  \includegraphics[width=\linewidth]{image/fig_JDF25.png}
+\end{figure}
+
+
+\paragraph{Model Reuse and Conversion to JavaScript Platform.} As already mentioned in the
+before section, to be able to use the trained model into a monolithic JavaScript
+environment, it is required to convert the network weights into a TensorFlow.js compatible
+format.
+
+In this case, a possible export format for weights can be ‘*.hdf5’. To implement saving
+the best model found during training we need to modify the call of the fit method on the
+model on the training section. As a side note, this workflow defines as ‘the best trained
+model’ as the one with the lowest loss validation value during the training iterations.
+
+After training, testing and evaluating the model generated, the weights are exported to
+JavaScript compatible format in the following way:
+
+This project will count with unit testing at all possible point in the code. For this,
+before proceeding to a random generation of a model, that will not produce deterministic
+results, a seed value for random generation will be provide.
+
+The main focus of unit test would be around functions that provides a result using
+principally code written by our team. There are sections of code related to the pipeline
+of TensorFlow/Keras framework that we trust is largely test as part of those libraries.
+
+As dataset for this stage a collection of well known melody sequence will be used for
+benchmark.
+
+\begin{figure}[]h!]
+  \caption{Addition of monitoring parameters to save the best model}
+  \includegraphics[width=\linewidth]{image/fig_JDF26.png}
+\end{figure}
 
 \subsection{Embedded Controller Comparisons}
 \label{sec:embedded_controllers}
