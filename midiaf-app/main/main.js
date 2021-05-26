@@ -1,4 +1,3 @@
-require('@tensorflow/tfjs-node')
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 const af = require('./autofill/autofill')('magenta')
@@ -6,7 +5,7 @@ const core = require('@magenta/music/node/core')
 
 let win = undefined
 
-function createWindow () {
+function createWindow() {
   win = new BrowserWindow({
     width: 800,
     height: 600,
