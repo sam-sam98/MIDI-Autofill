@@ -2,6 +2,8 @@ const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 const af = require('./autofill/autofill')('magenta')
 const core = require('@magenta/music/node/core')
+const { sequenceProtoToMidi } = require('@magenta/music/node/core')
+const fs = require('fs');
 
 let win = undefined
 
@@ -43,4 +45,30 @@ ipcMain.handle('generate', async (_, checkpointName, noteSequence, steps, temper
   let qns = core.sequences.quantizeNoteSequence(noteSequence, 4)
   let checkpoint = af.checkpoints.find(check => check.name == checkpointName)
   return await af.autofill(checkpoint, qns, steps, temperature)
+})
+
+ipcMain.handle('save', async (_, noteSequence, name) => {
+  const midiData = sequenceProtoToMidi(noteSequence)
+
+  // Create the save data folder if it doesn't already exist
+  const saveDataDir = path.join(app.getPath('userData'), 'midiaf')
+
+  try {
+    fs.mkdirSync(saveDataDir)
+  } catch (err) { }
+
+  const midiFilePath = path.join(saveDataDir, name + '.midi')
+
+  try {
+    fs.writeFileSync(midiFilePath, midiData)
+    return {
+      success: true,
+    }
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      error: err,
+    }
+  }
 })
