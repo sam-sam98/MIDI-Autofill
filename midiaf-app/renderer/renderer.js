@@ -36,56 +36,103 @@ ipcRenderer.once('ready', (_, checkpoints) => {
     selector.add(option)
   }
 
-  document.getElementById('loading').hidden = true
 })
 
-let viz = undefined
+const roll = document.getElementById('roll')
+const scroll = document.getElementById('scroll')
+const keys = document.getElementById('keys')
+const key = {offsetWidth: 40, offsetHeight: 10}
 
-let player = new core.Player(true, {
-  run: (note) => viz.redraw(note),
-})
+const octaves = 2
+const whole = 128
+let quant = whole
+let tempo = 120
+let measures = 0
 
-document.getElementById('generatebtn').onclick = () => {
-  player.stop()
-  let selector = document.getElementById('checkpoint')
-  let checkpoint = selector.value
-  ipcRenderer.invoke('generate', checkpoint, noteSequence, 20, 1.5).then((newNotes) => {
-    newNotes = core.sequences.unquantizeSequence(newNotes)
-    noteSequence = core.sequences.concatenate([noteSequence, newNotes])
-    viz = new core.Visualizer(noteSequence, document.getElementById('canvas'))
-  })
-}
+roll.style.width = window.innerWidth - keys.offsetWidth - keys.offsetLeft * 2 + 'px' // resize roll to fit screen
+// Default number of measures is the max betweeh the minimum number of measures in the MIDI and the minimum number
+// of measures required to fill the piano roll
+measures = Math.max(Math.ceil(roll.offsetWidth / whole), Math.ceil(originalSequence.totalTime * tempo / 60 / 4))
 
-document.getElementById('playbtn').onclick = () => {
-  player.start(noteSequence)
-}
+// populate roll with measures of alternating opacity
+for (var i = 0; i < 10; i++) {
+  var newMeasure = document.createElement('DIV')
+  newMeasure.classList.add('measure')
+  newMeasure.style.left = i * whole + 'px'
+  if (i % 2 == 0) {
+    newMeasure.style.opacity = 0.15
+  } else {
+    newMeasure.style.opacity = 0.2
+  }
 
-document.getElementById('resetbtn').onclick = () => {
-  player.stop()
-  noteSequence = originalSequence
-  viz = new core.Visualizer(noteSequence, document.getElementById('canvas'))
-}
+  grid.appendChild(newMeasure)
 
-document.getElementById('savebtn').onclick = () => {
-  console.log(document.getElementById('savename').value)
-  const midiName = document.getElementById('savename').value
-  ipcRenderer.invoke('save', noteSequence, midiName).then((result) => {
-    if (result.success) {
-      alert('Saved sucessfully');
-    } else {
-      alert('Save failed')
-      console.log(result.err)
+  for (var j = 0; j < octaves; j++) {
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.classList.add('wht')
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newMeasure.appendChild(newCell)
     }
-  })
-}
-
-document.getElementById('midifile').onchange = async (event) => {
-  const midi = event.target.files[0];
-  originalSequence = await core.blobToNoteSequence(midi)
-  noteSequence = originalSequence
-  viz = new core.Visualizer(noteSequence, document.getElementById('canvas'))
-}
-
-window.onload = function () {
-  viz = new core.Visualizer(originalSequence, document.getElementById('canvas'))
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.classList.add('blk')
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newMeasure.appendChild(newCell)
+    }
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.classList.add('wht')
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newMeasure.appendChild(newCell)
+    }
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.classList.add('blk')
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newMeasure.appendChild(newCell)
+    }
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.classList.add('wht')
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newMeasure.appendChild(newCell)
+    }
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.classList.add('blk')
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newMeasure.appendChild(newCell)
+    }
+    for (var k = 0; k < 8; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.classList.add('wht')
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newMeasure.appendChild(newCell)
+    }
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.classList.add('blk')
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newMeasure.appendChild(newCell)
+    }
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.classList.add('wht')
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newMeasure.appendChild(newCell)
+    }
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.classList.add('blk')
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newMeasure.appendChild(newCell)
+    }
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.classList.add('wht')
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newMeasure.appendChild(newCell)
+    }
+  }
 }

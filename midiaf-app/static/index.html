@@ -7,26 +7,45 @@
     <title>MIDI Autofill</title>
 </head>
 
+<link rel="stylesheet" href="index.css">
+
 <body>
-    <h1>Welcome to MIDI-Autofill!</h1>
+  <div class="container">
+    <div id="keys" class="piano keys">
+      <div class="wht">B</div>
+      <div class="blk"></div>
+      <div class="wht">A</div>
+      <div class="blk"></div>
+      <div class="wht">G</div>
+      <div class="blk"></div>
+      <div class="wht">F</div>
+      <div class="wht">E</div>
+      <div class="blk"></div>
+      <div class="wht">D</div>
+      <div class="blk"></div>
+      <div class="wht">C</div>
 
-    <div id="loading">Loading...</div>
-
-    <label for="checkpoint">Checkpoint:</label>
-    <select name="checkpoint" id="checkpoint">
-    </select>
-
-    <input type="file" id="midifile">
-    <button id="generatebtn">Generate!</button>
-    <button id="playbtn">Play</button>
-    <button id="resetbtn">Reset</button>
-    <label for="savename">MIDI Track Name</label>
-    <input type="text" id="savename" />
-    <button id="savebtn">Save</button>
-
-    <br>
-
-    <canvas id="canvas"></canvas>
+      <div class="wht">B</div>
+      <div class="blk"></div>
+      <div class="wht">A</div>
+      <div class="blk"></div>
+      <div class="wht">G</div>
+      <div class="blk"></div>
+      <div class="wht">F</div>
+      <div class="wht">E</div>
+      <div class="blk"></div>
+      <div class="wht">D</div>
+      <div class="blk"></div>
+      <div class="wht">C</div>
+    </div>
+    <div id="roll">
+      <div id="scroll">
+        <div id="grid">
+        </div>
+        <button id="expand" class="ui r">+</button>
+      </div>
+    </div>
+  </div>
 
     <script>
         require('../renderer/renderer')
