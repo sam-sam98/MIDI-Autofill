@@ -1,0 +1,164 @@
+
+#window {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.container {
+  display: inline;
+}
+
+#keys {
+  display: inline-grid;
+  row-gap: 1px;
+  grid-template-columns: 40px;
+  background: grey;
+  border: 1px solid grey;
+  vertical-align: top;
+}
+
+#scroller {
+  width: 1000px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  border: 1px solid grey;
+}
+
+#roll {
+  position: relative;
+}
+
+.ui-bar {
+  display: block;
+  height:22px;
+  width 100%;
+}
+
+.ui {
+  margin-top: 2px;
+  margin-right: 1px;
+  margin-left: 1px;
+  background-color: rgb(098, 096, 200);
+  border: 1px solid rgb(098, 096, 200);
+  border-radius: 5px;
+  height: 20px;
+  text-align: center;
+  font-family: Arial;
+  font-size: 14px;
+  color: white;
+  transition: all 0.4s;
+}
+.ui:hover {
+  background-color: white;
+  border-radius: 6px;
+  height: 22px;
+  font-size: 16px;
+  color: rgb(098, 096, 200);
+}
+.ui:disabled {
+  background-color: white;
+  border-radius: 5px;
+  height: 20px;
+  font-size: 14px;
+  color: rgb(098, 096, 200);
+}
+
+.r {
+  float: right;
+}
+.l {
+  float: left;
+}
+
+#expand {
+  position: absolute;
+  height: 100%;
+  vertical-align: top;
+}
+
+label {
+  font-family: Arial;
+  font-size: 14px;
+  color: grey;
+  margin-top: 2px;
+  margin-left: 1px;
+  margin-right: 1px;
+  padding-top: 4px;
+}
+
+.dropdown {
+    display: inline-block;
+    position: relative;
+}
+.dropdown-content {
+    width: 100%;
+    margin-top: 2px;
+    position: absolute;
+    background-color: white;
+    border: 1px solid rgb(098, 096, 200);
+    border-radius: 5px;
+    text-align: center;
+    display: none;
+    z-index: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+.dropdown-content option {
+    color: 1px solid rgb(098, 096, 200);
+    font-family: Arial;
+    color: rgb(098, 096, 200);
+    display: block;
+}
+.dropdown-content option:hover {
+    background-color: rgb(098, 096, 200);
+    color: white;
+}
+
+.show {
+  display: block;
+}
+
+.measure {
+  position: absolute;
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  grid-gap: 1px 1px;
+  background: grey;
+  padding-right: 1px;
+}
+
+.wht {
+  height: 10px;
+  border-radius: 1px;
+  background: white;
+  text-align: right;
+  font-family: Arial;
+  font-size: 7px;
+  color: grey;
+}
+
+.blk {
+  height: 10px;
+  border-radius: 2px;
+  background: rgb(65, 65, 80);
+}
+
+.note {
+  position: absolute;
+  background-color: rgb(153, 152, 229);
+  border: 1px solid rgb(098, 096, 200);
+  border-radius: 3px;
+  height: 10px;
+}
+.note:hover {
+  background-color: rgb(194, 194, 238);
+  border: 1px solid rgb(098, 096, 200);
+}
+.note:active {
+  background-color: rgb(098, 096, 200);
+  border: 1px solid rgb(098, 096, 200);
+}

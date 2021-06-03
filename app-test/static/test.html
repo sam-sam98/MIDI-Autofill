@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>MIDI Autofill</title>
+  </head>
+  <link rel="stylesheet" href="test.css">
+  <body>
+    <div class="ui-bar">
+      <button id="save" class = "ui l">Save</button>
+      <button id="reset" class="ui l">Reset</button>
+      <button id="undo" class="ui l">Undo</button>
+      <button id="redo" class="ui l">Redo</button>
+      <button id="tempo-down" class="ui r">-</button>
+      <div class="dropdown r">
+        <button id="tempo" class="ui r">120</button>
+        <div id="tempos" class="dropdown-content">
+          <option class="tempo-opt">40</option>
+          <option class="tempo-opt">60</option>
+          <option class="tempo-opt">80</option>
+          <option class="tempo-opt">100</option>
+          <option class="tempo-opt">120</option>
+          <option class="tempo-opt">140</option>
+          <option class="tempo-opt">160</option>
+          <option class="tempo-opt">180</option>
+          <option class="tempo-opt">200</option>
+          <option class="tempo-opt">220</option>
+          <option class="tempo-opt">240</option>
+          <option class="tempo-opt">260</option>
+          <option class="tempo-opt">280</option>
+          <option class="tempo-opt">300</option>
+        </div>
+      </div>
+      <button id="tempo-up" class="ui r">+</button>
+      <label class="r">Tempo:</label>
+    </div>
+    <div id="window">
+      <div class="container">
+        <div id="keys">
+          <div class="wht">B</div>
+          <div class="blk"></div>
+          <div class="wht">A</div>
+          <div class="blk"></div>
+          <div class="wht">G</div>
+          <div class="blk"></div>
+          <div class="wht">F</div>
+          <div class="wht">E</div>
+          <div class="blk"></div>
+          <div class="wht">D</div>
+          <div class="blk"></div>
+          <div class="wht">C</div>
+          <div class="wht">B</div>
+          <div class="blk"></div>
+          <div class="wht">A</div>
+          <div class="blk"></div>
+          <div class="wht">G</div>
+          <div class="blk"></div>
+          <div class="wht">F</div>
+          <div class="wht">E</div>
+          <div class="blk"></div>
+          <div class="wht">D</div>
+          <div class="blk"></div>
+          <div class="wht">C</div>
+        </div>
+      </div>
+      <div class="container">
+        <div id="scroller">
+          <div id="roll">
+            <div id="grid">
+            </div>
+            <button id="expand" class="ui r">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ui-bar">
+      <button id="quantize" class="ui r">Quantize</button>
+      <div class="dropdown r">
+        <button id="quant" class="ui r">none</button>
+        <div id="quants" class="dropdown-content">
+          <option class="quant-opt">1/1</option>
+          <option class="quant-opt">1/2</option>
+          <option class="quant-opt">1/4</option>
+          <option class="quant-opt">1/8</option>
+          <option class="quant-opt">1/16</option>
+          <option class="quant-opt">1/32</option>
+          <option class="quant-opt">1/64</option>
+          <option class="quant-opt">none</option>
+        </div>
+      </div>
+      <label class="r">Quantization:</label>
+      <button id="play" class="ui l">Play</button>
+      <button id="stop" class="ui l">Stop</button>
+      <button id="add" class="ui l">Add</button>
+      <button id="delete" class="ui l">Delete</button>
+      <button id="move" class="ui l">Move</button>
+      <button id="stretch" class="ui l">Stretch</button>
+    </div>
+    <script src="../renderer/test.js"></script>
+  </body>
+</html>
