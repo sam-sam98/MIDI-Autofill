@@ -20,6 +20,7 @@ TWINKLE_TWINKLE = {
 
 // establish reference values
 const whole = 128
+let originalSequence = TWINKLE_TWINKLE
 let sequence = TWINKLE_TWINKLE.notes
 let totalTime = TWINKLE_TWINKLE.totalTime
 let measures = 0
@@ -149,12 +150,124 @@ for (var i = 0; i < measures; i++) {
 expand.style.left = measures * whole + 'px'
 
 // add notes to roll
-for (var i = 0; i < sequence.length; i++) {
-  var newNote = document.createElement('BUTTON')
-  newNote.classList.add('note')
-  newNote.style.top = (key.offsetHeight + 1) * 23 - ((sequence[i].pitch - 60) * (key.offsetHeight + 1)) + 1 + 'px'
-  newNote.style.left = Math.round(sequence[i].startTime * tempo / 60) * whole / 4 + 'px'
-  newNote.style.width = Math.round((sequence[i].endTime - sequence[i].startTime) * tempo / 60) * whole / 4 + 'px'
-  roll.appendChild(newNote)
-}
+vizualize(sequence)
 let notes = document.getElementsByClassName('note')
+
+// expand piano roll
+expand.onclick = () => {
+  var newMeasure = document.createElement('DIV')
+  newMeasure.style.width = whole - 1 + 'px'
+  newMeasure.style.height = keys.offsetHeight + 'px'
+  newMeasure.style.left = measures * whole + 'px'
+  newMeasure.classList.add('measure')
+  if (measures % 2 == 0) {
+    newMeasure.style.opacity = 0.15
+  } else {
+    newMeasure.style.opacity = 0.2
+  }
+
+  grid.appendChild(newMeasure)
+
+  for (var j = 0; j < 2; j++) {
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight - 1 + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('wht')
+      newMeasure.appendChild(newCell)
+    }
+
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('blk')
+      newMeasure.appendChild(newCell)
+    }
+
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('wht')
+      newMeasure.appendChild(newCell)
+    }
+
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('blk')
+      newMeasure.appendChild(newCell)
+    }
+
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('wht')
+      newMeasure.appendChild(newCell)
+    }
+
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('blk')
+      newMeasure.appendChild(newCell)
+    }
+
+    for (var k = 0; k < 8; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('wht')
+      newMeasure.appendChild(newCell)
+    }
+
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('blk')
+      newMeasure.appendChild(newCell)
+    }
+
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('wht')
+      newMeasure.appendChild(newCell)
+    }
+
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('blk')
+      newMeasure.appendChild(newCell)
+    }
+
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('wht')
+      newMeasure.appendChild(newCell)
+    }
+  }
+  expand.style.left = ++measures * whole + 'px'
+}
+
+// FUNCTIONS
+function vizualize(sequence) {
+  for (var i = 0; i < sequence.length; i++) {
+    var newNote = document.createElement('BUTTON')
+    newNote.classList.add('note')
+    newNote.style.top = (key.offsetHeight + 1) * 23 - ((sequence[i].pitch - 60) * (key.offsetHeight + 1)) + 1 + 'px'
+    newNote.style.left = Math.round(sequence[i].startTime * tempo / 60) * whole / 4 + 'px'
+    newNote.style.width = Math.round((sequence[i].endTime - sequence[i].startTime) * tempo / 60) * whole / 4 + 'px'
+    roll.appendChild(newNote)
+  }
+}
