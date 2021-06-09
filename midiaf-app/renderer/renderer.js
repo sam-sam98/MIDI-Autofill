@@ -376,11 +376,14 @@ function vizualize(sequence) {
 
 function record(notes) {
   sequence = []
+  totalTime = 0
   for (var i = 0; i < notes.length; i++) {
     var pitch = 60 + (1 + (key.offsetHeight + 1) * 23 - notes.item(i).offsetTop) / (key.offsetHeight + 1)
     var startTime = notes.item(i).offsetLeft * 4 / whole * 60 / tempo
     var endTime = notes.item(i).offsetWidth * 4 / whole * 60 / tempo + startTime
-
+    if (endTime > totalTime) {
+      totalTime = endTime
+    }
     sequence.push({pitch: pitch, startTime: startTime, endTime: endTime})
   }
   return sequence
