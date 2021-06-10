@@ -54,7 +54,7 @@ for (var i = 0; i < measures; i++) {
     newMeasure.style.opacity = 0.2
   }
 
-  grid.appendChild(newMeasure)
+  roll.appendChild(newMeasure)
 
   for (j = 0; j < 2; j++) {
     for (var k = 0; k < 4; k++) {
@@ -166,7 +166,7 @@ expand.onclick = () => {
     newMeasure.style.opacity = 0.2
   }
 
-  grid.appendChild(newMeasure)
+  roll.appendChild(newMeasure)
 
   for (var j = 0; j < 2; j++) {
     for (var k = 0; k < 4; k++) {
@@ -257,7 +257,35 @@ expand.onclick = () => {
       newMeasure.appendChild(newCell)
     }
   }
-  expand.style.left = ++measures * whole + 'px'
+  expand.style.left = measures * whole + 'px'
+}
+
+document.getElementById('add').onclick = () => {
+  document.getElementById('add').disabled = true
+  document.getElementById('delete').disabled = false
+  document.getElementById('move').disabled = false
+  document.getElementById('stretch').disabled = false
+
+  for (var i = 0; i < notes.length; i++) {
+    notes.item(i).onclick = null
+  }
+
+  roll.onclick = (e) => {
+    e = e || window.event
+    e.preventDefault()
+
+
+    var newNote = document.createElement('BUTTON')
+    newNote.classList.add('note')
+    roll.appendChild(newNote)
+    newNote.style.width = whole / Math.min(quant, 8) + 'px'
+    newNote.style.left = e.clientX - (keys.offsetLeft + keys.offsetWidth - scroller.scrollLeft) + 'px'
+    newNote.style.top = e.clientY - keys.offsetTop - newNote.offsetHeight / 2 + 'px'
+    newNote.style.left = Math.round(newNote.offsetLeft / (whole / quant)) * whole / quant + 'px'
+    newNote.style.top = Math.round(newNote.offsetTop / (key.offsetHeight + 1)) * (key.offsetHeight + 1) + 1 + 'px'
+
+    notes = document.getElementsByClassName('note')
+  }
 }
 
 // FUNCTIONS
