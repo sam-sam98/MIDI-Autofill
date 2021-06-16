@@ -66,14 +66,7 @@ scroller.style.width = window.innerWidth - keys.offsetWidth - keys.offsetLeft * 
 addMeasures(Math.max(Math.ceil(scroller.offsetWidth / whole), Math.ceil(totalTime * tempo / 60 / 4)))
 
 // add notes to roll
-for (var i = 0; i < sequence.length; i++) {
-  var newNote = document.createElement('BUTTON')
-  newNote.classList.add('note')
-  newNote.style.top = (key.offsetHeight + 1) * 23 - (sequence[i].pitch - 60) * (key.offsetHeight + 1) + 1 + 'px'
-  newNote.style.left = Math.round(sequence[i].startTime * tempo / 60) * whole / 4 + 'px'
-  newNote.style.width = Math.round((sequence[i].endTime - sequence[i].startTime) * tempo / 60) * whole / 4 + 'px'
-  roll.appendChild(newNote)
-}
+toNotes(sequence)
 let notes = document.getElementsByClassName('note')
 let originalSequence = record(notes)
 
@@ -352,6 +345,17 @@ function addMeasures(n) {
   }
   measures += n
   expand.style.left = measures * whole + 'px'
+}
+
+function toNotes(seuqence) {
+  for (var i = 0; i < sequence.length; i++) {
+    var newNote = document.createElement('BUTTON')
+    newNote.classList.add('note')
+    newNote.style.top = (key.offsetHeight + 1) * 23 - (sequence[i].pitch - 60) * (key.offsetHeight + 1) + 1 + 'px'
+    newNote.style.left = Math.round(sequence[i].startTime * tempo / 60) * whole / 4 + 'px'
+    newNote.style.width = Math.round((sequence[i].endTime - sequence[i].startTime) * tempo / 60) * whole / 4 + 'px'
+    roll.appendChild(newNote)
+  }
 }
 
 // convert sequence to notes on piano roll
