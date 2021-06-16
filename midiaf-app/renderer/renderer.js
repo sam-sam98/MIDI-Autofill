@@ -127,10 +127,9 @@ document.getElementById('undo').onclick = () => {
 
 // reinstate most recently reverted change to piano roll
 document.getElementById('redo').onclick = () => {
+  undo.push(record(notes))
   document.getElementById('undo').disabled = false
   document.getElementById('reset').disabled = false
-  undo.push(record(notes))
-
   while (notes.length > 0) {
     notes.item(0).remove()
   }
@@ -208,6 +207,52 @@ document.getElementById('delete').onclick = () => {
   for (var i = 0; i < notes.length; i++) {
     deleteElem(notes.item(i))
   }
+}
+
+document.getElementById('move').onclick = () => {
+  document.getElementById('add').disabled = false
+  document.getElementById('delete').disabled = false
+  document.getElementById('move').disabled = true
+  document.getElementById('stretch').disabled = false
+  roll.onclick = null
+
+  for (var i = 0; i < notes.length; i++) {
+    dragElem(notes.item(i))
+  }
+}
+
+document.getElementById('stretch').onclick = () => {
+  document.getElementById('add').disabled = false
+  document.getElementById('delete').disabled = false
+  document.getElementById('move').disabled = false
+  document.getElementById('stretch').disabled = true
+  roll.onclick = null
+
+  for (var i = 0; i < notes.length; i++) {
+    stretchElem(notes.item(i))
+  }
+}
+
+document.getElementById('quantize').onclick = () => {
+  undo.push(record(notes))
+  document.getElementById('undo').disabled = false
+  document.getElementById('reset').disabled = false
+  while (undo.length > 10) {
+    undo.shift()
+  }
+
+  for (var i = 0; i < notes.length; i++) {
+    notes.item(i). style.left = Math.round(notes.item(i).offsetLeft / (whole / quant)) * whole / quant + 'px'
+  }
+}
+
+document.getElementById('quant').onclick = () => {
+  document.getElementById('quants').classList.toggle('show')
+}
+
+const quantOpt = document.getElementsByClassName('quant-opt')
+for (var i = 0; i < quantOpt.length; i++) {
+  selectQuant(quantOpt.item(i))
 }
 
 // FUNCTIONS
@@ -421,5 +466,84 @@ function deleteElem(elem) {
       undo.shift()
     }
     elem.remove()
+  }
+}
+
+function dragElem(elem) {
+  elem.onmousedown = dragDown
+
+  function dragDown(e) {
+    undo.push(record(notes))
+    document.getElementById('undo').disabled = false
+    document.getElementById('reset').disabled = false
+    while (undo.length > 10) {
+      undo.shift()
+    }
+
+    document.onmousemove = dragMove
+    document.onmouseup = dragUp
+  }
+
+  function dragMove(e) {
+    e = e || window.event
+    e.preventDefault()
+
+    elem.style.left = Math.max(0, Math.min(e.clientX - (keys.offsetWidth + keys.offsetLeft - scroller.scrollLeft) - elem.offsetWidth / 2, expand.offsetLeft - elem.offsetWidth)) + 'px'
+    elem.style.top = e.clientY - elem.offsetHeight / 2 - scroller.offsetTop + 'px'
+  }
+
+  function dragUp(e) {
+    document.onmousemove = null
+    document.onmouseup = null
+
+    elem.style.left = Math.round(elem.offsetLeft / (whole / quant)) * whole / quant + 'px'
+    elem.style.top = Math.round(elem.offsetTop / (key.offsetHeight + 1)) * (key.offsetHeight + 1) + 1 + 'px'
+  }
+}
+
+function stretchElem(elem) { // click-and-drag version
+  let pos = 0, startX = 0, startWidth = 0
+  elem.onmousedown = stretchDown
+
+  function stretchDown(e) {
+    undo.push(record(notes))
+    document.getElementById('undo').disabled = false
+    document.getElementById('reset').disabled = false
+    while (undo.length > 10) {
+      undo.shift()
+    }
+
+    startWidth = elem.offsetWidth
+    startX = e.clientX
+
+    document.onmousemove = stretchMove
+    document.onmouseup = stretchUp
+  }
+
+  function stretchMove(e) {
+    e = e || window.event
+    e.preventDefault()
+
+    pos = e.clientX - startX
+    elem.style.width = Math.min(Math.max(whole / quant, startWidth + pos), expand.offsetLeft - elem.offsetLeft) + 'px'
+  }
+
+  function stretchUp(e) {
+    document.onmousemove = null
+    document.onmouseup = null
+
+    elem.style.width = elem.offsetWidth - ((elem.offsetWidth + whole / quant / 2) % (whole / quant)) + whole / quant / 2 + 'px'
+  }
+}
+
+function selectQuant(elem) {
+  elem.onclick = () => {
+    if (!elem.textContent.localeCompare('none')) {
+      quant = whole
+    } else {
+      quant = parseInt(elem.textContent.slice(2))
+    }
+    document.getElementById('quant').textContent = elem.textContent
+    document.getElementById('quants').classList.toggle('show')
   }
 }
