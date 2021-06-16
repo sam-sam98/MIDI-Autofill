@@ -15,28 +15,28 @@
     <button id="reset" class="ui l">Reset</button>
     <button id="undo" class="ui l">Undo</button>
     <button id="redo" class="ui l">Redo</button>
+    <label for="checkpoint" class = "l">Checkpoint:</label>
+    <select name="checkpoint" id="checkpoint" class="ui l">
+    </select>
     <button id="tempo-up" class="ui r">+</button>
-    <div class="dropdown r">
-      <button id="tempo" class="ui r">120</button>
-      <div id="tempos" class="dropdown-content">
-        <option class="tempo-opt">40</option>
-        <option class="tempo-opt">60</option>
-        <option class="tempo-opt">80</option>
-        <option class="tempo-opt">100</option>
-        <option class="tempo-opt">120</option>
-        <option class="tempo-opt">140</option>
-        <option class="tempo-opt">160</option>
-        <option class="tempo-opt">180</option>
-        <option class="tempo-opt">200</option>
-        <option class="tempo-opt">220</option>
-        <option class="tempo-opt">240</option>
-        <option class="tempo-opt">260</option>
-        <option class="tempo-opt">280</option>
-        <option class="tempo-opt">300</option>
-      </div>
-    </div>
+    <select id="tempo" class="ui r">
+      <option value="40">40</option>
+      <option value="60">60</option>
+      <option value="80">80</option>
+      <option value="100">100</option>
+      <option value="120" selected>120</option>
+      <option value="140">140</option>
+      <option value="160">160</option>
+      <option value="180">180</option>
+      <option value="200">200</option>
+      <option value="220">220</option>
+      <option value="240">240</option>
+      <option value="260">260</option>
+      <option value="280">280</option>
+      <option value="300">300</option>
+    </select>
     <button id="tempo-down" class="ui r">-</button>
-    <label class="r">Tempo:</label>
+    <label for="tempo" class="r">Tempo:</label>
   </div>
   <div id="window">
     <div class="container">
@@ -77,19 +77,16 @@
   </div>
   <div class="ui-bar">
     <button id="quantize" class="ui r">Quantize</button>
-    <div class="dropdown r">
-      <button id="quant" class="ui r">none</button>
-      <div id="quants" class="dropdown-content">
-        <option class="quant-opt">1/1</option>
-        <option class="quant-opt">1/2</option>
-        <option class="quant-opt">1/4</option>
-        <option class="quant-opt">1/8</option>
-        <option class="quant-opt">1/16</option>
-        <option class="quant-opt">1/32</option>
-        <option class="quant-opt">1/64</option>
-        <option class="quant-opt">none</option>
-      </div>
-    </div>
+    <select id="quant" class="ui r">
+        <option value="1">1/1</option>
+        <option value="2">1/2</option>
+        <option value="4">1/4</option>
+        <option value="8">1/8</option>
+        <option value="16">1/16</option>
+        <option value="32">1/32</option>
+        <option value="64">1/64</option>
+        <option value="128" selected>none</option>
+      </select>
     <label class="r">Quantization:</label>
     <button id="play" class="ui l">Play</button>
     <button id="stop" class="ui l">Stop</button>

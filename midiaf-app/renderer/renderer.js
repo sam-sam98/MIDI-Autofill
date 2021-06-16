@@ -51,11 +51,6 @@ const roll = document.getElementById('roll')
 const scroller = document.getElementById('scroller')
 const expand = document.getElementById('expand')
 
-const tempoOpt = document.getElementsByClassName('tempo-opt')
-for (var i = 0; i < tempoOpt.length; i++) {
-  selectTempo(tempoOpt.item(i))
-}
-
 document.getElementById('reset').disabled = true
 document.getElementById('undo').disabled = true
 document.getElementById('redo').disabled = true
@@ -148,9 +143,8 @@ document.getElementById('tempo-down').onclick = () => {
   document.getElementById('tempo').textContent = tempo
 }
 
-// select tempo from dropdowm menu
-document.getElementById('tempo').onclick = () => {
-  document.getElementById('tempos').classList.toggle('show')
+document.getElementById('tempo').onchange = () => {
+  tempo = parseInt(document.getElementById('tempo').value)
 }
 
 // increase tempo by 1 bpm (maximum 300 bpm)
@@ -233,6 +227,10 @@ document.getElementById('stretch').onclick = () => {
   }
 }
 
+document.getElementById('quant').onchange = () => {
+  quant = parseInt(document.getElementById('quant').value)
+}
+
 document.getElementById('quantize').onclick = () => {
   undo.push(record(notes))
   document.getElementById('undo').disabled = false
@@ -244,15 +242,6 @@ document.getElementById('quantize').onclick = () => {
   for (var i = 0; i < notes.length; i++) {
     notes.item(i). style.left = Math.round(notes.item(i).offsetLeft / (whole / quant)) * whole / quant + 'px'
   }
-}
-
-document.getElementById('quant').onclick = () => {
-  document.getElementById('quants').classList.toggle('show')
-}
-
-const quantOpt = document.getElementsByClassName('quant-opt')
-for (var i = 0; i < quantOpt.length; i++) {
-  selectQuant(quantOpt.item(i))
 }
 
 // FUNCTIONS
@@ -401,15 +390,6 @@ function toSequence(notes) {
   return sequence
 }
 
-// allow for tempor selection by dropdown menu
-function selectTempo(elem) {
-  elem.onclick = () => {
-    tempo = parseInt(elem.textContent)
-    document.getElementById('tempo').textContent = tempo
-    document.getElementById('tempos').classList.toggle('show')
-  }
-}
-
 // play midi sequence
 function playMidi(e) {
   // read notes into sequence based on position and dimensions
@@ -533,17 +513,5 @@ function stretchElem(elem) { // click-and-drag version
     document.onmouseup = null
 
     elem.style.width = elem.offsetWidth - ((elem.offsetWidth + whole / quant / 2) % (whole / quant)) + whole / quant / 2 + 'px'
-  }
-}
-
-function selectQuant(elem) {
-  elem.onclick = () => {
-    if (!elem.textContent.localeCompare('none')) {
-      quant = whole
-    } else {
-      quant = parseInt(elem.textContent.slice(2))
-    }
-    document.getElementById('quant').textContent = elem.textContent
-    document.getElementById('quants').classList.toggle('show')
   }
 }
