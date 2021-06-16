@@ -23,7 +23,6 @@ TWINKLE_TWINKLE = {
 
 // The starting melody. This starts as twinkle twinkle, but
 // can be changed to a user uploaded MIDI.
-let originalSequence = TWINKLE_TWINKLE.notes
 
 ipcRenderer.once('ready', (_, checkpoints) => {
   let selector = document.getElementById('checkpoint')
@@ -72,8 +71,16 @@ scroller.style.width = window.innerWidth - keys.offsetWidth - keys.offsetLeft * 
 addMeasures(Math.max(Math.ceil(scroller.offsetWidth / whole), Math.ceil(totalTime * tempo / 60 / 4)))
 
 // add notes to roll
-vizualize(sequence)
+for (var i = 0; i < sequence.length; i++) {
+  var newNote = document.createElement('BUTTON')
+  newNote.classList.add('note')
+  newNote.style.top = (key.offsetHeight + 1) * 23 - (sequence[i].pitch - 60) * (key.offsetHeight + 1) + 1 + 'px'
+  newNote.style.left = Math.round(sequence[i].startTime * tempo / 60) * whole / 4 + 'px'
+  newNote.style.width = Math.round((sequence[i].endTime - sequence[i].startTime) * tempo / 60) * whole / 4 + 'px'
+  roll.appendChild(newNote)
+}
 let notes = document.getElementsByClassName('note')
+let originalSequence = record(notes)
 
 // expand piano roll
 expand.onclick = () => {addMeasures(1)}
@@ -86,6 +93,13 @@ document.getElementById('save').onclick = () => {
 
 // return piano roll to most recently saved sequence
 document.getElementById('reset').onclick = () => {
+  undo.push(record(notes))
+  document.getElementById('undo').disabled = false
+  document.getElementById('reset').disabled = false
+  while (undo.length > 10) {
+    undo.shift()
+  }
+
   while (notes.length > 0) {
     notes.item(0).remove()
   }
@@ -103,8 +117,7 @@ document.getElementById('undo').onclick = () => {
     notes.item(0).remove()
   }
 
-  sequence = undo.pop()
-  vizualize(sequence)
+  vizualize(undo.pop())
   notes = document.getElementsByClassName('note')
 
   if (undo.length <= 0) {
@@ -115,14 +128,14 @@ document.getElementById('undo').onclick = () => {
 // reinstate most recently reverted change to piano roll
 document.getElementById('redo').onclick = () => {
   document.getElementById('undo').disabled = false
+  document.getElementById('reset').disabled = false
   undo.push(record(notes))
 
   while (notes.length > 0) {
     notes.item(0).remove()
   }
 
-  sequence = redo.pop()
-  vizualize(sequence)
+  vizualize(redo.pop())
   notes = document.getElementsByClassName('note')
 
   if (redo.length <= 0) {
@@ -308,19 +321,27 @@ function addMeasures(n) {
 }
 
 // convert sequence to notes on piano roll
-function vizualize(sequence) {
-  for (var i = 0; i < sequence.length; i++) {
+function vizualize(noteRecord) {
+  for (var i = 0; i < noteRecord.length; i++) {
     var newNote = document.createElement('BUTTON')
     newNote.classList.add('note')
-    newNote.style.top = (key.offsetHeight + 1) * 23 - (sequence[i].pitch - 60) * (key.offsetHeight + 1) + 1 + 'px'
-    newNote.style.left = Math.round(sequence[i].startTime * tempo / 60) * whole / 4 + 'px'
-    newNote.style.width = Math.round((sequence[i].endTime - sequence[i].startTime) * tempo / 60) * whole / 4 + 'px'
+    newNote.style.top = noteRecord[i].offsetTop + 'px'
+    newNote.style.left = noteRecord[i].offsetLeft + 'px'
+    newNote.style.width = noteRecord[i].offsetWidth + 'px'
     roll.appendChild(newNote)
   }
 }
 
-// convert piano roll to sequence
 function record(notes) {
+  noteRecord = []
+  for (var i = 0; i < notes.length; i++) {
+    noteRecord.push({offsetTop: notes.item(i).offsetTop, offsetLeft: notes.item(i).offsetLeft, offsetWidth: notes.item(i).offsetWidth})
+  }
+  return noteRecord
+}
+
+// convert piano roll to sequence
+function toSequence(notes) {
   sequence = []
   totalTime = 0
   for (var i = 0; i < notes.length; i++) {
@@ -347,7 +368,7 @@ function selectTempo(elem) {
 // play midi sequence
 function playMidi(e) {
   // read notes into sequence based on position and dimensions
-  playseq = record(notes)
+  sequence = toSequence(notes)
 
   // translate sequence into audio
   var audio = new (window.AudioContext || window.webkitAudioContext)()
@@ -377,10 +398,10 @@ function playMidi(e) {
     var osc = audio.createOscillator()
     osc.type = 'square'
     osc.connect(gain)
-    osc.frequency.setValueAtTime(Math.pow(2, (playseq[i].pitch - 69) / 12) * 440, 0)
-    osc.start(playseq[i].startTime + 1)
-    osc.stop(playseq[i].endTime + 1)
-    if (playseq[i].endTime === totalTime) {
+    osc.frequency.setValueAtTime(Math.pow(2, (sequence[i].pitch - 69) / 12) * 440, 0)
+    osc.start(sequence[i].startTime + 1)
+    osc.stop(sequence[i].endTime + 1)
+    if (sequence[i].endTime === totalTime) {
       osc.onended = () => {
         audio.close()
         document.getElementById('stop').disabled = true
