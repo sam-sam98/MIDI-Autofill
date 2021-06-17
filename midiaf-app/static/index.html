@@ -2,20 +2,20 @@
 <html>
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>MIDI Autofill</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>MIDI Autofill</title>
 </head>
 
 <link rel="stylesheet" href="index.css">
 
 <body>
   <div class="ui-bar">
-    <button id="save" class = "ui l">Save</button>
+    <button id="save" class="ui l">Save</button>
     <button id="reset" class="ui l">Reset</button>
     <button id="undo" class="ui l">Undo</button>
     <button id="redo" class="ui l">Redo</button>
-    <label for="checkpoint" class = "l">Checkpoint:</label>
+    <label for="checkpoint" class="l">Checkpoint:</label>
     <select name="checkpoint" id="checkpoint" class="ui l">
     </select>
     <button id="tempo-up" class="ui r">+</button>
@@ -78,15 +78,15 @@
   <div class="ui-bar">
     <button id="quantize" class="ui r">Quantize</button>
     <select id="quant" class="ui r">
-        <option value="1">1/1</option>
-        <option value="2">1/2</option>
-        <option value="4">1/4</option>
-        <option value="8">1/8</option>
-        <option value="16">1/16</option>
-        <option value="32">1/32</option>
-        <option value="64">1/64</option>
-        <option value="128" selected>none</option>
-      </select>
+      <option value="1">1/1</option>
+      <option value="2">1/2</option>
+      <option value="4">1/4</option>
+      <option value="8">1/8</option>
+      <option value="16">1/16</option>
+      <option value="32">1/32</option>
+      <option value="64">1/64</option>
+      <option value="128" selected>none</option>
+    </select>
     <label class="r">Quantization:</label>
     <button id="play" class="ui l">Play</button>
     <button id="stop" class="ui l">Stop</button>
@@ -94,11 +94,12 @@
     <button id="delete" class="ui l">Delete</button>
     <button id="move" class="ui l">Move</button>
     <button id="stretch" class="ui l">Stretch</button>
+    <button id="generate" class="ui l">Generate</button>
   </div>
 
-    <script>
-        require('../renderer/renderer')
-    </script>
+  <script>
+    require('../renderer/renderer')
+  </script>
 </body>
 
 </html>

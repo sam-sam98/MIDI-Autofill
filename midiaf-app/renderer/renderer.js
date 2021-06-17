@@ -45,7 +45,7 @@ let tempo = 120
 let undo = []
 let redo = []
 
-const key = {offsetHeight: 10}
+const key = { offsetHeight: 10 }
 const keys = document.getElementById('keys')
 const roll = document.getElementById('roll')
 const scroller = document.getElementById('scroller')
@@ -57,7 +57,7 @@ document.getElementById('redo').disabled = true
 document.getElementById('stop').disabled = true
 
 // flexible dimensions
-keys.style.height = (key.offsetHeight + 1) * 24 - 1 +'px'
+keys.style.height = (key.offsetHeight + 1) * 24 - 1 + 'px'
 roll.style.height = keys.offsetHeight + 'px'
 scroller.style.height = (key.offsetHeight + 1) * 24 + 18 + 'px'
 scroller.style.width = window.innerWidth - keys.offsetWidth - keys.offsetLeft * 2 + 'px'
@@ -71,7 +71,7 @@ let notes = document.getElementsByClassName('note')
 let originalSequence = record(notes)
 
 // expand piano roll
-expand.onclick = () => {addMeasures(1)}
+expand.onclick = () => { addMeasures(1) }
 
 // save sequence to reset to
 document.getElementById('save').onclick = () => {
@@ -233,7 +233,7 @@ document.getElementById('quantize').onclick = () => {
   }
 
   for (var i = 0; i < notes.length; i++) {
-    notes.item(i). style.left = Math.round(notes.item(i).offsetLeft / (whole / quant)) * whole / quant + 'px'
+    notes.item(i).style.left = Math.round(notes.item(i).offsetLeft / (whole / quant)) * whole / quant + 'px'
   }
 }
 
@@ -347,7 +347,7 @@ function addMeasures(n) {
   expand.style.left = measures * whole + 'px'
 }
 
-function toNotes(seuqence) {
+function toNotes(sequence) {
   for (var i = 0; i < sequence.length; i++) {
     var newNote = document.createElement('BUTTON')
     newNote.classList.add('note')
@@ -373,7 +373,7 @@ function vizualize(noteRecord) {
 function record(notes) {
   noteRecord = []
   for (var i = 0; i < notes.length; i++) {
-    noteRecord.push({offsetTop: notes.item(i).offsetTop, offsetLeft: notes.item(i).offsetLeft, offsetWidth: notes.item(i).offsetWidth})
+    noteRecord.push({ offsetTop: notes.item(i).offsetTop, offsetLeft: notes.item(i).offsetLeft, offsetWidth: notes.item(i).offsetWidth })
   }
   return noteRecord
 }
@@ -389,10 +389,21 @@ function toSequence(notes) {
     if (endTime > totalTime) {
       totalTime = endTime
     }
-    sequence.push({pitch: pitch, startTime: startTime, endTime: endTime})
+    sequence.push({ pitch: pitch, startTime: startTime, endTime: endTime })
   }
   return sequence
 }
+
+var audio = null
+
+function stopPlayback() {
+  console.log("stopPlayback was called")
+  audio.close()
+  document.getElementById('stop').disabled = true
+  document.getElementById('play').textContent = 'Play'
+  document.getElementById('play').onclick = playMidi
+}
+
 
 // play midi sequence
 function playMidi(e) {
@@ -400,28 +411,27 @@ function playMidi(e) {
   sequence = toSequence(notes)
 
   // translate sequence into audio
-  var audio = new (window.AudioContext || window.webkitAudioContext)()
+  audio = new (window.AudioContext || window.webkitAudioContext)()
   var gain = audio.createGain()
   gain.connect(audio.destination)
   gain.gain.setValueAtTime(0.02, audio.currentTime)
   document.getElementById('stop').disabled = false
   document.getElementById('play').textContent = 'Pause'
+
+
   document.getElementById('play').onclick = () => {
-    if(audio.state === 'running') {
-      audio.suspend().then(function() {
+    if (audio.state === 'running') {
+      audio.suspend().then(function () {
         document.getElementById('play').textContent = 'Play'
       })
-    } else if(audio.state === 'suspended') {
-      audio.resume().then(function() {
+    } else if (audio.state === 'suspended') {
+      audio.resume().then(function () {
         document.getElementById('play').textContent = 'Pause'
       })
     }
   }
   document.getElementById('stop').onclick = () => {
-    audio.close()
-    document.getElementById('stop').disabled = true
-    document.getElementById('play').textContent = 'Play'
-    document.getElementById('play').onclick = playMidi
+    stopPlayback()
   }
   for (var i = 0; i < notes.length; i++) {
     var osc = audio.createOscillator()
@@ -518,4 +528,37 @@ function stretchElem(elem) { // click-and-drag version
 
     elem.style.width = elem.offsetWidth - ((elem.offsetWidth + whole / quant / 2) % (whole / quant)) + whole / quant / 2 + 'px'
   }
+}
+
+
+document.getElementById('generate').onclick = () => {
+  console.log("generate onclick was called")
+  if (audio != null) {
+    stopPlayback()
+  }
+
+  let selector = document.getElementById('checkpoint')
+  let checkpoint = selector.value
+  let notes = document.getElementsByClassName('note')
+  let convertedNotes = toSequence(notes);
+  let totalTime = convertedNotes.reduce((accumulator, note) => note.endTime > accumulator ? note.endTime : accumulator, 0)
+  let noteSequence = {
+    notes: convertedNotes,
+    totalTime: totalTime,
+  }
+  // TODO: We need to resolve the minimum quantization value we can use here instead of using
+  // whatever the user has selected, because the default 1/128 quantization is VERY slow to generate on.
+  noteSequence = core.sequences.quantizeNoteSequence(noteSequence, quant)
+  ipcRenderer.invoke('generate', checkpoint, noteSequence, 20, 1.5).then((newNotes) => {
+    newNotes.notes = newNotes.notes.map((note) => {
+      let startTime = totalTime + note.quantizedStartStep / quant;
+      let endTime = totalTime + note.quantizedEndStep / quant;
+      return {
+        pitch: note.pitch,
+        startTime: startTime,
+        endTime: endTime,
+      }
+    })
+    toNotes(newNotes.notes)
+  })
 }

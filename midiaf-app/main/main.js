@@ -42,9 +42,9 @@ app.on('window-all-closed', () => {
 })
 
 ipcMain.handle('generate', async (_, checkpointName, noteSequence, steps, temperature) => {
-  let qns = core.sequences.quantizeNoteSequence(noteSequence, 4)
+  // let qns = core.sequences.quantizeNoteSequence(noteSequence, 4)
   let checkpoint = af.checkpoints.find(check => check.name == checkpointName)
-  return await af.autofill(checkpoint, qns, steps, temperature)
+  return await af.autofill(checkpoint, noteSequence, steps, temperature)
 })
 
 ipcMain.handle('save', async (_, noteSequence, name) => {
