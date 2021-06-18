@@ -546,19 +546,25 @@ document.getElementById('generate').onclick = () => {
     notes: convertedNotes,
     totalTime: totalTime,
   }
+
   // TODO: We need to resolve the minimum quantization value we can use here instead of using
   // whatever the user has selected, because the default 1/128 quantization is VERY slow to generate on.
   noteSequence = core.sequences.quantizeNoteSequence(noteSequence, quant)
   ipcRenderer.invoke('generate', checkpoint, noteSequence, 20, 1.5).then((newNotes) => {
+    let end = 0
     newNotes.notes = newNotes.notes.map((note) => {
       let startTime = totalTime + note.quantizedStartStep / quant;
       let endTime = totalTime + note.quantizedEndStep / quant;
+      end = Math.max(end, endTime)
       return {
         pitch: note.pitch,
         startTime: startTime,
         endTime: endTime,
       }
     })
+    if (end > 4 * measures * 60 / tempo) {
+      addMeasures(Math.ceil((end - 4 * measures * 60 / tempo) / (4 * 60 / tempo)))
+    }
     toNotes(newNotes.notes)
   })
 }
