@@ -59,7 +59,7 @@ document.getElementById('stop').disabled = true
 // flexible dimensions
 keys.style.height = (key.offsetHeight + 1) * 29 - 1 + 'px'
 roll.style.height = keys.offsetHeight + 'px'
-scroller.style.height = (key.offsetHeight + 1) * 29 + 18 + 'px'
+scroller.style.height = (key.offsetHeight + 1) * 29 + 15 + 'px'
 scroller.style.width = window.innerWidth - keys.offsetWidth - keys.offsetLeft * 2 + 'px'
 
 // fill piano roll with grid
@@ -171,6 +171,11 @@ document.getElementById('add').onclick = () => {
       undo.shift()
     }
 
+    document.getElementById('redo').disabled = true
+    while (redo.length > 0) {
+      redo.shift()
+    }
+
     var newNote = document.createElement('BUTTON')
     newNote.classList.add('note')
     roll.appendChild(newNote)
@@ -178,7 +183,7 @@ document.getElementById('add').onclick = () => {
     newNote.style.left = e.clientX - (keys.offsetLeft + keys.offsetWidth - scroller.scrollLeft) + 'px'
     newNote.style.top = e.clientY - keys.offsetTop - newNote.offsetHeight / 2 + 'px'
     newNote.style.left = Math.round(newNote.offsetLeft / (whole / quant)) * whole / quant + 'px'
-    newNote.style.top = Math.round(newNote.offsetTop / (key.offsetHeight + 1)) * (key.offsetHeight + 1) + 1 + 'px'
+    newNote.style.top = Math.round(newNote.offsetTop / (key.offsetHeight + 1)) * (key.offsetHeight + 1) + 'px'
 
     notes = document.getElementsByClassName('note')
   }
@@ -230,6 +235,11 @@ document.getElementById('quantize').onclick = () => {
   document.getElementById('reset').disabled = false
   while (undo.length > 10) {
     undo.shift()
+  }
+
+  document.getElementById('redo').disabled = true
+  while (redo.length > 0) {
+    redo.shift()
   }
 
   for (var i = 0; i < notes.length; i++) {
@@ -499,6 +509,12 @@ function deleteElem(elem) {
     while (undo.length > 10) {
       undo.shift()
     }
+
+    document.getElementById('redo').disabled = true
+    while (redo.length > 0) {
+      redo.shift()
+    }
+
     elem.remove()
   }
 }
@@ -513,6 +529,11 @@ function dragElem(elem) {
     document.getElementById('reset').disabled = false
     while (undo.length > 10) {
       undo.shift()
+    }
+
+    document.getElementById('redo').disabled = true
+    while (redo.length > 0) {
+      redo.shift()
     }
 
     document.onmousemove = dragMove
@@ -532,7 +553,7 @@ function dragElem(elem) {
     document.onmouseup = null
 
     elem.style.left = Math.round(elem.offsetLeft / (whole / quant)) * whole / quant + 'px'
-    elem.style.top = Math.round(elem.offsetTop / (key.offsetHeight + 1)) * (key.offsetHeight + 1) + 1 + 'px'
+    elem.style.top = Math.round(elem.offsetTop / (key.offsetHeight + 1)) * (key.offsetHeight + 1) + 'px'
   }
 }
 
@@ -547,6 +568,11 @@ function stretchElem(elem) { // click-and-drag version
     document.getElementById('reset').disabled = false
     while (undo.length > 10) {
       undo.shift()
+    }
+
+    document.getElementById('redo').disabled = true
+    while (redo.length > 0) {
+      redo.shift()
     }
 
     startWidth = elem.offsetWidth
@@ -579,6 +605,11 @@ document.getElementById('generate').onclick = () => {
   document.getElementById('reset').disabled = false
   while (undo.length > 10) {
     undo.shift()
+  }
+
+  document.getElementById('redo').disabled = true
+  while (redo.length > 0) {
+    redo.shift()
   }
 
   console.log("generate onclick was called")
