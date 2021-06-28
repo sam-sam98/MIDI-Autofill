@@ -36,7 +36,7 @@ ipcRenderer.once('ready', (_, checkpoints) => {
 })
 
 // establish reference values
-const whole = 128
+const whole = 256
 let sequence = TWINKLE_TWINKLE.notes
 let totalTime = TWINKLE_TWINKLE.totalTime
 let measures = 0
@@ -45,7 +45,7 @@ let tempo = 120
 let undo = []
 let redo = []
 
-const key = { offsetHeight: 10 }
+const key = { offsetHeight: document.getElementById('key-sample').offsetHeight }
 const keys = document.getElementById('keys')
 const roll = document.getElementById('roll')
 const scroller = document.getElementById('scroller')
@@ -57,9 +57,9 @@ document.getElementById('redo').disabled = true
 document.getElementById('stop').disabled = true
 
 // flexible dimensions
-keys.style.height = (key.offsetHeight + 1) * 24 - 1 + 'px'
+keys.style.height = (key.offsetHeight + 1) * 29 - 1 + 'px'
 roll.style.height = keys.offsetHeight + 'px'
-scroller.style.height = (key.offsetHeight + 1) * 24 + 18 + 'px'
+scroller.style.height = (key.offsetHeight + 1) * 29 + 18 + 'px'
 scroller.style.width = window.innerWidth - keys.offsetWidth - keys.offsetLeft * 2 + 'px'
 
 // fill piano roll with grid
@@ -91,7 +91,7 @@ document.getElementById('reset').onclick = () => {
   while (notes.length > 0) {
     notes.item(0).remove()
   }
-  vizualize(originalSequence)
+  visualize(originalSequence)
   notes = document.getElementsByClassName('note')
 }
 
@@ -105,7 +105,7 @@ document.getElementById('undo').onclick = () => {
     notes.item(0).remove()
   }
 
-  vizualize(undo.pop())
+  visualize(undo.pop())
   notes = document.getElementsByClassName('note')
 
   if (undo.length <= 0) {
@@ -122,7 +122,7 @@ document.getElementById('redo').onclick = () => {
     notes.item(0).remove()
   }
 
-  vizualize(redo.pop())
+  visualize(redo.pop())
   notes = document.getElementsByClassName('note')
 
   if (redo.length <= 0) {
@@ -253,6 +253,46 @@ function addMeasures(n) {
 
     roll.appendChild(newMeasure)
 
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('wht')
+      newMeasure.appendChild(newCell)
+    }
+
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('blk')
+      newMeasure.appendChild(newCell)
+    }
+
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('wht')
+      newMeasure.appendChild(newCell)
+    }
+
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('blk')
+      newMeasure.appendChild(newCell)
+    }
+
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('wht')
+      newMeasure.appendChild(newCell)
+    }
+
     for (var j = 0; j < 2; j++) {
       for (var k = 0; k < 4; k++) {
         var newCell = document.createElement('DIV')
@@ -351,7 +391,7 @@ function toNotes(sequence) {
   for (var i = 0; i < sequence.length; i++) {
     var newNote = document.createElement('BUTTON')
     newNote.classList.add('note')
-    newNote.style.top = (key.offsetHeight + 1) * 23 - (sequence[i].pitch - 60) * (key.offsetHeight + 1) + 1 + 'px'
+    newNote.style.top = (key.offsetHeight + 1) * 28 - (sequence[i].pitch - 60) * (key.offsetHeight + 1) + 1 + 'px'
     newNote.style.left = Math.round(sequence[i].startTime * tempo / 60) * whole / 4 + 'px'
     newNote.style.width = Math.round((sequence[i].endTime - sequence[i].startTime) * tempo / 60) * whole / 4 + 'px'
     roll.appendChild(newNote)
@@ -359,7 +399,7 @@ function toNotes(sequence) {
 }
 
 // convert sequence to notes on piano roll
-function vizualize(noteRecord) {
+function visualize(noteRecord) {
   for (var i = 0; i < noteRecord.length; i++) {
     var newNote = document.createElement('BUTTON')
     newNote.classList.add('note')
@@ -465,6 +505,7 @@ function deleteElem(elem) {
 
 function dragElem(elem) {
   elem.onmousedown = dragDown
+  elem.onclick = null
 
   function dragDown(e) {
     undo.push(record(notes))
@@ -498,6 +539,7 @@ function dragElem(elem) {
 function stretchElem(elem) { // click-and-drag version
   let pos = 0, startX = 0, startWidth = 0
   elem.onmousedown = stretchDown
+  elem.onclick = null
 
   function stretchDown(e) {
     undo.push(record(notes))

@@ -13,7 +13,7 @@
 #keys {
   display: inline-grid;
   row-gap: 1px;
-  grid-template-columns: 40px;
+  grid-template-columns: 80px;
   background: grey;
   border: 1px solid grey;
   vertical-align: top;
@@ -99,7 +99,7 @@ label {
 }
 
 .wht {
-  height: 10px;
+  height: 20px;
   border-radius: 1px;
   background: white;
   text-align: right;
@@ -109,7 +109,7 @@ label {
 }
 
 .blk {
-  height: 10px;
+  height: 20px;
   border-radius: 1px;
   background: rgb(65, 65, 80);
 }
@@ -119,7 +119,7 @@ label {
   background-color: rgb(153, 152, 229);
   border: 1px solid rgb(098, 096, 200);
   border-radius: 3px;
-  height: 10px;
+  height: 20px;
 }
 .note:hover {
   background-color: rgb(194, 194, 238);
