@@ -242,13 +242,13 @@ function addMeasures(n) {
   for (var i = 0; i < n; i++) {
     var newMeasure = document.createElement('DIV')
     newMeasure.style.width = whole - 1 + 'px'
-    newMeasure.style.height = keys.offsetHeight + 'px'
+    newMeasure.style.height = keys.offsetHeight - 2 + 'px'
     newMeasure.style.left = (measures + i) * whole + 'px'
     newMeasure.classList.add('measure')
     if ((measures + i) % 2 == 0) {
-      newMeasure.style.opacity = 0.15
+      newMeasure.style.opacity = 0.3
     } else {
-      newMeasure.style.opacity = 0.2
+      newMeasure.style.opacity = 0.4
     }
 
     roll.appendChild(newMeasure)
@@ -391,7 +391,7 @@ function toNotes(sequence) {
   for (var i = 0; i < sequence.length; i++) {
     var newNote = document.createElement('BUTTON')
     newNote.classList.add('note')
-    newNote.style.top = (key.offsetHeight + 1) * 28 - (sequence[i].pitch - 60) * (key.offsetHeight + 1) + 1 + 'px'
+    newNote.style.top = (key.offsetHeight + 1) * 28 - (sequence[i].pitch - 60) * (key.offsetHeight + 1) + 'px'
     newNote.style.left = Math.round(sequence[i].startTime * tempo / 60) * whole / 4 + 'px'
     newNote.style.width = Math.round((sequence[i].endTime - sequence[i].startTime) * tempo / 60) * whole / 4 + 'px'
     roll.appendChild(newNote)
@@ -423,7 +423,7 @@ function toSequence(notes) {
   sequence = []
   totalTime = 0
   for (var i = 0; i < notes.length; i++) {
-    var pitch = 60 + (1 + (key.offsetHeight + 1) * 23 - notes.item(i).offsetTop) / (key.offsetHeight + 1)
+    var pitch = 60 + ((key.offsetHeight + 1) * 28 - notes.item(i).offsetTop) / (key.offsetHeight + 1)
     var startTime = notes.item(i).offsetLeft * 4 / whole * 60 / tempo
     var endTime = notes.item(i).offsetWidth * 4 / whole * 60 / tempo + startTime
     if (endTime > totalTime) {
@@ -574,6 +574,13 @@ function stretchElem(elem) { // click-and-drag version
 
 
 document.getElementById('generate').onclick = () => {
+  undo.push(record(document.getElementsByClassName('note')))
+  document.getElementById('undo').disabled = false
+  document.getElementById('reset').disabled = false
+  while (undo.length > 10) {
+    undo.shift()
+  }
+
   console.log("generate onclick was called")
   if (audio != null) {
     stopPlayback()
@@ -591,12 +598,12 @@ document.getElementById('generate').onclick = () => {
 
   // TODO: We need to resolve the minimum quantization value we can use here instead of using
   // whatever the user has selected, because the default 1/128 quantization is VERY slow to generate on.
-  noteSequence = core.sequences.quantizeNoteSequence(noteSequence, quant)
+  noteSequence = core.sequences.quantizeNoteSequence(noteSequence, Math.min(quant, 8))
   ipcRenderer.invoke('generate', checkpoint, noteSequence, 20, 1.5).then((newNotes) => {
     let end = 0
     newNotes.notes = newNotes.notes.map((note) => {
-      let startTime = totalTime + note.quantizedStartStep / quant;
-      let endTime = totalTime + note.quantizedEndStep / quant;
+      let startTime = totalTime + note.quantizedStartStep / Math.min(quant, 8);
+      let endTime = totalTime + note.quantizedEndStep / Math.min(quant, 8);
       end = Math.max(end, endTime)
       return {
         pitch: note.pitch,

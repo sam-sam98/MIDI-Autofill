@@ -4,6 +4,7 @@
   grid-template-columns: auto auto;
   padding-top: 5px;
   padding-bottom: 5px;
+  width: 100%
 }
 
 .container {
