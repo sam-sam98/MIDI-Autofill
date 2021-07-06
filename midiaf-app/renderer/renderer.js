@@ -50,11 +50,21 @@ const keys = document.getElementById('keys')
 const roll = document.getElementById('roll')
 const scroller = document.getElementById('scroller')
 const expand = document.getElementById('expand')
+const resetBtn = document.getElementById('reset')
+const undoBtn = document.getElementById('undo')
+const redoBtn = document.getElementById('redo')
+const tempoBtn = document.getElementById('tempo')
+const playBtn = document.getElementById('play')
+const stopBtn = document.getElementById('stop')
+const addBtn = document.getElementById('add')
+const deleteBtn = document.getElementById('delete')
+const moveBtn = document.getElementById('move')
+const stretchBtn = document.getElementById('stretch')
 
-document.getElementById('reset').disabled = true
-document.getElementById('undo').disabled = true
-document.getElementById('redo').disabled = true
-document.getElementById('stop').disabled = true
+resetBtn.disabled = true
+undoBtn.disabled = true
+redoBtn.disabled = true
+stopBtn.disabled = true
 
 // flexible dimensions
 keys.style.height = (key.offsetHeight + 1) * 29 - 1 + 'px'
@@ -76,14 +86,15 @@ expand.onclick = () => { addMeasures(1) }
 // save sequence to reset to
 document.getElementById('save').onclick = () => {
   originalSequence = record(notes)
-  document.getElementById('reset').disabled = true
+  resetBtn.disabled = true
 }
 
 // return piano roll to most recently saved sequence
-document.getElementById('reset').onclick = () => {
+resetBtn.onclick = () => {
+  // save state to stack for restoration via undo, maintain stack size < 10
   undo.push(record(notes))
-  document.getElementById('undo').disabled = false
-  document.getElementById('reset').disabled = false
+  undoBtn.disabled = false
+  resetBtn.disabled = false
   while (undo.length > 10) {
     undo.shift()
   }
@@ -96,92 +107,103 @@ document.getElementById('reset').onclick = () => {
 }
 
 // revert most recent change to piano roll
-document.getElementById('undo').onclick = () => {
-  document.getElementById('redo').disabled = false
-  document.getElementById('reset').disabled = false
+undoBtn.onclick = () => {
+  // save state to stack for restoration via redo, stack size automatically limited by undo
+  redoBtn.disabled = false
+  resetBtn.disabled = false
   redo.push(record(notes))
 
   while (notes.length > 0) {
     notes.item(0).remove()
   }
 
+  // restore retreived state
   visualize(undo.pop())
   notes = document.getElementsByClassName('note')
 
   if (undo.length <= 0) {
-    document.getElementById('undo').disabled = true
+    undoBtn.disabled = true
   }
 }
 
 // reinstate most recently reverted change to piano roll
-document.getElementById('redo').onclick = () => {
+redoBtn.onclick = () => {
+  // save state to stack for restoration via undo, maintain stack size < 10
   undo.push(record(notes))
-  document.getElementById('undo').disabled = false
-  document.getElementById('reset').disabled = false
+  undoBtn.disabled = false
+  resetBtn.disabled = false
   while (notes.length > 0) {
     notes.item(0).remove()
   }
 
+  // restore retrieved state
   visualize(redo.pop())
   notes = document.getElementsByClassName('note')
 
   if (redo.length <= 0) {
-    document.getElementById('redo').disabled = true
+    redoBtn.disabled = true
   }
 }
 
 // decrease the tempo by 1 bpm (minimum 30 bpm)
 document.getElementById('tempo-down').onclick = () => {
   tempo = Math.max(30, tempo - 1)
-  document.getElementById('tempo').textContent = tempo
+  tempoBtn.textContent = tempo
 }
 
-document.getElementById('tempo').onchange = () => {
-  tempo = parseInt(document.getElementById('tempo').value)
+tempoBtn.onchange = () => {
+  tempo = parseInt(tempoBtn.value)
 }
 
 // increase tempo by 1 bpm (maximum 300 bpm)
 document.getElementById('tempo-up').onclick = () => {
   tempo = Math.min(300, tempo + 1)
-  document.getElementById('tempo').textContent = tempo
+  tempoBtn.textContent = tempo
 }
 
 // play midi seuqence
-document.getElementById('play').onclick = playMidi
+playBtn.onclick = playMidi
 
-// add a note to the piano roll
-document.getElementById('add').onclick = () => {
-  document.getElementById('add').disabled = true
-  document.getElementById('delete').disabled = false
-  document.getElementById('move').disabled = false
-  document.getElementById('stretch').disabled = false
+// add a note to the piano roll by clicking on the grid
+addBtn.onclick = () => {
+  // deactivate all other interactions
+  addBtn.disabled = true
+  deleteBtn.disabled = false
+  moveBtn.disabled = false
+  stretchBtn.disabled = false
 
   for (var i = 0; i < notes.length; i++) {
     notes.item(i).onclick = null
+    notes.iten(i).onmousedown = null
   }
 
   roll.onclick = (e) => {
     e = e || window.event
     e.preventDefault()
 
+    // save state to stack for restoration via undo, maintain stack size < 10
     undo.push(record(notes))
-    document.getElementById('undo').disabled = false
-    document.getElementById('reset').disabled = false
+    undoBtn.disabled = false
+    resetBtn.disabled = false
     while (undo.length > 10) {
       undo.shift()
     }
 
-    document.getElementById('redo').disabled = true
+    // clear redo stack
+    redoBtn.disabled = true
     while (redo.length > 0) {
       redo.shift()
     }
 
+    // generate new note, position centered under cursor
     var newNote = document.createElement('BUTTON')
     newNote.classList.add('note')
     roll.appendChild(newNote)
     newNote.style.width = whole / Math.min(quant, 8) + 'px'
+    newNote.style.height = key.offsetHeight
     newNote.style.left = e.clientX - (keys.offsetLeft + keys.offsetWidth - scroller.scrollLeft) + 'px'
     newNote.style.top = e.clientY - keys.offsetTop - newNote.offsetHeight / 2 + 'px'
+    // snap to quantized position
     newNote.style.left = Math.round(newNote.offsetLeft / (whole / quant)) * whole / quant + 'px'
     newNote.style.top = Math.round(newNote.offsetTop / (key.offsetHeight + 1)) * (key.offsetHeight + 1) + 'px'
 
@@ -189,55 +211,68 @@ document.getElementById('add').onclick = () => {
   }
 }
 
-document.getElementById('delete').onclick = () => {
-  document.getElementById('add').disabled = false
-  document.getElementById('delete').disabled = true
-  document.getElementById('move').disabled = false
-  document.getElementById('stretch').disabled = false
+// delete note from piano roll by clicking the note
+deleteBtn.onclick = () => {
+  // deactivate all other interactions
+  addBtn.disabled = false
+  deleteBtn.disabled = true
+  moveBtn.disabled = false
+  stretchBtn.disabled = false
   roll.onclick = null
 
+  // set note interaction to delete
   for (var i = 0; i < notes.length; i++) {
     deleteElem(notes.item(i))
   }
 }
 
-document.getElementById('move').onclick = () => {
-  document.getElementById('add').disabled = false
-  document.getElementById('delete').disabled = false
-  document.getElementById('move').disabled = true
-  document.getElementById('stretch').disabled = false
+// change note's position on the piano roll bby clicking and dragging
+moveBtn.onclick = () => {
+  // deactivate all other interactions
+  addBtn.disabled = false
+  deleteBtn.disabled = false
+  moveBtn.disabled = true
+  stretchBtn.disabled = false
   roll.onclick = null
 
+  // set note interaction to move
   for (var i = 0; i < notes.length; i++) {
     dragElem(notes.item(i))
   }
 }
 
-document.getElementById('stretch').onclick = () => {
-  document.getElementById('add').disabled = false
-  document.getElementById('delete').disabled = false
-  document.getElementById('move').disabled = false
-  document.getElementById('stretch').disabled = true
+// change note duration by clicking and dragging
+stretchBtn.onclick = () => {
+  // deactivate all other interactions
+  addBtn.disabled = false
+  deleteBtn.disabled = false
+  moveBtn.disabled = false
+  stretchBtn.disabled = true
   roll.onclick = null
 
+  // set note interaction to stretch
   for (var i = 0; i < notes.length; i++) {
     stretchElem(notes.item(i))
   }
 }
 
+// select quantization value
 document.getElementById('quant').onchange = () => {
   quant = parseInt(document.getElementById('quant').value)
 }
 
+// snap all notes on piano roll to a quantized position
 document.getElementById('quantize').onclick = () => {
+  // save state to stack for restoration via undo, maintain stack size < 10
   undo.push(record(notes))
-  document.getElementById('undo').disabled = false
-  document.getElementById('reset').disabled = false
+  undoBtn.disabled = false
+  resetBtn.disabled = false
   while (undo.length > 10) {
     undo.shift()
   }
 
-  document.getElementById('redo').disabled = true
+  // clear redo stack
+  redoBtn.disabled = true
   while (redo.length > 0) {
     redo.shift()
   }
@@ -247,14 +282,17 @@ document.getElementById('quantize').onclick = () => {
   }
 }
 
-// FUNCTIONS
+// ----- FUNCTIONS -----
+//  add n measures to the piano roll
 function addMeasures(n) {
   for (var i = 0; i < n; i++) {
+    // generate measure, establish dimensions to fit
     var newMeasure = document.createElement('DIV')
     newMeasure.style.width = whole - 1 + 'px'
-    newMeasure.style.height = keys.offsetHeight - 2 + 'px'
+    newMeasure.style.height = keys.offsetHeight - 4 + 'px'
     newMeasure.style.left = (measures + i) * whole + 'px'
     newMeasure.classList.add('measure')
+    // maintain alternating opacity
     if ((measures + i) % 2 == 0) {
       newMeasure.style.opacity = 0.3
     } else {
@@ -263,6 +301,7 @@ function addMeasures(n) {
 
     roll.appendChild(newMeasure)
 
+    // populate with grid cells, matching color to key
     for (var k = 0; k < 4; k++) {
       var newCell = document.createElement('DIV')
       newCell.style.height = key.offsetHeight + 'px'
@@ -397,18 +436,7 @@ function addMeasures(n) {
   expand.style.left = measures * whole + 'px'
 }
 
-function toNotes(sequence) {
-  for (var i = 0; i < sequence.length; i++) {
-    var newNote = document.createElement('BUTTON')
-    newNote.classList.add('note')
-    newNote.style.top = (key.offsetHeight + 1) * 28 - (sequence[i].pitch - 60) * (key.offsetHeight + 1) + 'px'
-    newNote.style.left = Math.round(sequence[i].startTime * tempo / 60) * whole / 4 + 'px'
-    newNote.style.width = Math.round((sequence[i].endTime - sequence[i].startTime) * tempo / 60) * whole / 4 + 'px'
-    roll.appendChild(newNote)
-  }
-}
-
-// convert sequence to notes on piano roll
+// convert positional value sequence to piano roll notes
 function visualize(noteRecord) {
   for (var i = 0; i < noteRecord.length; i++) {
     var newNote = document.createElement('BUTTON')
@@ -416,10 +444,12 @@ function visualize(noteRecord) {
     newNote.style.top = noteRecord[i].offsetTop + 'px'
     newNote.style.left = noteRecord[i].offsetLeft + 'px'
     newNote.style.width = noteRecord[i].offsetWidth + 'px'
+    newNote.style.height = key.offsetHeight + 'px'
     roll.appendChild(newNote)
   }
 }
 
+// convert piano roll configuration to a positional value sequence
 function record(notes) {
   noteRecord = []
   for (var i = 0; i < notes.length; i++) {
@@ -428,8 +458,21 @@ function record(notes) {
   return noteRecord
 }
 
-// convert piano roll to sequence
-function toSequence(notes) {
+// convert MIDI sequence to piano roll notes
+function toNotes(sequence) {
+  for (var i = 0; i < sequence.length; i++) {
+    var newNote = document.createElement('BUTTON')
+    newNote.classList.add('note')
+    newNote.style.top = (key.offsetHeight + 1) * 28 - (sequence[i].pitch - 60) * (key.offsetHeight + 1) + 'px'
+    newNote.style.left = Math.round(sequence[i].startTime * tempo / 60) * whole / 4 + 'px'
+    newNote.style.width = Math.round((sequence[i].endTime - sequence[i].startTime) * tempo / 60) * whole / 4 + 'px'
+    newNote.style.height = key.offsetHeight + 'px'
+    roll.appendChild(newNote)
+  }
+}
+
+// convert piano roll cofiguration to MIDI sequence
+function toMIDI(notes) {
   sequence = []
   totalTime = 0
   for (var i = 0; i < notes.length; i++) {
@@ -449,38 +492,38 @@ var audio = null
 function stopPlayback() {
   console.log("stopPlayback was called")
   audio.close()
-  document.getElementById('stop').disabled = true
-  document.getElementById('play').textContent = 'Play'
-  document.getElementById('play').onclick = playMidi
+  stopBtn.disabled = true
+  playBtn.textContent = 'Play'
+  playBtn.onclick = playMidi
 }
 
 
 // play midi sequence
 function playMidi(e) {
   // read notes into sequence based on position and dimensions
-  sequence = toSequence(notes)
+  sequence = toMIDI(notes)
 
   // translate sequence into audio
   audio = new (window.AudioContext || window.webkitAudioContext)()
   var gain = audio.createGain()
   gain.connect(audio.destination)
   gain.gain.setValueAtTime(0.02, audio.currentTime)
-  document.getElementById('stop').disabled = false
-  document.getElementById('play').textContent = 'Pause'
+  stopBtn.disabled = false
+  playBtn.textContent = 'Pause'
 
 
-  document.getElementById('play').onclick = () => {
+  playBtn.onclick = () => {
     if (audio.state === 'running') {
       audio.suspend().then(function () {
-        document.getElementById('play').textContent = 'Play'
+        playBtn.textContent = 'Play'
       })
     } else if (audio.state === 'suspended') {
       audio.resume().then(function () {
-        document.getElementById('play').textContent = 'Pause'
+        playBtn.textContent = 'Pause'
       })
     }
   }
-  document.getElementById('stop').onclick = () => {
+  stopBtn.onclick = () => {
     stopPlayback()
   }
   for (var i = 0; i < notes.length; i++) {
@@ -493,24 +536,27 @@ function playMidi(e) {
     if (sequence[i].endTime === totalTime) {
       osc.onended = () => {
         audio.close()
-        document.getElementById('stop').disabled = true
-        document.getElementById('play').textContent = 'Play'
-        document.getElementById('play').onclick = playMidi
+        stopBtn.disabled = true
+        playBtn.textContent = 'Play'
+        playBtn.onclick = playMidi
       }
     }
   }
 }
 
+// delete selected note from piano roll
 function deleteElem(elem) {
+  elem.onmousedown = null
   elem.onclick = () => {
+    // save state to stack for restoration via undo, maintain stack size < 10
     undo.push(record(notes))
-    document.getElementById('undo').disabled = false
-    document.getElementById('reset').disabled = false
+    undoBtn.disabled = false
+    resetBtn.disabled = false
     while (undo.length > 10) {
       undo.shift()
     }
-
-    document.getElementById('redo').disabled = true
+    // clear redo stack
+    redoBtn.disabled = true
     while (redo.length > 0) {
       redo.shift()
     }
@@ -524,14 +570,15 @@ function dragElem(elem) {
   elem.onclick = null
 
   function dragDown(e) {
+    // save state to stack for restoration via undo, maintain stack size < 10
     undo.push(record(notes))
-    document.getElementById('undo').disabled = false
-    document.getElementById('reset').disabled = false
+    undoBtn.disabled = false
+    resetBtn.disabled = false
     while (undo.length > 10) {
       undo.shift()
     }
-
-    document.getElementById('redo').disabled = true
+    // clear redo stack
+    redoBtn.disabled = true
     while (redo.length > 0) {
       redo.shift()
     }
@@ -543,7 +590,7 @@ function dragElem(elem) {
   function dragMove(e) {
     e = e || window.event
     e.preventDefault()
-
+    // center selected note over cursor
     elem.style.left = Math.max(0, Math.min(e.clientX - (keys.offsetWidth + keys.offsetLeft - scroller.scrollLeft) - elem.offsetWidth / 2, expand.offsetLeft - elem.offsetWidth)) + 'px'
     elem.style.top = e.clientY - elem.offsetHeight / 2 - scroller.offsetTop + 'px'
   }
@@ -551,7 +598,7 @@ function dragElem(elem) {
   function dragUp(e) {
     document.onmousemove = null
     document.onmouseup = null
-
+    // snap note to quantized positon
     elem.style.left = Math.round(elem.offsetLeft / (whole / quant)) * whole / quant + 'px'
     elem.style.top = Math.round(elem.offsetTop / (key.offsetHeight + 1)) * (key.offsetHeight + 1) + 'px'
   }
@@ -563,14 +610,15 @@ function stretchElem(elem) { // click-and-drag version
   elem.onclick = null
 
   function stretchDown(e) {
+    // save state to stack for restoration via undo, maintain stack size < 10
     undo.push(record(notes))
-    document.getElementById('undo').disabled = false
-    document.getElementById('reset').disabled = false
+    undoBtn.disabled = false
+    resetBtn.disabled = false
     while (undo.length > 10) {
       undo.shift()
     }
-
-    document.getElementById('redo').disabled = true
+    // clear redo stack
+    redoBtn.disabled = true
     while (redo.length > 0) {
       redo.shift()
     }
@@ -585,7 +633,7 @@ function stretchElem(elem) { // click-and-drag version
   function stretchMove(e) {
     e = e || window.event
     e.preventDefault()
-
+    // change selected note width according to cursor movement
     pos = e.clientX - startX
     elem.style.width = Math.min(Math.max(whole / quant, startWidth + pos), expand.offsetLeft - elem.offsetLeft) + 'px'
   }
@@ -593,21 +641,23 @@ function stretchElem(elem) { // click-and-drag version
   function stretchUp(e) {
     document.onmousemove = null
     document.onmouseup = null
-
+    // snap note to uantized width
     elem.style.width = elem.offsetWidth - ((elem.offsetWidth + whole / quant / 2) % (whole / quant)) + whole / quant / 2 + 'px'
   }
 }
 
-
+// generate melody completion
 document.getElementById('generate').onclick = () => {
+  // save state to stack for restoration via undo, maintain stack size < 10
   undo.push(record(document.getElementsByClassName('note')))
-  document.getElementById('undo').disabled = false
-  document.getElementById('reset').disabled = false
+  undoBtn.disabled = false
+  resetBtn.disabled = false
   while (undo.length > 10) {
     undo.shift()
   }
 
-  document.getElementById('redo').disabled = true
+  // clear redo stack
+  redoBtn.disabled = true
   while (redo.length > 0) {
     redo.shift()
   }
@@ -620,15 +670,14 @@ document.getElementById('generate').onclick = () => {
   let selector = document.getElementById('checkpoint')
   let checkpoint = selector.value
   let notes = document.getElementsByClassName('note')
-  let convertedNotes = toSequence(notes);
+  let convertedNotes = toMIDI(notes);
   let totalTime = convertedNotes.reduce((accumulator, note) => note.endTime > accumulator ? note.endTime : accumulator, 0)
   let noteSequence = {
     notes: convertedNotes,
     totalTime: totalTime,
   }
 
-  // TODO: We need to resolve the minimum quantization value we can use here instead of using
-  // whatever the user has selected, because the default 1/128 quantization is VERY slow to generate on.
+  // minimum quantization value set at 8th
   noteSequence = core.sequences.quantizeNoteSequence(noteSequence, Math.min(quant, 8))
   ipcRenderer.invoke('generate', checkpoint, noteSequence, 20, 1.5).then((newNotes) => {
     let end = 0
@@ -647,4 +696,5 @@ document.getElementById('generate').onclick = () => {
     }
     toNotes(newNotes.notes)
   })
+  notes = document.getElementsByClassName('note')
 }
