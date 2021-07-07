@@ -2,7 +2,6 @@
   display: inline-grid;
   grid-template-columns: auto auto;
   padding-top: 5px;
-  padding-bottom: 5px;
   width: 100%;
 }
 
@@ -36,6 +35,11 @@
 
 #roll {
   position: relative;
+}
+
+#marker{
+  border-left: 1px solid rgb(201, 145, 233);
+  position: absolute;
 }
 
 .ui-bar {
@@ -100,6 +104,7 @@ label {
   grid-gap: 1px 1px;
   background: grey;
   padding-right: 1px;
+  z-index: -1;
 }
 
 .wht {
@@ -132,4 +137,25 @@ label {
 .note:active {
   background-color: rgb(098, 096, 200);
   border: 1px solid rgb(098, 096, 200);
+}
+
+#time-bar {
+  border: 1px solid grey;
+  display: block;
+  overflow-y: hidden;
+  overflow-x: scroll;
+  margin-bottom: 5px;
+  position: relative;
+}
+
+#spacer {
+  height: 100%;
+  position: absolute;
+}
+
+#seeker {
+  height: 100%;
+  background-color: rgb(201, 145, 233);
+  border: none;
+  position: absolute;
 }

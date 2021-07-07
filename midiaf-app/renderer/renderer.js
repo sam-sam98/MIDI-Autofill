@@ -46,11 +46,14 @@ let tempo = 120
 let undo = []
 let redo = []
 let metronome = true
+let markerInterval = null
+let interval = 0
 
 const key = { offsetHeight: document.getElementById('key-sample').offsetHeight }
-const vert = document.getElementById('vert-scroller')
 const keys = document.getElementById('keys')
 const roll = document.getElementById('roll')
+const marker = document.getElementById('marker')
+const vert = document.getElementById('vert-scroller')
 const scroller = document.getElementById('scroller')
 const expand = document.getElementById('expand')
 const resetBtn = document.getElementById('reset')
@@ -63,20 +66,30 @@ const addBtn = document.getElementById('add')
 const deleteBtn = document.getElementById('delete')
 const moveBtn = document.getElementById('move')
 const stretchBtn = document.getElementById('stretch')
+const timebar = document.getElementById('time-bar')
+const spacer = document.getElementById('spacer')
+const seeker = document.getElementById('seeker')
 
 resetBtn.disabled = true
 undoBtn.disabled = true
 redoBtn.disabled = true
-stopBtn.disabled = true
 // flexible dimensions
+keys.style.height = (key.offsetHeight + 1) * 53 - 1 + 'px'
+roll.style.height = keys.style.height
+marker.style.height = roll.style.height
 vert.style.height = (key.offsetHeight + 1) * 29 - 1 + 'px'
 vert.scrollTop = (key.offsetHeight + 1) * 12
-keys.style.height = (key.offsetHeight + 1) * 53 - 1 + 'px'
-roll.style.height = vert.style.height
 scroller.style.height = vert.style.height
 scroller.style.width = window.innerWidth - keys.offsetWidth - keys.offsetLeft * 2 + 'px'
 scroller.scrollTop = vert.scrollTop
 expand.style.height = keys.style.height
+timebar.style.height = key.offsetHeight + 'px'
+timebar.style.width = scroller.style.width
+timebar.style['margin-left'] = keys.offsetWidth + 2 + 'px'
+spacer.style.width = expand.offsetWidth + 2 + 'px'
+seeker.style.width = seeker.offsetHeight + 'px'
+seeker.style['border-radius'] = seeker.offsetHeight + 'px'
+seeker.style.left = seeker.offsetLeft - seeker.offsetWidth / 2 + 'px'
 // fill piano roll with grid
 addMeasures(Math.max(Math.ceil(scroller.offsetWidth / whole), Math.ceil(totalTime * tempo / 60 / 4)))
 // add notes to roll
@@ -84,8 +97,9 @@ toNotes(sequence)
 let notes = document.getElementsByClassName('note')
 let originalSequence = record(notes)
 
-scroller.onscroll = () => {scrollMatch(scroller, vert)}
-vert.onscroll = () => {scrollMatch(vert, scroller)}
+scroller.onscroll = () => { scrollerMatch() }
+vert.onscroll = () => { vertMatch() }
+timebar.onscroll = () => { timebarMatch() }
 
 // expand piano roll
 expand.onclick = () => { addMeasures(1) }
@@ -173,6 +187,12 @@ document.getElementById('tempo-up').onclick = () => {
 
 // play midi seuqence
 playBtn.onclick = playMidi
+
+stopBtn.onclick = () => {
+  stopPlayback()
+  clearInterval(markerInterval)
+  marker.style.left = '0px'
+}
 
 // add a note to the piano roll by clicking on the grid
 addBtn.onclick = () => {
@@ -286,20 +306,34 @@ document.getElementById('quantize').onclick = () => {
 }
 
 // ----- FUNCTIONS -----
-// keep the vertical scrollers synchronized
-function scrollMatch(scroll1, scroll2) {
-  scroll2.onscroll = null
-  scroll2.scrollTop = scroll1.scrollTop
-  scroll2.onscroll = () => {scrollMatch(scroll2, scroll1)}
+//  add n measures to the piano roll
+function scrollerMatch() {
+  vert.onscroll = null
+  timebar.onscroll = null
+  vert.scrollTop = scroller.scrollTop
+  timebar.scrollLeft = scroller.scrollLeft
+  vert.onscroll = () => { vertMatch() }
+  timebar.onscroll = () => { timebarMatch() }
 }
 
-//  add n measures to the piano roll
+function vertMatch() {
+  scroller.onscroll = null
+  scroller.scrollTop = vert.scrollTop
+  scroller.onscroll = () => { scrollerMatch() }
+}
+
+function timebarMatch() {
+  scroller.onscroll = null
+  scroller.scrollLeft = timebar.scrollLeft
+  scroller.onscroll = () => { scrollerMatch() }
+}
+
 function addMeasures(n) {
   for (var i = 0; i < n; i++) {
     // generate measure, establish dimensions to fit
     var newMeasure = document.createElement('DIV')
     newMeasure.style.width = whole - 1 + 'px'
-    newMeasure.style.height = keys.offsetHeight - 4 + 'px'
+    newMeasure.style.height = keys.style.height + 'px'
     newMeasure.style.left = (measures + i) * whole + 'px'
     newMeasure.classList.add('measure')
     // maintain alternating opacity
@@ -440,9 +474,26 @@ function addMeasures(n) {
         newMeasure.appendChild(newCell)
       }
     }
+    // expand time bar to match
+    var newTimeSection = document.createElement('DIV')
+    newTimeSection.style.width = whole - 1 + 'px'
+    newTimeSection.style.height = timebar.style.height
+    newTimeSection.style.left = (measures + i) * whole + 'px'
+    newTimeSection.classList.add('measure')
+    newTimeSection.style.opacity = 0.5
+    timebar.appendChild(newTimeSection)
+    // populate with grid cells, matching color to key
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('wht')
+      newTimeSection.appendChild(newCell)
+    }
   }
   measures += n
   expand.style.left = measures * whole + 'px'
+  spacer.style.left = expand.style.left
 }
 
 // convert positional value sequence to piano roll notes
@@ -501,7 +552,6 @@ var audio = null
 function stopPlayback() {
   console.log("stopPlayback was called")
   audio.close()
-  stopBtn.disabled = true
   playBtn.textContent = 'Play'
   playBtn.onclick = playMidi
 }
@@ -518,20 +568,20 @@ function playMidi(e) {
   gain.gain.setValueAtTime(0.02, audio.currentTime)
   stopBtn.disabled = false
   playBtn.textContent = 'Pause'
+  animateMarker()
   // allow pausing during playback
   playBtn.onclick = () => {
     if (audio.state === 'running') {
       audio.suspend().then(function () {
         playBtn.textContent = 'Play'
       })
+      clearInterval(markerInterval)
     } else if (audio.state === 'suspended') {
       audio.resume().then(function () {
         playBtn.textContent = 'Pause'
       })
+      animateMarker()
     }
-  }
-  stopBtn.onclick = () => {
-    stopPlayback()
   }
   // play metronome audio if activated
   if (metronome) {
@@ -544,8 +594,8 @@ function playMidi(e) {
         } else {
           metOsc.frequency.setValueAtTime(3000, 0)
         }
-        metOsc.start(i * (tempo / 60 / 4) + 1)
-        metOsc.stop(i * (tempo / 60 / 4) + 0.01 + 1)
+        metOsc.start(i * (tempo / 60 / 4))
+        metOsc.stop(i * (tempo / 60 / 4) + 0.01)
       }
   }
   // create tones from MIDI data
@@ -554,17 +604,28 @@ function playMidi(e) {
     osc.type = 'square'
     osc.connect(gain)
     osc.frequency.setValueAtTime(Math.pow(2, (sequence[i].pitch - 69) / 12) * 440, 0)
-    osc.start(sequence[i].startTime + 1)
-    osc.stop(sequence[i].endTime + 1)
+    osc.start(sequence[i].startTime)
+    osc.stop(sequence[i].endTime)
     if (sequence[i].endTime === totalTime) {
       osc.onended = () => {
         audio.close()
-        stopBtn.disabled = true
         playBtn.textContent = 'Play'
         playBtn.onclick = playMidi
       }
     }
   }
+}
+
+// marker moves to show progress of MIDI playback
+function animateMarker() {
+  interval = 4.0 * 60 * 1000 / (whole * tempo)
+  markerInterval = setInterval(function() {
+    marker.style.left = marker.offsetLeft + 1 + 'px'
+    seeker.style.left = seeker.offsetLeft + 1 + 'px'
+    if (marker.offsetLeft >= totalTime * tempo / 60 / 4 * whole) {
+      clearInterval(markerInterval)
+    }
+  }, interval)
 }
 
 // delete selected note from piano roll
