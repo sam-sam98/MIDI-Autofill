@@ -192,6 +192,7 @@ stopBtn.onclick = () => {
   stopPlayback()
   clearInterval(markerInterval)
   marker.style.left = '0px'
+  seeker.style.left = -seeker.offsetWidth / 2 + 'px'
 }
 
 // add a note to the piano roll by clicking on the grid
