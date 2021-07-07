@@ -38,8 +38,9 @@
 }
 
 #marker{
-  border-left: 1px solid rgb(201, 145, 233);
+  border-left: 1px solid rgb(185, 66, 210);
   position: absolute;
+  z-index: 100;
 }
 
 .ui-bar {
@@ -155,7 +156,8 @@ label {
 
 #seeker {
   height: 100%;
-  background-color: rgb(201, 145, 233);
+  background-color: rgb(185, 66, 210);
   border: none;
   position: absolute;
+  z-index: 100;
 }

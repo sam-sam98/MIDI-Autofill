@@ -52,6 +52,7 @@ var audio = null
 
 const key = { offsetHeight: document.getElementById('key-sample').offsetHeight }
 const keys = document.getElementById('keys')
+const samples = document.getElementsByClassName('key')
 const roll = document.getElementById('roll')
 const marker = document.getElementById('marker')
 const vert = document.getElementById('vert-scroller')
@@ -105,6 +106,10 @@ timebar.onscroll = timebarMatch
 // expand piano roll
 expand.onclick = () => { addMeasures(1) }
 seekElem(seeker)
+
+for (var i = 0; i < samples.length; i++) {
+  playSample(samples.item(i))
+}
 
 // save sequence to reset to
 document.getElementById('save').onclick = () => {
@@ -497,6 +502,24 @@ function timebarMatch() {
   scroller.scrollLeft = timebar.scrollLeft
   scroller.onscroll = scrollerMatch
 }
+
+// play sample audio of note
+function playSample(elem) {
+  elem.onclick = () => {
+    var pitch = 60 + ((key.offsetHeight + 1) * 28 + keys.offsetTop - elem.offsetTop) / (key.offsetHeight + 1)
+    var sampleAudio = new (window.AudioContext || window.webkitAudioContext)()
+    var sampleGain = sampleAudio.createGain()
+    sampleGain.connect(sampleAudio.destination)
+    sampleGain.gain.setValueAtTime(0.02, sampleAudio.currentTime)
+    var sampleOsc = sampleAudio.createOscillator()
+    sampleOsc.type = 'square'
+    sampleOsc.connect(sampleGain)
+    sampleOsc.frequency.setValueAtTime(Math.pow(2, (pitch - 69) / 12) * 440, 0)
+    sampleOsc.start(0)
+    sampleOsc.stop(0.5)
+  }
+}
+
 
 // move time scroller
 function seekElem(elem) {
