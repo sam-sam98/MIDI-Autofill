@@ -105,7 +105,12 @@ resetBtn.onclick = () => {
   while (undo.length > 10) {
     undo.shift()
   }
-
+  // clear redo stack
+  redoBtn.disabled = true
+  while (redo.length > 0) {
+    redo.shift()
+  }
+  
   while (notes.length > 0) {
     notes.item(0).remove()
   }
