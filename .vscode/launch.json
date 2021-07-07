@@ -42,7 +42,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}/statwork"
+            "cwd": "${workspaceFolder}/midiaf-desktop"
         }
     ],
     "compounds": [
