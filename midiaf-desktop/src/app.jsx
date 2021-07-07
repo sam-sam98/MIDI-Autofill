@@ -13,6 +13,8 @@ import {
 
 import { Alert } from "@material-ui/lab";
 
+import MainContent from "./maincontent.jsx";
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -43,24 +45,7 @@ class App extends React.Component {
       window.api.send("retry-connection");
     };
     if (this.state.connectionStatus == "good") {
-      return <h1>loaded</h1>;
-      // return (
-      //   <Container>
-      //     <FormControl>
-      //       <InputLabel id="port-select-label">Port</InputLabel>
-      //       <Select value={this.state.selectedPort} onChange={portChanged}>
-      //         {this.state.ports.map((port, index) => (
-      //           <MenuItem key={index} value={index}>
-      //             {port}
-      //           </MenuItem>
-      //         ))}
-      //       </Select>
-      //     </FormControl>
-      //     <Button variant="contained" color="primary">
-      //       Connect
-      //     </Button>
-      //   </Container>
-      // );
+      return <MainContent />;
     } else if (this.state.connectionStatus == "loading") {
       return <CircularProgress />;
     } else if (this.state.connectionStatus == "error") {

@@ -1,4 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const fs = require("fs");
+const util = require("util");
 const path = require("path");
 const SerialServer = require("./serial-server");
 
@@ -9,10 +11,14 @@ if (require("electron-squirrel-startup")) {
 }
 
 let serialServer = new SerialServer();
+let mainWindow;
+
+// FIXME: Awful, instead SerialServer should have a await/async API so this isn't necessary to track
+let activeSaveDirectory;
 
 const createWindow = async () => {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -75,4 +81,42 @@ ipcMain.on("retry-connection", async (event) => {
     connectionStatus = "error";
   }
   event.reply("app-connection-result", connectionStatus);
+});
+
+ipcMain.on("list-files", async (_event) => {
+  serialServer.listFiles();
+});
+
+ipcMain.on("save-files", async (_event, files) => {
+  var result = await dialog.showOpenDialog(mainWindow, {
+    properties: ["openDirectory"],
+  });
+
+  console.log(files);
+
+  if (!result.canceled) {
+    var directory = result.filePaths[0];
+    activeSaveDirectory = directory;
+    for (let file of files) {
+      console.log("Fetching file ", file);
+      serialServer.fetchFile(file);
+    }
+  }
+});
+
+serialServer.on("list_files_response", (files) => {
+  mainWindow.webContents.send("list-files-result", files);
+});
+
+serialServer.on("fetch_file_response", async (response) => {
+  let file = response["file"];
+  let base64 = response["data"];
+  let outPath = path.join(activeSaveDirectory, file);
+  let writeFile = util.promisify(fs.writeFile);
+  try {
+    await writeFile(outPath, base64, "base64");
+  } catch (error) {
+    console.error("Failed to fetch file ", file, ": ");
+    console.error(error);
+  }
 });
