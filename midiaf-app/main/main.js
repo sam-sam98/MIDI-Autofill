@@ -4,8 +4,19 @@ const af = require('./autofill/autofill')('magenta')
 const core = require('@magenta/music/node/core')
 const { sequenceProtoToMidi } = require('@magenta/music/node/core')
 const fs = require('fs');
+const MIDIOutput = require('./midi-output')
+
+const SAVE_DATA_DIR = path.join(app.getPath('userData'), 'midiaf')
 
 let win = undefined
+let midiOutput = new MIDIOutput(SAVE_DATA_DIR);
+
+
+function ensureSaveDirExists() {
+  if (!fs.existsSync(SAVE_DATA_DIR)) {
+    fs.mkdirSync(SAVE_DATA_DIR, { recursive: true })
+  }
+}
 
 function createWindow() {
   win = new BrowserWindow({
@@ -22,6 +33,7 @@ function createWindow() {
 }
 
 app.whenReady().then(async () => {
+  ensureSaveDirExists();
   createWindow()
 
   app.on('activate', () => {
@@ -72,4 +84,13 @@ ipcMain.handle('save', async (_, noteSequence, name) => {
       error: err,
     }
   }
+})
+
+
+ipcMain.handle('midi-out-note-on', async (_, pitch, velocity) => {
+  midiOutput.sendNoteOn(pitch, velocity)
+})
+
+ipcMain.handle('midi-out-note-off', async (_, pitch, velocity) => {
+  midiOutput.sendNoteOff(pitch, velocity)
 })
