@@ -595,8 +595,8 @@ function playMidi(e) {
         } else {
           metOsc.frequency.setValueAtTime(3000, 0)
         }
-        metOsc.start(i * (tempo / 60 / 4))
-        metOsc.stop(i * (tempo / 60 / 4) + 0.01)
+        metOsc.start(i * (60 / tempo))
+        metOsc.stop(i * (60 / tempo) + 0.01)
       }
   }
   // create tones from MIDI data
