@@ -44,6 +44,7 @@ let quant = whole
 let tempo = 120
 let undo = []
 let redo = []
+let metronome = true
 
 const key = { offsetHeight: document.getElementById('key-sample').offsetHeight }
 const keys = document.getElementById('keys')
@@ -65,16 +66,13 @@ resetBtn.disabled = true
 undoBtn.disabled = true
 redoBtn.disabled = true
 stopBtn.disabled = true
-
 // flexible dimensions
 keys.style.height = (key.offsetHeight + 1) * 29 - 1 + 'px'
 roll.style.height = keys.offsetHeight + 'px'
 scroller.style.height = (key.offsetHeight + 1) * 29 + 15 + 'px'
 scroller.style.width = window.innerWidth - keys.offsetWidth - keys.offsetLeft * 2 + 'px'
-
 // fill piano roll with grid
 addMeasures(Math.max(Math.ceil(scroller.offsetWidth / whole), Math.ceil(totalTime * tempo / 60 / 4)))
-
 // add notes to roll
 toNotes(sequence)
 let notes = document.getElementsByClassName('note')
@@ -116,7 +114,6 @@ undoBtn.onclick = () => {
   while (notes.length > 0) {
     notes.item(0).remove()
   }
-
   // restore retreived state
   visualize(undo.pop())
   notes = document.getElementsByClassName('note')
@@ -135,7 +132,6 @@ redoBtn.onclick = () => {
   while (notes.length > 0) {
     notes.item(0).remove()
   }
-
   // restore retrieved state
   visualize(redo.pop())
   notes = document.getElementsByClassName('note')
@@ -180,7 +176,6 @@ addBtn.onclick = () => {
   roll.onclick = (e) => {
     e = e || window.event
     e.preventDefault()
-
     // save state to stack for restoration via undo, maintain stack size < 10
     undo.push(record(notes))
     undoBtn.disabled = false
@@ -188,13 +183,11 @@ addBtn.onclick = () => {
     while (undo.length > 10) {
       undo.shift()
     }
-
     // clear redo stack
     redoBtn.disabled = true
     while (redo.length > 0) {
       redo.shift()
     }
-
     // generate new note, position centered under cursor
     var newNote = document.createElement('BUTTON')
     newNote.classList.add('note')
@@ -219,7 +212,6 @@ deleteBtn.onclick = () => {
   moveBtn.disabled = false
   stretchBtn.disabled = false
   roll.onclick = null
-
   // set note interaction to delete
   for (var i = 0; i < notes.length; i++) {
     deleteElem(notes.item(i))
@@ -234,7 +226,6 @@ moveBtn.onclick = () => {
   moveBtn.disabled = true
   stretchBtn.disabled = false
   roll.onclick = null
-
   // set note interaction to move
   for (var i = 0; i < notes.length; i++) {
     dragElem(notes.item(i))
@@ -249,7 +240,6 @@ stretchBtn.onclick = () => {
   moveBtn.disabled = false
   stretchBtn.disabled = true
   roll.onclick = null
-
   // set note interaction to stretch
   for (var i = 0; i < notes.length; i++) {
     stretchElem(notes.item(i))
@@ -270,7 +260,6 @@ document.getElementById('quantize').onclick = () => {
   while (undo.length > 10) {
     undo.shift()
   }
-
   // clear redo stack
   redoBtn.disabled = true
   while (redo.length > 0) {
@@ -300,7 +289,6 @@ function addMeasures(n) {
     }
 
     roll.appendChild(newMeasure)
-
     // populate with grid cells, matching color to key
     for (var k = 0; k < 4; k++) {
       var newCell = document.createElement('DIV')
@@ -502,7 +490,6 @@ function stopPlayback() {
 function playMidi(e) {
   // read notes into sequence based on position and dimensions
   sequence = toMIDI(notes)
-
   // translate sequence into audio
   audio = new (window.AudioContext || window.webkitAudioContext)()
   var gain = audio.createGain()
@@ -510,8 +497,7 @@ function playMidi(e) {
   gain.gain.setValueAtTime(0.02, audio.currentTime)
   stopBtn.disabled = false
   playBtn.textContent = 'Pause'
-
-
+  // allow pausing during playback
   playBtn.onclick = () => {
     if (audio.state === 'running') {
       audio.suspend().then(function () {
@@ -526,6 +512,22 @@ function playMidi(e) {
   stopBtn.onclick = () => {
     stopPlayback()
   }
+  // play metronome audio if activated
+  if (metronome) {
+      for (var i = 0; i < measures * 4; i++) {
+        var metOsc = audio.createOscillator()
+        metOsc.detune = 10
+        metOsc.connect(gain)
+        if (i % 4 == 0) {
+          metOsc.frequency.setValueAtTime(4000, 0)
+        } else {
+          metOsc.frequency.setValueAtTime(3000, 0)
+        }
+        metOsc.start(i * (tempo / 60 / 4) + 1)
+        metOsc.stop(i * (tempo / 60 / 4) + 0.01 + 1)
+      }
+  }
+  // create tones from MIDI data
   for (var i = 0; i < notes.length; i++) {
     var osc = audio.createOscillator()
     osc.type = 'square'
@@ -604,7 +606,7 @@ function dragElem(elem) {
   }
 }
 
-function stretchElem(elem) { // click-and-drag version
+function stretchElem(elem) {
   let pos = 0, startX = 0, startWidth = 0
   elem.onmousedown = stretchDown
   elem.onclick = null
@@ -655,7 +657,6 @@ document.getElementById('generate').onclick = () => {
   while (undo.length > 10) {
     undo.shift()
   }
-
   // clear redo stack
   redoBtn.disabled = true
   while (redo.length > 0) {
@@ -676,7 +677,6 @@ document.getElementById('generate').onclick = () => {
     notes: convertedNotes,
     totalTime: totalTime,
   }
-
   // minimum quantization value set at 8th
   noteSequence = core.sequences.quantizeNoteSequence(noteSequence, Math.min(quant, 8))
   ipcRenderer.invoke('generate', checkpoint, noteSequence, 20, 1.5).then((newNotes) => {
