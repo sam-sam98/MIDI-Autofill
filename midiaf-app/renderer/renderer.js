@@ -68,9 +68,10 @@ redoBtn.disabled = true
 stopBtn.disabled = true
 // flexible dimensions
 keys.style.height = (key.offsetHeight + 1) * 29 - 1 + 'px'
-roll.style.height = keys.offsetHeight + 'px'
-scroller.style.height = (key.offsetHeight + 1) * 29 + 15 + 'px'
+roll.style.height = keys.style.height
+scroller.style.height = keys.style.height
 scroller.style.width = window.innerWidth - keys.offsetWidth - keys.offsetLeft * 2 + 'px'
+expand.style.height = scroller.style.height
 // fill piano roll with grid
 addMeasures(Math.max(Math.ceil(scroller.offsetWidth / whole), Math.ceil(totalTime * tempo / 60 / 4)))
 // add notes to roll

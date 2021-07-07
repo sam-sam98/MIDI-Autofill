@@ -26,6 +26,10 @@
   border: 1px solid grey;
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
 #roll {
   position: relative;
 }
@@ -37,7 +41,6 @@
 }
 
 .ui {
-  margin-top: 2px;
   margin-right: 1px;
   margin-left: 1px;
   background-color: rgb(098, 096, 200);
@@ -74,8 +77,6 @@
 
 #expand {
   position: absolute;
-  height: 100%;
-  vertical-align: top;
 }
 
 label {
