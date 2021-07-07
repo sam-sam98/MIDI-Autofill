@@ -1,0 +1,15 @@
+{
+  "name": "midiaf-desktop",
+  "version": "1.0.0",
+  "description": "MIDI-Autofill desktop app",
+  "main": "test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node test.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "serialport": "^9.2.0"
+  }
+}

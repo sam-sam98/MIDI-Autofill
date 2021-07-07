@@ -1,5 +1,6 @@
 const { ipcRenderer } = require("electron/renderer")
-const core = require('@magenta/music/node/core')
+const core = require('@magenta/music/node/core');
+const { ipcMain } = require("electron");
 
 TWINKLE_TWINKLE = {
   notes: [
@@ -698,4 +699,12 @@ document.getElementById('generate').onclick = () => {
     toNotes(newNotes.notes)
   })
   notes = document.getElementsByClassName('note')
+}
+
+document.getElementById('testA').onmousedown = (_event) => {
+  ipcMain.send('midi-out-note-on', 69, 100)
+}
+
+document.getElementById('testA').onmouseup = (_event) => {
+  ipcMain.send('midi-out-note-off', 69, 100)
 }
