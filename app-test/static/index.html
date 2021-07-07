@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>MIDI Autofill</title>
+</head>
+
+<link rel="stylesheet" href="index.css">
+
+<body>
+  <div class="ui-bar">
+    <button id="save" class="ui l">Save</button>
+    <button id="reset" class="ui l">Reset</button>
+    <button id="undo" class="ui l">Undo</button>
+    <button id="redo" class="ui l">Redo</button>
+    <button id="tempo-up" class="ui r">+</button>
+    <select id="tempo" class="ui r">
+      <option value="40">40</option>
+      <option value="60">60</option>
+      <option value="80">80</option>
+      <option value="100">100</option>
+      <option value="120" selected>120</option>
+      <option value="140">140</option>
+      <option value="160">160</option>
+      <option value="180">180</option>
+      <option value="200">200</option>
+      <option value="220">220</option>
+      <option value="240">240</option>
+      <option value="260">260</option>
+      <option value="280">280</option>
+      <option value="300">300</option>
+    </select>
+    <button id="tempo-down" class="ui r">-</button>
+    <label for="tempo" class="r">Tempo:</label>
+  </div>
+  <div id="window">
+    <div class="container">
+      <div id="vert-scroller">
+        <div id="keys">
+          <div id="key-sample" class="wht key">E6</div>
+          <div class="blk key"></div>
+          <div class="wht key">D6</div>
+          <div class="blk key"></div>
+          <div class="wht key">C6</div>
+
+          <div class="wht key">B5</div>
+          <div class="blk key"></div>
+          <div class="wht key">A5</div>
+          <div class="blk key"></div>
+          <div class="wht key">G5</div>
+          <div class="blk key"></div>
+          <div class="wht key">F5</div>
+          <div class="wht key">E5</div>
+          <div class="blk key"></div>
+          <div class="wht key">D5</div>
+          <div class="blk key"></div>
+          <div class="wht key">C5</div>
+
+          <div class="wht key">B4</div>
+          <div class="blk key"></div>
+          <div class="wht key">A4</div>
+          <div class="blk key"></div>
+          <div class="wht key">G4</div>
+          <div class="blk key"></div>
+          <div class="wht key">F4</div>
+          <div class="wht key">E4</div>
+          <div class="blk key"></div>
+          <div class="wht key">D4</div>
+          <div class="blk key"></div>
+          <div class="wht key">C4</div>
+
+          <div class="wht key">B3</div>
+          <div class="blk key"></div>
+          <div class="wht key">A3</div>
+          <div class="blk key"></div>
+          <div class="wht key">G3</div>
+          <div class="blk key"></div>
+          <div class="wht key">F3</div>
+          <div class="wht key">E3</div>
+          <div class="blk key"></div>
+          <div class="wht key">D3</div>
+          <div class="blk key"></div>
+          <div class="wht key">C3</div>
+
+          <div class="wht key">B2</div>
+          <div class="blk key"></div>
+          <div class="wht key">A2</div>
+          <div class="blk key"></div>
+          <div class="wht key">G2</div>
+          <div class="blk key"></div>
+          <div class="wht key">F2</div>
+          <div class="wht key">E2</div>
+          <div class="blk key"></div>
+          <div class="wht key">D2</div>
+          <div class="blk key"></div>
+          <div class="wht key">C2</div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div id="scroller">
+        <div id="roll">
+          <button id="expand" class="ui r">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ui-bar">
+    <button id="quantize" class="ui r">Quantize</button>
+    <select id="quant" class="ui r">
+      <option value="1">1/1</option>
+      <option value="2">1/2</option>
+      <option value="4">1/4</option>
+      <option value="8">1/8</option>
+      <option value="16">1/16</option>
+      <option value="32">1/32</option>
+      <option value="64">1/64</option>
+      <option value="128" selected>none</option>
+    </select>
+    <label class="r">Quantization:</label>
+    <button id="play" class="ui l">Play</button>
+    <button id="stop" class="ui l">Stop</button>
+    <button id="add" class="ui l">Add</button>
+    <button id="delete" class="ui l">Delete</button>
+    <button id="move" class="ui l">Move</button>
+    <button id="stretch" class="ui l">Stretch</button>
+  </div>
+
+  <script src="../renderer/renderer.js"></script>
+
+</body>
+
+</html>

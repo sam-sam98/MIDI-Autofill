@@ -1,7 +1,3 @@
-const { ipcRenderer } = require("electron/renderer")
-const core = require('@magenta/music/node/core');
-const { ipcMain } = require("electron");
-
 TWINKLE_TWINKLE = {
   notes: [
     { pitch: 60, startTime: 0.0, endTime: 0.5 },
@@ -24,17 +20,6 @@ TWINKLE_TWINKLE = {
 
 // The starting melody. This starts as twinkle twinkle, but
 // can be changed to a user uploaded MIDI.
-
-ipcRenderer.once('ready', (_, checkpoints) => {
-  let selector = document.getElementById('checkpoint')
-  for (let checkpoint of checkpoints) {
-    let option = document.createElement("option")
-    option.text = checkpoint
-    option.value = checkpoint
-    selector.add(option)
-  }
-
-})
 
 // establish reference values
 const whole = 256
@@ -69,14 +54,8 @@ undoBtn.disabled = true
 redoBtn.disabled = true
 stopBtn.disabled = true
 // flexible dimensions
-vert.style.height = (key.offsetHeight + 1) * 29 - 1 + 'px'
-vert.scrollTop = (key.offsetHeight + 1) * 12
-keys.style.height = (key.offsetHeight + 1) * 53 - 1 + 'px'
-roll.style.height = vert.style.height
-scroller.style.height = vert.style.height
-scroller.style.width = window.innerWidth - keys.offsetWidth - keys.offsetLeft * 2 + 'px'
-scroller.scrollTop = vert.scrollTop
-expand.style.height = keys.style.height
+UIFlex()
+window.onresize = UIFlex()
 // fill piano roll with grid
 addMeasures(Math.max(Math.ceil(scroller.offsetWidth / whole), Math.ceil(totalTime * tempo / 60 / 4)))
 // add notes to roll
@@ -286,6 +265,18 @@ document.getElementById('quantize').onclick = () => {
 }
 
 // ----- FUNCTIONS -----
+// UI dimensions adjust to window
+function UIFlex() {
+  vert.style.height = (key.offsetHeight + 1) * 29 - 1 + 'px'
+  vert.scrollTop = (key.offsetHeight + 1) * 12
+  keys.style.height = (key.offsetHeight + 1) * 53 - 1 + 'px'
+  roll.style.height = vert.style.height
+  scroller.style.height = vert.style.height
+  scroller.style.width = window.innerWidth - keys.offsetWidth - keys.offsetLeft * 2 + 'px'
+  scroller.scrollTop = vert.scrollTop
+  expand.style.height = keys.style.height
+}
+
 // keep the vertical scrollers synchronized
 function scrollMatch(scroll1, scroll2) {
   scroll2.onscroll = null
@@ -667,63 +658,4 @@ function stretchElem(elem) {
     // snap note to uantized width
     elem.style.width = elem.offsetWidth - ((elem.offsetWidth + whole / quant / 2) % (whole / quant)) + whole / quant / 2 + 'px'
   }
-}
-
-// generate melody completion
-document.getElementById('generate').onclick = () => {
-  // save state to stack for restoration via undo, maintain stack size < 10
-  undo.push(record(document.getElementsByClassName('note')))
-  undoBtn.disabled = false
-  resetBtn.disabled = false
-  while (undo.length > 10) {
-    undo.shift()
-  }
-  // clear redo stack
-  redoBtn.disabled = true
-  while (redo.length > 0) {
-    redo.shift()
-  }
-
-  console.log("generate onclick was called")
-  if (audio != null) {
-    stopPlayback()
-  }
-
-  let selector = document.getElementById('checkpoint')
-  let checkpoint = selector.value
-  let notes = document.getElementsByClassName('note')
-  let convertedNotes = toMIDI(notes);
-  let totalTime = convertedNotes.reduce((accumulator, note) => note.endTime > accumulator ? note.endTime : accumulator, 0)
-  let noteSequence = {
-    notes: convertedNotes,
-    totalTime: totalTime,
-  }
-  // minimum quantization value set at 8th
-  noteSequence = core.sequences.quantizeNoteSequence(noteSequence, Math.min(quant, 8))
-  ipcRenderer.invoke('generate', checkpoint, noteSequence, 20, 1.5).then((newNotes) => {
-    let end = 0
-    newNotes.notes = newNotes.notes.map((note) => {
-      let startTime = totalTime + note.quantizedStartStep / Math.min(quant, 8);
-      let endTime = totalTime + note.quantizedEndStep / Math.min(quant, 8);
-      end = Math.max(end, endTime)
-      return {
-        pitch: note.pitch,
-        startTime: startTime,
-        endTime: endTime,
-      }
-    })
-    if (end > 4 * measures * 60 / tempo) {
-      addMeasures(Math.ceil((end - 4 * measures * 60 / tempo) / (4 * 60 / tempo)))
-    }
-    toNotes(newNotes.notes)
-  })
-  notes = document.getElementsByClassName('note')
-}
-
-document.getElementById('testA').onmousedown = (_event) => {
-  ipcMain.send('midi-out-note-on', 69, 100)
-}
-
-document.getElementById('testA').onmouseup = (_event) => {
-  ipcMain.send('midi-out-note-off', 69, 100)
 }

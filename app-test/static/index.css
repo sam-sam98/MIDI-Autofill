@@ -3,6 +3,7 @@
   grid-template-columns: auto auto;
   padding-top: 5px;
   padding-bottom: 5px;
+  width: 100%;
 }
 
 .container {
@@ -12,18 +13,25 @@
 #keys {
   display: inline-grid;
   row-gap: 1px;
-  grid-template-columns: 40px;
+  grid-template-columns: 80px;
   background: grey;
-  border: 1px solid grey;
   vertical-align: top;
 }
 
-#scroller {
-  width: 1000px;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  scroll-behavior: smooth;
+#vert-scroller {
+  overflow-x: hidden;
+  overflow-y: scroll;
   border: 1px solid grey;
+}
+
+#scroller {
+  overflow-x: scroll;
+  overflow-y: scroll;
+  border: 1px solid grey;
+}
+
+::-webkit-scrollbar {
+    display: none;
 }
 
 #roll {
@@ -37,7 +45,6 @@
 }
 
 .ui {
-  margin-top: 2px;
   margin-right: 1px;
   margin-left: 1px;
   background-color: rgb(098, 096, 200);
@@ -74,8 +81,6 @@
 
 #expand {
   position: absolute;
-  height: 100%;
-  vertical-align: top;
 }
 
 label {
@@ -88,39 +93,6 @@ label {
   padding-top: 4px;
 }
 
-.dropdown {
-    display: inline-block;
-    position: relative;
-}
-.dropdown-content {
-    width: 100%;
-    margin-top: 2px;
-    position: absolute;
-    background-color: white;
-    border: 1px solid rgb(098, 096, 200);
-    border-radius: 5px;
-    text-align: center;
-    display: none;
-    z-index: 1;
-    overflow-x: hidden;
-    overflow-y: auto;
-    scrollbar-width: thin;
-}
-.dropdown-content option {
-    color: 1px solid rgb(098, 096, 200);
-    font-family: Arial;
-    color: rgb(098, 096, 200);
-    display: block;
-}
-.dropdown-content option:hover {
-    background-color: rgb(098, 096, 200);
-    color: white;
-}
-
-.show {
-  display: block;
-}
-
 .measure {
   position: absolute;
   display: grid;
@@ -131,8 +103,6 @@ label {
 }
 
 .wht {
-  height: 10px;
-  border-radius: 1px;
   background: white;
   text-align: right;
   font-family: Arial;
@@ -141,9 +111,12 @@ label {
 }
 
 .blk {
-  height: 10px;
-  border-radius: 2px;
   background: rgb(65, 65, 80);
+}
+
+.key {
+  height: 15px;
+  border-radius: 1px;
 }
 
 .note {
@@ -151,7 +124,6 @@ label {
   background-color: rgb(153, 152, 229);
   border: 1px solid rgb(098, 096, 200);
   border-radius: 3px;
-  height: 10px;
 }
 .note:hover {
   background-color: rgb(194, 194, 238);
