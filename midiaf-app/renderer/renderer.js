@@ -324,7 +324,6 @@ function addMeasures(n) {
     } else {
       newMeasure.style.opacity = 0.4
     }
-
     roll.appendChild(newMeasure)
     // populate with grid cells, matching color to key
     for (var k = 0; k < 4; k++) {
@@ -476,6 +475,7 @@ function addMeasures(n) {
   measures += n
   expand.style.left = measures * whole + 'px'
   spacer.style.left = expand.style.left
+  roll.style.width = measures * whole + 'px'
 }
 
 // synchronize scroll axes
