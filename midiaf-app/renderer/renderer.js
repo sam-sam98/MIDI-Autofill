@@ -48,6 +48,7 @@ let redo = []
 let metronome = true
 
 const key = { offsetHeight: document.getElementById('key-sample').offsetHeight }
+const vert = document.getElementById('vert-scroller')
 const keys = document.getElementById('keys')
 const roll = document.getElementById('roll')
 const scroller = document.getElementById('scroller')
@@ -68,17 +69,23 @@ undoBtn.disabled = true
 redoBtn.disabled = true
 stopBtn.disabled = true
 // flexible dimensions
-keys.style.height = (key.offsetHeight + 1) * 29 - 1 + 'px'
-roll.style.height = keys.style.height
-scroller.style.height = keys.style.height
+vert.style.height = (key.offsetHeight + 1) * 29 - 1 + 'px'
+vert.scrollTop = (key.offsetHeight + 1) * 12
+keys.style.height = (key.offsetHeight + 1) * 53 - 1 + 'px'
+roll.style.height = vert.style.height
+scroller.style.height = vert.style.height
 scroller.style.width = window.innerWidth - keys.offsetWidth - keys.offsetLeft * 2 + 'px'
-expand.style.height = scroller.style.height
+scroller.scrollTop = vert.scrollTop
+expand.style.height = keys.style.height
 // fill piano roll with grid
 addMeasures(Math.max(Math.ceil(scroller.offsetWidth / whole), Math.ceil(totalTime * tempo / 60 / 4)))
 // add notes to roll
 toNotes(sequence)
 let notes = document.getElementsByClassName('note')
 let originalSequence = record(notes)
+
+scroller.onscroll = () => {scrollMatch(scroller, vert)}
+vert.onscroll = () => {scrollMatch(vert, scroller)}
 
 // expand piano roll
 expand.onclick = () => { addMeasures(1) }
@@ -172,7 +179,7 @@ addBtn.onclick = () => {
 
   for (var i = 0; i < notes.length; i++) {
     notes.item(i).onclick = null
-    notes.iten(i).onmousedown = null
+    notes.item(i).onmousedown = null
   }
 
   roll.onclick = (e) => {
@@ -195,9 +202,9 @@ addBtn.onclick = () => {
     newNote.classList.add('note')
     roll.appendChild(newNote)
     newNote.style.width = whole / Math.min(quant, 8) + 'px'
-    newNote.style.height = key.offsetHeight
+    newNote.style.height = key.offsetHeight + 'px'
     newNote.style.left = e.clientX - (keys.offsetLeft + keys.offsetWidth - scroller.scrollLeft) + 'px'
-    newNote.style.top = e.clientY - keys.offsetTop - newNote.offsetHeight / 2 + 'px'
+    newNote.style.top = e.clientY - (keys.offsetTop - scroller.scrollTop) - newNote.offsetHeight / 2 + 'px'
     // snap to quantized position
     newNote.style.left = Math.round(newNote.offsetLeft / (whole / quant)) * whole / quant + 'px'
     newNote.style.top = Math.round(newNote.offsetTop / (key.offsetHeight + 1)) * (key.offsetHeight + 1) + 'px'
@@ -274,6 +281,11 @@ document.getElementById('quantize').onclick = () => {
 }
 
 // ----- FUNCTIONS -----
+// keep the vertical scrollers synchronized
+function scrollMatch(scroll1, scroll2) {
+    scroll2.scrollTop = scroll1.scrollTop
+}
+
 //  add n measures to the piano roll
 function addMeasures(n) {
   for (var i = 0; i < n; i++) {
@@ -332,7 +344,7 @@ function addMeasures(n) {
       newMeasure.appendChild(newCell)
     }
 
-    for (var j = 0; j < 2; j++) {
+    for (var j = 0; j < 4; j++) {
       for (var k = 0; k < 4; k++) {
         var newCell = document.createElement('DIV')
         newCell.style.height = key.offsetHeight + 'px'
@@ -596,7 +608,7 @@ function dragElem(elem) {
     e.preventDefault()
     // center selected note over cursor
     elem.style.left = Math.max(0, Math.min(e.clientX - (keys.offsetWidth + keys.offsetLeft - scroller.scrollLeft) - elem.offsetWidth / 2, expand.offsetLeft - elem.offsetWidth)) + 'px'
-    elem.style.top = e.clientY - elem.offsetHeight / 2 - scroller.offsetTop + 'px'
+    elem.style.top = e.clientY - elem.offsetHeight / 2 - scroller.offsetTop + scroller.scrollTop + 'px'
   }
 
   function dragUp(e) {

@@ -15,14 +15,18 @@
   row-gap: 1px;
   grid-template-columns: 80px;
   background: grey;
-  border: 1px solid grey;
   vertical-align: top;
+}
+
+#vert-scroller {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  border: 1px solid grey;
 }
 
 #scroller {
   overflow-x: scroll;
-  overflow-y: hidden;
-  scroll-behavior: smooth;
+  overflow-y: scroll;
   border: 1px solid grey;
 }
 
