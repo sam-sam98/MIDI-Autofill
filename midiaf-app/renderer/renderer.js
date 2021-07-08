@@ -1,6 +1,7 @@
 const { ipcRenderer } = require("electron/renderer")
 const core = require('@magenta/music/node/core');
 const { ipcMain } = require("electron");
+const Keyboard = window.SimpleKeyboard.default;
 
 TWINKLE_TWINKLE = {
   notes: [
@@ -33,9 +34,7 @@ ipcRenderer.once('ready', (_, checkpoints) => {
     option.value = checkpoint
     selector.add(option)
   }
-
 })
-
 
 // establish reference values
 const whole = 256
@@ -50,6 +49,14 @@ let metronome = true
 let markerInterval = null
 let interval = 0
 var audio = null
+let showingKeyboard = false
+
+let virtualKeyboard = new Keyboard({
+  onChange: input => onVirtualKeyboardInput(input),
+  onKeyPress: button => onVirtualKeyboardPressed(button)
+});
+
+hideKeyboard();
 
 const key = { offsetHeight: document.getElementById('key-sample').offsetHeight }
 const keys = document.getElementById('keys')
@@ -853,8 +860,19 @@ function loadNewSequence(noteSequence) {
   toNotes(noteSequence)
 }
 
-async function renameTrack(oldName, newName) {
-  return await ipcRenderer.invoke('rename-track', oldName, newName)
+async function renameTrack() {
+  // Jeez...
+  let oldName = trackList.options[trackList.selectedIndex].value
+  let newName = trackNameInput.value
+  let err = await ipcRenderer.invoke('rename-track', oldName, newName)
+
+  if (err != null) {
+    trackNameInput.value = oldName
+  } else {
+    let option = trackList.options[trackList.selectedIndex]
+    option.textContent = newName
+    option.value = newName
+  }
 }
 
 async function switchTrack(trackName, saveTrack) {
@@ -869,21 +887,23 @@ async function switchTrack(trackName, saveTrack) {
       // Allow the user to rename the track by simply entering a new name
       trackNameInput.onchange = null
       trackNameInput.value = trackName
-      trackNameInput.onchange = async (event) => {
-        let newName = event.target.value
-        let err = await renameTrack(trackName, newName)
-        if (err != null) {
-          trackNameInput.value = trackName
-        } else {
-          let option = trackList.options[trackList.selectedIndex]
-          option.textContent = newName
-          option.value = newName
-        }
-      };
+      trackNameInput.onfocus = () => {
+        showKeyboard();
+      }
     } else {
       alert("Failed to load MIDI track")
     }
   })
+}
+
+function onVirtualKeyboardInput(input) {
+  trackNameInput.value = input
+}
+
+async function onVirtualKeyboardPressed(button) {
+  if (button == '{enter}') {
+    await renameTrack()
+  }
 }
 
 async function saveActiveTrack() {
@@ -935,6 +955,26 @@ document.getElementById('generate').onclick = () => {
     toNotes(newNotes.notes)
   })
   notes = document.getElementsByClassName('note')
+}
+
+document.addEventListener('mousedown', (event) => {
+  let keyboardContainer = document.getElementById('keyboard-container')
+  if (showingKeyboard && !keyboardContainer.contains(event.target)){
+    hideKeyboard();
+    renameTrack();
+  }
+})
+
+function showKeyboard() {
+  let keyboardContainer = document.getElementById('keyboard-container')
+  showingKeyboard = true;
+  keyboardContainer.style.display = 'block';
+}
+
+function hideKeyboard() {
+  let keyboardContainer = document.getElementById('keyboard-container')
+  showingKeyboard = false;
+  keyboardContainer.style.display = 'none';
 }
 
 // TOOD:

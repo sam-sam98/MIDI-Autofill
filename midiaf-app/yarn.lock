@@ -2314,6 +2314,11 @@ simple-get@^3.0.3:
     once "^1.3.1"
     simple-concat "^1.0.0"
 
+simple-keyboard@^3.2.11:
+  version "3.2.11"
+  resolved "https://registry.yarnpkg.com/simple-keyboard/-/simple-keyboard-3.2.11.tgz#bf1e09b7659c0e94b5bb172c5deaa97042a3131d"
+  integrity sha512-DMg9ZQi7fDAKxuSJ6UFX13LLNM6Z+J/s68ewnw/kzoU9VpwnSLPeBhgEBvcv6F4aoC3L1z3YSViWgJHA4vGOvg==
+
 "source-map@>= 0.1.2":
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.7.3.tgz#5302f8169031735226544092e64981f751750383"
