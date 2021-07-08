@@ -72,7 +72,7 @@ const stretchBtn = document.getElementById('stretch')
 const timebar = document.getElementById('time-bar')
 const spacer = document.getElementById('spacer')
 const seeker = document.getElementById('seeker')
-const trackName = document.getElementById('current-track-name');
+const trackNameInput = document.getElementById('current-track-name');
 const trackList = document.getElementById('track-list');
 
 resetBtn.disabled = true
@@ -824,24 +824,42 @@ function loadNewSequence(noteSequence) {
   toNotes(noteSequence)
 }
 
+async function renameTrack(oldName, newName) {
+  return await ipcRenderer.invoke('rename-track', oldName, newName)
+}
+
 async function switchTrack(trackName, saveTrack) {
   if (saveTrack) {
-    await saveActiveTrack();
+    await saveActiveTrack()
   }
 
   ipcRenderer.invoke('fetch-track-notes', trackName).then((noteSequence) => {
     if (noteSequence != null) {
       loadNewSequence(noteSequence.notes)
-      document.getElementById('current-track-name').value = trackName
+
+      // Allow the user to rename the track by simply entering a new name
+      trackNameInput.onchange = null
+      trackNameInput.value = trackName
+      trackNameInput.onchange = async (event) => {
+        let newName = event.target.value
+        let err = await renameTrack(trackName, newName)
+        if (err != null) {
+          trackNameInput.value = trackName
+        } else {
+          let option = trackList.options[trackList.selectedIndex]
+          option.textContent = newName
+          option.value = newName
+        }
+      };
     } else {
-      alert("Failed to load MIDI track");
+      alert("Failed to load MIDI track")
     }
   })
 }
 
 async function saveActiveTrack() {
   let noteSequence = toNoteSequence(notes);
-  await ipcRenderer.invoke('save', noteSequence, trackName.value)
+  await ipcRenderer.invoke('save', noteSequence, trackNameInput.value)
 }
 
 // generate melody completion
@@ -890,14 +908,6 @@ document.getElementById('generate').onclick = () => {
   notes = document.getElementsByClassName('note')
 }
 
-document.getElementById('testA').onmousedown = (_event) => {
-  ipcMain.send('midi-out-note-on', 69, 100)
-}
-
-document.getElementById('testA').onmouseup = (_event) => {
-  ipcMain.send('midi-out-note-off', 69, 100)
-}
-
 // TOOD:
 // * Don't start with TWINKLE_TWINKLE, have piano roll disabled
 // * After tracks list is loaded, enable piano roll
@@ -910,14 +920,14 @@ ipcRenderer.on('receive-track-list', (_, tracks) => {
     // This is a bit hacky.
     // If no current track exists, create a twinkle twinkle one
     // and add it to the track list.
-    tracks.push('twinkle-twinkle');
-    trackName.value = "twinkle-twinkle";
+    tracks.push('twinkle-twinkle')
+    trackNameInput.value = "twinkle-twinkle"
     saveActiveTrack();
   }
 
   for (let track of tracks) {
     let option = document.createElement('option')
-    option.text = track
+    option.textContent = track
     option.value = track
     trackList.add(option)
   }
@@ -925,7 +935,7 @@ ipcRenderer.on('receive-track-list', (_, tracks) => {
   if (tracks.length > 0) {
     // Load first track by default. 
     // TODO: This would be better if the last track worked on was saved somewhere, say a cookie.
-    switchTrack(tracks[0], false);
+    switchTrack(tracks[0], false)
   }
 
   // When changing tracks:
@@ -934,6 +944,6 @@ ipcRenderer.on('receive-track-list', (_, tracks) => {
   // 3. Clear the piano roll
   // 4. Fill it with the new notes
   trackList.onchange = async (event) => {
-    await switchTrack(event.target.value, true);
+    await switchTrack(event.target.value, true)
   };
 })

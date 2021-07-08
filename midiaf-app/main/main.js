@@ -90,6 +90,10 @@ app.on('window-all-closed', () => {
   }
 })
 
+function getTrackPath(trackName) {
+  return path.join(SAVE_DATA_DIR, trackName + '.mid')
+}
+
 ipcMain.handle('generate', async (_, checkpointName, noteSequence, steps, temperature) => {
   // let qns = core.sequences.quantizeNoteSequence(noteSequence, 4)
   let checkpoint = af.checkpoints.find(check => check.name == checkpointName)
@@ -100,13 +104,11 @@ ipcMain.handle('save', async (_, noteSequence, name) => {
   const midiData = sequenceProtoToMidi(noteSequence)
 
   // Create the save data folder if it doesn't already exist
-  const saveDataDir = path.join(app.getPath('userData'), 'midiaf')
-
   try {
-    fs.mkdirSync(saveDataDir)
+    fs.mkdirSync(SAVE_DATA_DIR)
   } catch (err) { }
 
-  const midiFilePath = path.join(saveDataDir, name + '.mid')
+  const midiFilePath = path.join(SAVE_DATA_DIR, name + '.mid')
 
   try {
     fs.writeFileSync(midiFilePath, midiData)
@@ -120,6 +122,17 @@ ipcMain.handle('save', async (_, noteSequence, name) => {
       error: err,
     }
   }
+})
+
+ipcMain.handle('rename-track', async (_, oldName, newName) => {
+  const oldFilePath = getTrackPath(oldName)
+  const newFilePath = getTrackPath(newName)
+  try {
+    fs.renameSync(oldFilePath, newFilePath)
+  } catch (error) {
+    return error;
+  }
+  return null;
 })
 
 
