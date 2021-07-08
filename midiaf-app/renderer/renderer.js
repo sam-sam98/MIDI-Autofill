@@ -687,7 +687,7 @@ function playMidi(e) {
 
 // marker moves to show progress of MIDI playback
 function animateMarker() {
-  interval = 4.0 * 60 * 1000 / (whole * tempo)
+  interval = 4.1 * 60 * 1000 / (whole * tempo)
   markerInterval = setInterval(function() {
     marker.style.left = marker.offsetLeft + 1 + 'px'
     seeker.style.left = seeker.offsetLeft + 1 + 'px'
