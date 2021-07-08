@@ -135,6 +135,23 @@ ipcMain.handle('rename-track', async (_, oldName, newName) => {
   return null;
 })
 
+ipcMain.handle('create-new-track', async (event, trackName) => {
+  let writeFile = util.promisify(fs.writeFile);
+
+  let trackPath = getTrackPath(trackName)
+  let emptyTrack = {
+    notes: [],
+    totalTime: 0.0,
+  }
+  try {
+    let emptyMidiData = core.sequenceProtoToMidi(emptyTrack)
+    await writeFile(trackPath, emptyMidiData)
+  } catch(error) {
+    return error
+  }
+
+  return null
+})
 
 ipcMain.handle('midi-out-note-on', async (_, pitch, velocity) => {
   midiOutput.sendNoteOn(pitch, velocity)

@@ -69,6 +69,7 @@ const addBtn = document.getElementById('add')
 const deleteBtn = document.getElementById('delete')
 const moveBtn = document.getElementById('move')
 const stretchBtn = document.getElementById('stretch')
+const newTrackBtn = document.getElementById('new-track')
 const timebar = document.getElementById('time-bar')
 const spacer = document.getElementById('spacer')
 const seeker = document.getElementById('seeker')
@@ -288,6 +289,34 @@ stretchBtn.onclick = () => {
   // set note interaction to stretch
   for (var i = 0; i < notes.length; i++) {
     stretchElem(notes.item(i))
+  }
+}
+
+newTrackBtn.onclick = async () => {
+  let existingTrackNames = []
+  // Can't map options :/
+  for (let i = 0; i < trackList.options.length; i++) {
+    existingTrackNames.push(trackList.options[i].value)
+  }
+
+  // Default name, increment a number suffix until we find something unique
+  let newTrackCounter = 0
+  let newTrackName = `NewTrack ${newTrackCounter}`
+  while (existingTrackNames.includes(newTrackName)) {
+    newTrackCounter += 1
+    newTrackName = `NewTrack ${newTrackCounter}`
+  }
+
+  let err = await ipcRenderer.invoke('create-new-track', newTrackName);
+  if (err == null) {
+    let option = document.createElement('option')
+    option.textContent = newTrackName
+    option.value = newTrackName
+    trackList.add(option)
+    trackList.selectedIndex = trackList.options.length - 1;
+    switchTrack(newTrackName, true)
+  } else {
+    alert("Error occurred creating new track");
   }
 }
 
