@@ -19,5 +19,5 @@
     "write-good.write-good-config": {
         "passive": false
     },
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
 }
