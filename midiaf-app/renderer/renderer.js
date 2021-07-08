@@ -36,6 +36,7 @@ ipcRenderer.once('ready', (_, checkpoints) => {
 
 })
 
+
 // establish reference values
 const whole = 256
 let sequence = TWINKLE_TWINKLE.notes
@@ -71,6 +72,8 @@ const stretchBtn = document.getElementById('stretch')
 const timebar = document.getElementById('time-bar')
 const spacer = document.getElementById('spacer')
 const seeker = document.getElementById('seeker')
+const trackName = document.getElementById('current-track-name');
+const trackList = document.getElementById('track-list');
 
 resetBtn.disabled = true
 undoBtn.disabled = true
@@ -608,6 +611,16 @@ function toMIDI(notes) {
   return sequence
 }
 
+// Like toMIDI, but puts the results into a magenta INoteSequence
+function toNoteSequence(notes) {
+  let convertedNotes = toMIDI(notes);
+  let totalTime = convertedNotes.reduce((accumulator, note) => note.endTime > accumulator ? note.endTime : accumulator, 0)
+  return {
+    notes: convertedNotes,
+    totalTime: totalTime,
+  }
+}
+
 function stopPlayback() {
   console.log("stopPlayback was called")
   audio.close()
@@ -799,6 +812,38 @@ function stretchElem(elem) {
   }
 }
 
+function resetPianoRoll() {
+  let notes = document.getElementsByClassName("note");
+  for (var i = notes.length - 1; i >= 0; i--) {
+    roll.removeChild(notes[i])
+  }
+}
+
+function loadNewSequence(noteSequence) {
+  resetPianoRoll()
+  toNotes(noteSequence)
+}
+
+async function switchTrack(trackName, saveTrack) {
+  if (saveTrack) {
+    await saveActiveTrack();
+  }
+
+  ipcRenderer.invoke('fetch-track-notes', trackName).then((noteSequence) => {
+    if (noteSequence != null) {
+      loadNewSequence(noteSequence.notes)
+      document.getElementById('current-track-name').value = trackName
+    } else {
+      alert("Failed to load MIDI track");
+    }
+  })
+}
+
+async function saveActiveTrack() {
+  let noteSequence = toNoteSequence(notes);
+  await ipcRenderer.invoke('save', noteSequence, trackName.value)
+}
+
 // generate melody completion
 document.getElementById('generate').onclick = () => {
   // save state to stack for restoration via undo, maintain stack size < 10
@@ -822,12 +867,7 @@ document.getElementById('generate').onclick = () => {
   let selector = document.getElementById('checkpoint')
   let checkpoint = selector.value
   let notes = document.getElementsByClassName('note')
-  let convertedNotes = toMIDI(notes);
-  let totalTime = convertedNotes.reduce((accumulator, note) => note.endTime > accumulator ? note.endTime : accumulator, 0)
-  let noteSequence = {
-    notes: convertedNotes,
-    totalTime: totalTime,
-  }
+  let noteSequence = toNoteSequence(notes);
   // minimum quantization value set at 8th
   noteSequence = core.sequences.quantizeNoteSequence(noteSequence, Math.min(quant, 8))
   ipcRenderer.invoke('generate', checkpoint, noteSequence, 20, 1.5).then((newNotes) => {
@@ -857,3 +897,43 @@ document.getElementById('testA').onmousedown = (_event) => {
 document.getElementById('testA').onmouseup = (_event) => {
   ipcMain.send('midi-out-note-off', 69, 100)
 }
+
+// TOOD:
+// * Don't start with TWINKLE_TWINKLE, have piano roll disabled
+// * After tracks list is loaded, enable piano roll
+// * If no existing tracks, create a default one and leave it blank
+// * Implement rename MIDI track feature with the text area.
+
+// Receive the list of existing MIDI tracks from main process
+ipcRenderer.on('receive-track-list', (_, tracks) => {
+  if (tracks.length == 0) {
+    // This is a bit hacky.
+    // If no current track exists, create a twinkle twinkle one
+    // and add it to the track list.
+    tracks.push('twinkle-twinkle');
+    trackName.value = "twinkle-twinkle";
+    saveActiveTrack();
+  }
+
+  for (let track of tracks) {
+    let option = document.createElement('option')
+    option.text = track
+    option.value = track
+    trackList.add(option)
+  }
+
+  if (tracks.length > 0) {
+    // Load first track by default. 
+    // TODO: This would be better if the last track worked on was saved somewhere, say a cookie.
+    switchTrack(tracks[0], false);
+  }
+
+  // When changing tracks:
+  // 1. Save the current track
+  // 2. Fetch the new tracks notes
+  // 3. Clear the piano roll
+  // 4. Fill it with the new notes
+  trackList.onchange = async (event) => {
+    await switchTrack(event.target.value, true);
+  };
+})

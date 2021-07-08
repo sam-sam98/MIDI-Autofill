@@ -5,6 +5,7 @@ const core = require('@magenta/music/node/core')
 const { sequenceProtoToMidi } = require('@magenta/music/node/core')
 const fs = require('fs');
 const MIDIOutput = require('./midi-output')
+const util = require('util');
 
 const SAVE_DATA_DIR = path.join(app.getPath('userData'), 'midiaf')
 
@@ -46,6 +47,41 @@ app.whenReady().then(async () => {
   let checkpoints = af.checkpoints.map((checkpoint) => checkpoint.name)
   console.log(checkpoints)
   win.webContents.send('ready', checkpoints)
+
+  sendTrackList();
+})
+
+function sendTrackList() {
+  console.log(SAVE_DATA_DIR);
+  fs.readdir(SAVE_DATA_DIR, (err, files) => {
+    if (err != null) {
+      console.error("Received error trying to read track list: ")
+      console.error(err)
+    }
+    else {
+      files = files.filter(file => file.endsWith('.mid') || file.endsWith('.midi'))
+      // Remove extension from track names
+      let tracks = files.map(file => file.replace(/\.[^/.]+$/, ""))
+      console.log("Found the following tracks: ", tracks)
+      win.webContents.send('receive-track-list', tracks)
+    }
+  });
+}
+
+ipcMain.handle('fetch-track-notes', async (_, track) => {
+  // Note: some midi files are '.midi' instead.
+  let trackPath = path.join(SAVE_DATA_DIR, track + '.mid')
+  let readFile = util.promisify(fs.readFile);
+
+  try {
+    let data = await readFile(trackPath)
+    let noteSequence = core.midiToSequenceProto(data)
+    return noteSequence;
+  } catch(error) {
+      console.log("Error occurred while reading midi file ", trackPath, ":");
+      console.log(error);
+      return null;
+  }
 })
 
 app.on('window-all-closed', () => {
@@ -70,7 +106,7 @@ ipcMain.handle('save', async (_, noteSequence, name) => {
     fs.mkdirSync(saveDataDir)
   } catch (err) { }
 
-  const midiFilePath = path.join(saveDataDir, name + '.midi')
+  const midiFilePath = path.join(saveDataDir, name + '.mid')
 
   try {
     fs.writeFileSync(midiFilePath, midiData)
