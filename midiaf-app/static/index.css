@@ -1,3 +1,8 @@
+.track-bar {
+  height: 25px;
+  padding-bottom: 4px;
+}
+
 #window {
   display: inline-grid;
   grid-template-columns: auto auto;
@@ -45,7 +50,7 @@
 
 .ui-bar {
   display: block;
-  height:22px;
+  height: 25px;
   width 100%;
 }
 
@@ -55,25 +60,25 @@
   background-color: rgb(098, 096, 200);
   border: 1px solid rgb(098, 096, 200);
   border-radius: 5px;
-  height: 20px;
+  height: 25px;
   text-align: center;
   font-family: Arial;
-  font-size: 14px;
+  font-size: 16px;
   color: white;
   transition: all 0.4s;
 }
 .ui:hover {
   background-color: white;
   border-radius: 6px;
-  height: 22px;
+  height: 27px;
   font-size: 16px;
   color: rgb(098, 096, 200);
 }
 .ui:disabled {
   background-color: white;
   border-radius: 5px;
-  height: 20px;
-  font-size: 14px;
+  height: 25px;
+  font-size: 16px;
   color: rgb(098, 096, 200);
 }
 
@@ -121,7 +126,7 @@ label {
 }
 
 .key {
-  height: 15px;
+  height: 22px;
   border-radius: 1px;
 }
 
