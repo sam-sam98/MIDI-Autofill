@@ -1,6 +1,5 @@
 const { ipcRenderer } = require("electron/renderer")
 const core = require('@magenta/music/node/core');
-const { ipcMain } = require("electron");
 const Keyboard = window.SimpleKeyboard.default;
 
 TWINKLE_TWINKLE = {
@@ -903,6 +902,7 @@ function onVirtualKeyboardInput(input) {
 async function onVirtualKeyboardPressed(button) {
   if (button == '{enter}') {
     await renameTrack()
+    hideKeyboard();
   }
 }
 
