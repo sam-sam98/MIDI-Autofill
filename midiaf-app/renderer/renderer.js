@@ -567,8 +567,8 @@ function seekElem(elem) {
       audio.close()
       playBtn.onclick = playMidi
     }
-    document.onmousemove = seekMove
-    document.onmouseup = seekUp
+    document.onmousemove = document.ontouchmove = seekMove
+    document.onmouseup = document.ontouchend = seekUp
   }
 
   function seekMove(e) {
@@ -583,8 +583,8 @@ function seekElem(elem) {
     if (playback) {
       playMidi()
     }
-    document.onmousemove = null
-    document.onmouseup = null
+    document.onmousemove = document.ontouchmove = null
+    document.onmouseup = document.ontouchend = null
   }
 }
 
@@ -760,8 +760,13 @@ function deleteElem(elem) {
 }
 
 function dragElem(elem) {
-  elem.onmousedown = dragDown
+  //elem.onmousedown = dragDown
   elem.onclick = null
+
+  elem.addEventListener('touchstart', (ev) => {
+    document.getElementById('debug').textContent = 'TOUCH'
+    dragDown(ev)
+  }, false)
 
   function dragDown(e) {
     // save state to stack for restoration via undo, maintain stack size < 10
@@ -777,24 +782,33 @@ function dragElem(elem) {
       redo.shift()
     }
 
-    document.onmousemove = dragMove
-    document.onmouseup = dragUp
+    //document.onmousemove = dragMove
+    //document.onmouseup = dragUp
+    document.addEventListener('touchmove', dragMove, false)
+    document.addEventListener('touchend', dragUp, false)
   }
 
   function dragMove(e) {
     e = e || window.event
-    e.preventDefault()
+    //e.preventDefault()
     // center selected note over cursor
-    elem.style.left = Math.max(0, Math.min(e.clientX - (keys.offsetWidth + keys.offsetLeft - scroller.scrollLeft) - elem.offsetWidth / 2, expand.offsetLeft - elem.offsetWidth)) + 'px'
-    elem.style.top = e.clientY - elem.offsetHeight / 2 - scroller.offsetTop + scroller.scrollTop + 'px'
+
+    let touch = e.changedTouches[0];
+    elem.style.left = Math.max(0, Math.min(touch.pageX - (keys.offsetWidth + keys.offsetLeft - scroller.scrollLeft) - elem.offsetWidth / 2, expand.offsetLeft - elem.offsetWidth)) + 'px'
+    elem.style.top = touch.pageY - elem.offsetHeight / 2 - scroller.offsetTop + scroller.scrollTop + 'px'
+
+    document.getElementById('debug').textContent = 'dragMove called.'
   }
 
   function dragUp(e) {
+    document.ontouchmove = null
+    document.ontouchend = null
     document.onmousemove = null
     document.onmouseup = null
     // snap note to quantized positon
     elem.style.left = Math.round(elem.offsetLeft / (whole / quant)) * whole / quant + 'px'
     elem.style.top = Math.round(elem.offsetTop / (key.offsetHeight + 1)) * (key.offsetHeight + 1) + 'px'
+    document.getElementById('debug').textContent = 'dragUp called.'
   }
 }
 
@@ -802,6 +816,11 @@ function stretchElem(elem) {
   let pos = 0, startX = 0, startWidth = 0
   elem.onmousedown = stretchDown
   elem.onclick = null
+
+  elem.addEventListener('touchstart', (ev) => {
+    ev.preventDefault()
+    stetchDown(ev)
+  })
 
   function stretchDown(e) {
     // save state to stack for restoration via undo, maintain stack size < 10

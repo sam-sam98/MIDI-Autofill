@@ -31,6 +31,7 @@ function createWindow() {
   })
 
   win.loadFile('static/index.html')
+  win.webContents.openDevTools()
 }
 
 app.whenReady().then(async () => {
