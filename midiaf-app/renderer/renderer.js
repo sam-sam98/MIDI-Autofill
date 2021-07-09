@@ -558,7 +558,6 @@ function playSample(elem) {
   }
 }
 
-
 // move time scroller
 function seekElem(elem) {
   var playback = false
@@ -593,7 +592,6 @@ function seekElem(elem) {
     document.onmouseup = null
   }
 }
-
 
 // convert positional value sequence to piano roll notes
 function visualize(noteRecord) {
@@ -842,7 +840,7 @@ function stretchElem(elem) {
   function stretchUp(e) {
     document.onmousemove = null
     document.onmouseup = null
-    // snap note to uantized width
+    // snap note to quantized width
     elem.style.width = elem.offsetWidth - ((elem.offsetWidth + whole / quant / 2) % (whole / quant)) + whole / quant / 2 + 'px'
   }
 }
@@ -1002,7 +1000,7 @@ ipcRenderer.on('receive-track-list', (_, tracks) => {
   }
 
   if (tracks.length > 0) {
-    // Load first track by default. 
+    // Load first track by default.
     // TODO: This would be better if the last track worked on was saved somewhere, say a cookie.
     switchTrack(tracks[0], false)
   }
