@@ -80,7 +80,8 @@ const timebar = document.getElementById('time-bar')
 const spacer = document.getElementById('spacer')
 const seeker = document.getElementById('seeker')
 const trackNameInput = document.getElementById('current-track-name');
-const trackList = document.getElementById('track-list');
+const trackOptions = document.getElementById('track-options');
+const directory = document.getElementById('open-directory')
 
 resetBtn.disabled = true
 undoBtn.disabled = true
@@ -102,6 +103,8 @@ spacer.style.width = expand.offsetWidth + 2 + 'px'
 seeker.style.width = seeker.offsetHeight + 'px'
 seeker.style['border-radius'] = seeker.offsetHeight + 'px'
 seeker.style.left = seeker.offsetLeft - seeker.offsetWidth / 2 + 'px'
+trackOptions.style.width = trackNameInput.offsetWidth - 2 + 'px'
+trackOptions.style.left = trackNameInput.offsetLeft + 'px'
 // fill piano roll with grid
 addMeasures(Math.max(Math.ceil(scroller.offsetWidth / whole), Math.ceil(totalTime * tempo / 60 / 4)))
 // add notes to roll
@@ -270,7 +273,7 @@ deleteBtn.onclick = () => {
   }
 }
 
-// change note's position on the piano roll bby clicking and dragging
+// change note's position on the piano roll by clicking and dragging
 moveBtn.onclick = () => {
   // deactivate all other interactions
   addBtn.disabled = false
@@ -324,6 +327,11 @@ newTrackBtn.onclick = async () => {
   } else {
     alert("Error occurred creating new track");
   }
+}
+
+directory.onclick = () => {
+  trackOptions.classList.toggle('visible')
+  trackOptions.classList.toggle('invisible')
 }
 
 // select quantization value
@@ -733,7 +741,7 @@ function playMidi(e) {
 
 // marker moves to show progress of MIDI playback
 function animateMarker() {
-  interval = 4.1 * 60 * 1000 / (whole * tempo)
+  interval = 4 * 60 * 1000 / (whole * tempo)
   markerInterval = setInterval(function() {
     marker.style.left = marker.offsetLeft + 1 + 'px'
     seeker.style.left = seeker.offsetLeft + 1 + 'px'
@@ -996,7 +1004,8 @@ ipcRenderer.on('receive-track-list', (_, tracks) => {
     let option = document.createElement('option')
     option.textContent = track
     option.value = track
-    trackList.add(option)
+    option.classList.add('track')
+    trackOptions.appendChild(option)
   }
 
   if (tracks.length > 0) {
@@ -1005,12 +1014,25 @@ ipcRenderer.on('receive-track-list', (_, tracks) => {
     switchTrack(tracks[0], false)
   }
 
+  let opts = document.getElementsByClassName('track')
+  for (let opt of opts) {
+    selectOpt(opt)
+  }
+
+  function selectOpt(opt) {
+    opt.onclick = async (event) => {
+      trackNameInput.value = opt.value
+      trackOptions.classList.toggle('visible')
+      trackOptions.classList.toggle('invisible')
+      await switchTrack(event.target.value, true)
+    }
+  }
   // When changing tracks:
   // 1. Save the current track
   // 2. Fetch the new tracks notes
   // 3. Clear the piano roll
   // 4. Fill it with the new notes
-  trackList.onchange = async (event) => {
+  trackNameInput.onsubmit = async (event) => {
     await switchTrack(event.target.value, true)
   };
 })

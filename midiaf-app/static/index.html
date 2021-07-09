@@ -11,39 +11,49 @@
 <link rel="stylesheet" href="simple-keyboard.css">
 
 <body>
-  <div class="track-bar">
-    <button id="new-track" class="ui l">New Track</button>
-    <label for="current-track-name">Current track</label>
-    <input type="text" id="current-track-name"></input>
-    <select id="track-list" class="ui l"></select>
-  </div>
   <div class="ui-bar">
-    <button id="save" class="ui l">Save</button>
-    <button id="reset" class="ui l">Reset</button>
-    <button id="undo" class="ui l">Undo</button>
-    <button id="redo" class="ui l">Redo</button>
-    <label for="checkpoint" class="l">Checkpoint:</label>
-    <select name="checkpoint" id="checkpoint" class="ui l">
-    </select>
-    <button id="tempo-up" class="ui r">+</button>
-    <select id="tempo" class="ui r">
-      <option value="40">40</option>
-      <option value="60">60</option>
-      <option value="80">80</option>
-      <option value="100">100</option>
-      <option value="120" selected>120</option>
-      <option value="140">140</option>
-      <option value="160">160</option>
-      <option value="180">180</option>
-      <option value="200">200</option>
-      <option value="220">220</option>
-      <option value="240">240</option>
-      <option value="260">260</option>
-      <option value="280">280</option>
-      <option value="300">300</option>
-    </select>
-    <button id="tempo-down" class="ui r">-</button>
-    <label for="tempo" class="r">Tempo:</label>
+    <div id="left">
+      <button id="save" class="ui">Save</button>
+      <button id="reset" class="ui">Reset</button>
+      <button id="undo" class="ui">Undo</button>
+      <button id="redo" class="ui">Redo</button>
+      <label for="checkpoint">Checkpoint:</label>
+      <select name="checkpoint" id="checkpoint" class="ui">
+      </select>
+    </div>
+
+    <div id="track-bar">
+      <button id="new-track" class="ui">New Track</button>
+      <label id="track-label" for="current-track-name">Current track:</label>
+      <input type="text" id="current-track-name"></input>
+      <button id="open-directory" class="ui">
+        <img src="img/directory-icon.png"/>
+      </button>
+      <div id="track-options" class="invisible">
+      </div>
+    </div>
+
+    <div id="right">
+      <button id="tempo-up" class="ui">+</button>
+      <select id="tempo" class="ui">
+        <option value="40">40</option>
+        <option value="60">60</option>
+        <option value="80">80</option>
+        <option value="100">100</option>
+        <option value="120" selected>120</option>
+        <option value="140">140</option>
+        <option value="160">160</option>
+        <option value="180">180</option>
+        <option value="200">200</option>
+        <option value="220">220</option>
+        <option value="240">240</option>
+        <option value="260">260</option>
+        <option value="280">280</option>
+        <option value="300">300</option>
+      </select>
+      <button id="tempo-down" class="ui">-</button>
+      <label for="tempo">Tempo:</label>
+    </div>
   </div>
   <div id="window">
     <div class="container">

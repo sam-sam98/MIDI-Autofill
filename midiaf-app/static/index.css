@@ -1,6 +1,47 @@
-.track-bar {
+#left {
+  width: 33%;
+  display: inline-block;
+  vertical-align: top;
+}
+#left>* {
+  float: left;
+}
+#track-bar {
   height: 25px;
-  padding-bottom: 4px;
+  width: 33%;
+  display: inline-flex;
+  vertical-align: top;
+  justify-content: center;
+}
+
+#right {
+  width: 33%;
+  display: inline;
+  vertical-align: top;
+}
+#right>* {
+  float: right;
+}
+#track-options {
+  border: 1px solid grey;
+  background: white;
+  position: absolute;
+}
+.visible {
+  display: block;
+}
+.invisible {
+  display: none;
+}
+
+.track {
+  color:rgb(098, 096, 200);
+  font-family: Arial;
+  font-size: 14px;
+}
+.track:hover {
+  background: rgb(098, 096, 200);
+  color: white;
 }
 
 #window {
@@ -126,7 +167,7 @@ label {
 }
 
 .key {
-  height: 21px;
+  height: 22px;
   border-radius: 1px;
 }
 
