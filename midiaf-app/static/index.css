@@ -26,6 +26,7 @@
   border: 1px solid grey;
   background: white;
   position: absolute;
+  transition: all 0.4s;
 }
 .visible {
   display: block;

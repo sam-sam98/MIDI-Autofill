@@ -330,6 +330,12 @@ newTrackBtn.onclick = async () => {
   }
 }
 
+directory.onmouseover = () => {
+  icon.src = 'img/directory-hover.png'
+}
+directory.onmouseout = () => {
+  icon.src = 'img/directory-icon.png'
+}
 directory.onclick = () => {
   trackOptions.classList.toggle('visible')
   trackOptions.classList.toggle('invisible')
