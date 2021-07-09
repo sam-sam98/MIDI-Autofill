@@ -105,6 +105,7 @@ seeker.style['border-radius'] = seeker.offsetHeight + 'px'
 seeker.style.left = seeker.offsetLeft - seeker.offsetWidth / 2 + 'px'
 trackOptions.style.width = trackNameInput.offsetWidth - 2 + 'px'
 trackOptions.style.left = trackNameInput.offsetLeft + 'px'
+trackOptions.style.top = trackNameInput.offsetTop + trackNameInput.offsetHeight + 'px'
 // fill piano roll with grid
 addMeasures(Math.max(Math.ceil(scroller.offsetWidth / whole), Math.ceil(totalTime * tempo / 60 / 4)))
 // add notes to roll
@@ -1005,6 +1006,7 @@ ipcRenderer.on('receive-track-list', (_, tracks) => {
     option.textContent = track
     option.value = track
     option.classList.add('track')
+    option.style.height = trackNameInput.style.height
     trackOptions.appendChild(option)
   }
 
