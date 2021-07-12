@@ -75,7 +75,6 @@ const addBtn = document.getElementById('add')
 const deleteBtn = document.getElementById('delete')
 const moveBtn = document.getElementById('move')
 const stretchBtn = document.getElementById('stretch')
-const newTrackBtn = document.getElementById('new-track')
 const timebar = document.getElementById('time-bar')
 const spacer = document.getElementById('spacer')
 const seeker = document.getElementById('seeker')
@@ -302,34 +301,6 @@ stretchBtn.onclick = () => {
   }
 }
 
-newTrackBtn.onclick = async () => {
-  let existingTrackNames = []
-  // Can't map options :/
-  for (let i = 0; i < trackList.options.length; i++) {
-    existingTrackNames.push(trackList.options[i].value)
-  }
-
-  // Default name, increment a number suffix until we find something unique
-  let newTrackCounter = 0
-  let newTrackName = `NewTrack ${newTrackCounter}`
-  while (existingTrackNames.includes(newTrackName)) {
-    newTrackCounter += 1
-    newTrackName = `NewTrack ${newTrackCounter}`
-  }
-
-  let err = await ipcRenderer.invoke('create-new-track', newTrackName);
-  if (err == null) {
-    let option = document.createElement('option')
-    option.textContent = newTrackName
-    option.value = newTrackName
-    trackList.add(option)
-    trackList.selectedIndex = trackList.options.length - 1;
-    switchTrack(newTrackName, true)
-  } else {
-    alert("Error occurred creating new track");
-  }
-}
-
 directory.onmouseover = () => {
   icon.src = 'img/directory-hover.png'
 }
@@ -339,6 +310,15 @@ directory.onmouseout = () => {
 directory.onclick = () => {
   trackOptions.classList.toggle('visible')
   trackOptions.classList.toggle('invisible')
+  if (trackOptions.classList.contains('visible')) {
+    document.onmousedown = (event) => {
+      if(!trackOptions.contains(event.target) && !trackNameInput.contains(event.target)){
+        trackOptions.classList.toggle('visible')
+        trackOptions.classList.toggle('invisible')
+        document.onmousedown = null
+      }
+    }
+  }
 }
 
 // select quantization value
@@ -972,7 +952,7 @@ document.getElementById('generate').onclick = () => {
 
 document.addEventListener('mousedown', (event) => {
   let keyboardContainer = document.getElementById('keyboard-container')
-  if (showingKeyboard && !keyboardContainer.contains(event.target)){
+  if (showingKeyboard && !keyboardContainer.contains(event.target) && !trackNameInput.contains(event.target)){
     hideKeyboard();
     renameTrack();
   }
@@ -1013,7 +993,43 @@ ipcRenderer.on('receive-track-list', (_, tracks) => {
     option.value = track
     option.classList.add('track')
     option.style.height = trackNameInput.style.height
+    option.style.width = trackNameInput.style.width
     trackOptions.appendChild(option)
+  }
+  let newTrackBtn = document.createElement('option')
+  newTrackBtn.textContent = '-- Add New Track --'
+  newTrackBtn.value = trackNameInput.textContent
+  newTrackBtn.classList.add('new-track')
+  newTrackBtn.style.height = trackNameInput.style.height
+  newTrackBtn.style.width = trackNameInput.style.width
+  trackOptions.appendChild(newTrackBtn)
+
+  newTrackBtn.onclick = async () => {
+    let existingTrackNames = []
+    // Can't map options :/
+    for (let i = 0; i < trackList.options.length; i++) {
+      existingTrackNames.push(trackList.options[i].value)
+    }
+
+    // Default name, increment a number suffix until we find something unique
+    let newTrackCounter = 0
+    let newTrackName = `NewTrack ${newTrackCounter}`
+    while (existingTrackNames.includes(newTrackName)) {
+      newTrackCounter += 1
+      newTrackName = `NewTrack ${newTrackCounter}`
+    }
+
+    let err = await ipcRenderer.invoke('create-new-track', newTrackName);
+    if (err == null) {
+      let option = document.createElement('option')
+      option.textContent = newTrackName
+      option.value = newTrackName
+      trackList.add(option)
+      trackList.selectedIndex = trackList.options.length - 1;
+      switchTrack(newTrackName, true)
+    } else {
+      alert("Error occurred creating new track");
+    }
   }
 
   if (tracks.length > 0) {

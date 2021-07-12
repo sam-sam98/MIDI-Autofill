@@ -13,7 +13,6 @@
   vertical-align: top;
   justify-content: center;
 }
-
 #right {
   width: 33%;
   display: inline;
@@ -26,7 +25,7 @@
   border: 1px solid grey;
   background: white;
   position: absolute;
-  transition: all 0.4s;
+  z-index: 100;
 }
 .visible {
   display: block;
@@ -41,6 +40,16 @@
   font-size: 14px;
 }
 .track:hover {
+  background: rgb(098, 096, 200);
+  color: white;
+}
+
+.new-track {
+  color:rgb(098, 096, 200);
+  font-family: Arial;
+  font-size: 14px;
+}
+.new-track:hover {
   background: rgb(098, 096, 200);
   color: white;
 }
