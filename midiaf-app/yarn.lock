@@ -127,6 +127,14 @@
     nan "^2.14.2"
     prebuild-install "^6.0.1"
 
+"@serialport/list@^9.2.0":
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/@serialport/list/-/list-9.2.0.tgz#5f727b7d9e990ee96f3d558fceddf8604a570e3f"
+  integrity sha512-3KUf8n0/NiEXCClQsgF7/HPehMa0onF3vpWoUfsrYnHNYcvNg8MiAp+0dJvh35+5ojZONgldTKvIuCVZmO0Ryg==
+  dependencies:
+    "@serialport/bindings" "^9.2.0"
+    commander "^7.1.0"
+
 "@serialport/parser-byte-length@9.0.7":
   version "9.0.7"
   resolved "https://registry.yarnpkg.com/@serialport/parser-byte-length/-/parser-byte-length-9.0.7.tgz#9e362bba70eeffcd2eb0804afeca4bb1dee59d5f"
@@ -668,6 +676,11 @@ combined-stream@^1.0.6, combined-stream@^1.0.8, combined-stream@~1.0.6:
   integrity sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==
   dependencies:
     delayed-stream "~1.0.0"
+
+commander@^7.1.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-7.2.0.tgz#a36cb57d0b501ce108e4d20559a150a391d97ab7"
+  integrity sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==
 
 concat-map@0.0.1:
   version "0.0.1"

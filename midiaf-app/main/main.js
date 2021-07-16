@@ -5,12 +5,14 @@ const core = require('@magenta/music/node/core')
 const { sequenceProtoToMidi } = require('@magenta/music/node/core')
 const fs = require('fs');
 const MIDIOutput = require('./midi-output')
+const MIDIInput = require('./midi-input')
 const util = require('util');
 
 const SAVE_DATA_DIR = path.join(app.getPath('userData'), 'midiaf')
 
 let win = undefined
 let midiOutput = new MIDIOutput(SAVE_DATA_DIR);
+let midiInput = new MIDIInput();
 
 
 function ensureSaveDirExists() {
@@ -19,7 +21,11 @@ function ensureSaveDirExists() {
   }
 }
 
-function createWindow() {
+function keyCallback(status, pitch, velocity) {
+  win.webContents.send('keyboard-input', status, pitch, velocity)
+}
+
+async function createWindow() {
   win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -29,6 +35,13 @@ function createWindow() {
       contextIsolation: false,
     }
   })
+
+  try {
+    await midiOutput.initialize()
+    await midiInput.initialize(keyCallback)
+  } catch (error) {
+    console.error(error);
+  }
 
   win.loadFile('static/index.html')
   win.webContents.openDevTools()

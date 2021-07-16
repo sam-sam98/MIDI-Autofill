@@ -15,7 +15,7 @@
                 "midiaf-app"
             ],
             "env": {
-                "DISPLAY": ":1.0"
+                "DISPLAY": ":1"
             },
             "windows": {
                 "runtimeExecutable": "${workspaceFolder}/midiaf-app/node_modules/electron/dist/electron"
