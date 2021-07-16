@@ -653,7 +653,17 @@ function seekElem(elem) {
   var playback = false
   elem.onmousedown = seekDown
 
+  elem.addEventListener('touchstart', seekDown, false)
+  elem.addEventListener('touchmove', seekMove, false)
+  elem.addEventListener('touchend', seekUp, false)
+  elem.addEventListener('mousedown', seekDown, false)
+  elem.addEventListener('mousemove', seekMove, false)
+  elem.addEventListener('mouseup', seekUp, false)
+
+  elem.style.touchAction = 'none'
+
   function seekDown(e) {
+    e.preventDefault()
     clearInterval(markerInterval)
     if (audio != null) {
       if (audio.state === 'running') {
@@ -662,24 +672,22 @@ function seekElem(elem) {
       audio.close()
       playBtn.onclick = playMidi
     }
-    document.onmousemove = document.ontouchmove = seekMove
-    document.onmouseup = document.ontouchend = seekUp
   }
 
   function seekMove(e) {
-    e = e || window.event
     e.preventDefault()
+    e = e || window.event
+    const x = e.changedTouches[0].pageX;
     // center seeker over cursor
-    elem.style.left = Math.max(-elem.offsetWidth / 2, Math.min(e.clientX - (keys.offsetWidth + keys.offsetLeft - timebar.scrollLeft) - elem.offsetWidth / 2, spacer.offsetLeft - elem.offsetWidth / 2)) + 'px'
+    elem.style.left = Math.max(-elem.offsetWidth / 2, Math.min(x - (keys.offsetWidth + keys.offsetLeft - timebar.scrollLeft) - elem.offsetWidth / 2, spacer.offsetLeft - elem.offsetWidth / 2)) + 'px'
     marker.style.left = elem.offsetLeft + elem.offsetWidth / 2 + 'px'
   }
 
   function seekUp(e) {
+    e.preventDefault()
     if (playback) {
       playMidi()
     }
-    document.onmousemove = document.ontouchmove = null
-    document.onmouseup = document.ontouchend = null
   }
 }
 
