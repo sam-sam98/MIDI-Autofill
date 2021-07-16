@@ -8,16 +8,16 @@ class MIDIOutput {
     }
 
     async initialize() {
-		const ports = await SerialPort.list()
-		console.log("Ports: ")
-		console.log(JSON.stringify(ports, null, " "))
-        
+        const ports = await SerialPort.list()
+        console.log("Ports: ")
+        console.log(JSON.stringify(ports, null, " "))
+
         // We don't get anything fancy like vendor/product ID
         // for this one, so just look for the one that isn't the arduino
-		const targetPort = ports.find(
-		(port) =>
-			port.manufacturer != "Arduino LLC"
-		)
+        const targetPort = ports.find(
+            (port) =>
+                port.manufacturer != "Arduino LLC"
+        )
 
         this.port = new SerialPort(targetPort.path, {
             baudRate: 115200,

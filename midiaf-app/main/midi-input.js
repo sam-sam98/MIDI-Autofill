@@ -12,10 +12,10 @@ class MIDIInputServer {
 
 		// Find a serial COM port which matches our ADAFruit adapter.
 		const targetPort = ports.find(
-		(port) =>
-			port.manufacturer == "Arduino LLC" &&
-			port.vendorId == "2341" &&
-			port.productId == "0058"
+			(port) =>
+				port.manufacturer == "Arduino LLC" &&
+				port.vendorId == "2341" &&
+				port.productId == "0058"
 		)
 
 		if (targetPort == undefined) {
@@ -25,8 +25,8 @@ class MIDIInputServer {
 		const serialPort = new SerialPort(targetPort.path, {
 			baudRate: 9600
 		})
-		
-        const parser = new SerialPort.parsers.Readline({
+
+		const parser = new SerialPort.parsers.Readline({
 			delimiter: '\r\n'
 		})
 		serialPort.pipe(parser)
@@ -43,7 +43,7 @@ class MIDIInputServer {
 			let velocity = parseFloat(parts[2]);
 
 			// Sanity checks
-			if (velocity == NaN || (status != 'ON' && status != 'OFF') || key < 0 || key > 29) { 
+			if (velocity == NaN || (status != 'ON' && status != 'OFF') || key < 0 || key > 29) {
 				throw new Error();
 			}
 

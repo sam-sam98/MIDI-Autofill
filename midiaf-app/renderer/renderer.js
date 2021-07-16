@@ -257,6 +257,8 @@ addBtn.onclick = () => {
     newNote.style.left = Math.round(newNote.offsetLeft / (whole / quant)) * whole / quant + 'px'
     newNote.style.top = Math.round(newNote.offsetTop / (key.offsetHeight + 1)) * (key.offsetHeight + 1) + 'px'
 
+    setupNoteCallbacks(newNote)
+
     notes = document.getElementsByClassName('note')
   }
 }
@@ -287,11 +289,6 @@ moveBtn.onclick = () => {
   stretchBtn.disabled = false
   roll.onclick = null
   activeTool = "MOVE"
-  // // set note interaction to move
-  // for (var i = 0; i < notes.length; i++) {
-  //   dragElem(notes.item(i), true)
-  //   stretchElem(notes.item(i), false)
-  // }
 }
 
 // change note duration by clicking and dragging
@@ -303,11 +300,6 @@ stretchBtn.onclick = () => {
   stretchBtn.disabled = true
   roll.onclick = null
   activeTool = "STRETCH"
-  // // set note interaction to stretch
-  // for (var i = 0; i < notes.length; i++) {
-  //   stretchElem(notes.item(i), true)
-  //   dragElem(notes.item(i), false)
-  // }
 }
 
 function setupNoteCallbacks(noteElem) {
@@ -701,6 +693,7 @@ function visualize(noteRecord) {
     newNote.style.width = noteRecord[i].offsetWidth + 'px'
     newNote.style.height = key.offsetHeight + 'px'
     roll.appendChild(newNote)
+    setupNoteCallbacks(newNote)
   }
 }
 
@@ -863,134 +856,6 @@ function deleteElem(elem) {
   }
 }
 
-function dragElem(elem, enabled) {
-  //elem.onmousedown = dragDown
-  elem.onclick = null
-
-  let touchStart = (ev) => {
-    document.getElementById('debug').textContent = 'TOUCH'
-    dragDown(ev)
-  };
-
-  if (enabled) {
-    elem.addEventListener('touchstart', touchStart, false)
-  } else {
-    elem.removeEventListener('touchstart', touchStart, false)
-    document.removeEventListener('touchmove', dragMove)
-    document.removeEventListener('touchend', dragUp)
-  }
-
-  elem.style.touchAction = "none"
-
-  function dragDown(e) {
-    // save state to stack for restoration via undo, maintain stack size < 10
-    undo.push(record(notes))
-    undoBtn.disabled = false
-    resetBtn.disabled = false
-    while (undo.length > 10) {
-      undo.shift()
-    }
-    // clear redo stack
-    redoBtn.disabled = true
-    while (redo.length > 0) {
-      redo.shift()
-    }
-
-    //document.onmousemove = dragMove
-    //document.onmouseup = dragUp
-    document.addEventListener('touchmove', dragMove, false)
-    document.addEventListener('touchend', dragUp, false)
-
-    document.getElementById('debug').textContent = 'dragDown called.'
-  }
-
-  function dragMove(e) {
-    e = e || window.event
-    //e.preventDefault()
-    // center selected note over cursor
-
-    let touch = e.changedTouches[0];
-    elem.style.left = Math.max(0, Math.min(touch.pageX - (keys.offsetWidth + keys.offsetLeft - scroller.scrollLeft) - elem.offsetWidth / 2, expand.offsetLeft - elem.offsetWidth)) + 'px'
-    elem.style.top = touch.pageY - elem.offsetHeight / 2 - scroller.offsetTop + scroller.scrollTop + 'px'
-
-    // document.getElementById('debug').textContent = 'dragMove called.'
-  }
-
-  function dragUp(e) {
-    document.onmousemove = null
-    document.onmouseup = null
-    document.removeEventListener('touchmove', dragMove)
-    document.removeEventListener('touchend', dragUp)
-    // snap note to quantized positon
-    elem.style.left = Math.round(elem.offsetLeft / (whole / quant)) * whole / quant + 'px'
-    elem.style.top = Math.round(elem.offsetTop / (key.offsetHeight + 1)) * (key.offsetHeight + 1) + 'px'
-    document.getElementById('debug').textContent = 'dragUp called.'
-  }
-}
-
-function stretchElem(elem, enabled) {
-  let pos = 0, startX = 0, startWidth = 0
-  elem.onmousedown = stretchDown
-  elem.onclick = null
-  elem.style.touchAction = "none"
-
-  let touchStart = (ev) => {
-    stretchDown(ev)
-  };
-
-  if (enabled) {
-    elem.addEventListener('touchstart', touchStart, false)
-  } else {
-    elem.removeEventListener('touchstart', touchStart)
-    document.removeEventListener('touchmove', stretchMove)
-    document.removeEventListener('touchend', stretchUp)
-  }
-
-  function stretchDown(e) {
-    // save state to stack for restoration via undo, maintain stack size < 10
-    undo.push(record(notes))
-    undoBtn.disabled = false
-    resetBtn.disabled = false
-    while (undo.length > 10) {
-      undo.shift()
-    }
-    // clear redo stack
-    redoBtn.disabled = true
-    while (redo.length > 0) {
-      redo.shift()
-    }
-
-    startWidth = elem.offsetWidth
-    let touch = e.changedTouches[0]
-    //startX = e.clientX
-    startX = touch.pageX
-
-    // document.onmousemove = stretchMove
-    // document.onmouseup = stretchUp
-    document.addEventListener('touchmove', stretchMove, false)
-    document.addEventListener('touchend', stretchUp, false)
-    document.getElementById('debug').textContent = "stretchDown sus"
-  }
-
-  function stretchMove(e) {
-    e = e || window.event
-    e.preventDefault()
-    // change selected note width according to cursor movement
-    let touch = e.changedTouches[0]
-    pos = touch.pageX - startX
-    elem.style.width = Math.min(Math.max(whole / quant, startWidth + pos), expand.offsetLeft - elem.offsetLeft) + 'px'
-  }
-
-  function stretchUp(e) {
-    document.onmousemove = null
-    document.onmouseup = null
-    document.removeEventListener('touchmove', stretchMove)
-    document.removeEventListener('touchend', stretchUp)
-    // snap note to quantized width
-    elem.style.width = elem.offsetWidth - ((elem.offsetWidth + whole / quant / 2) % (whole / quant)) + whole / quant / 2 + 'px'
-  }
-}
-
 function resetPianoRoll() {
   let notes = document.getElementsByClassName("note");
   for (var i = notes.length - 1; i >= 0; i--) {
@@ -1121,7 +986,7 @@ function hideKeyboard() {
   keyboardContainer.style.display = 'none';
 }
 
-// TOOD:
+// TODO:
 // * Don't start with TWINKLE_TWINKLE, have piano roll disabled
 // * After tracks list is loaded, enable piano roll
 // * If no existing tracks, create a default one and leave it blank
