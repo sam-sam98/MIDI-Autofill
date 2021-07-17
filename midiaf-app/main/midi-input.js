@@ -5,7 +5,7 @@ class MIDIInputServer {
 		this.keyCallback = null;
 	}
 
-	async initialize(keyCallback) {
+	async initialize(keyCallback, volumeCallback) {
 		const ports = await SerialPort.list()
 		console.log("Ports: ")
 		console.log(JSON.stringify(ports, null, " "))
@@ -32,6 +32,7 @@ class MIDIInputServer {
 		serialPort.pipe(parser)
 		parser.on('data', this.onData.bind(this))
 		this.keyCallback = keyCallback;
+		this.volumeCallback = volumeCallback;
 	}
 
 	onData(message) {
@@ -39,17 +40,26 @@ class MIDIInputServer {
 			let parts = message.split(' ')
 
 			let status = parts[0];
-			let key = parseInt(parts[1]);
-			let velocity = parseFloat(parts[2]);
 
-			// Sanity checks
-			if (velocity == NaN || (status != 'ON' && status != 'OFF') || key < 0 || key > 29) {
-				throw new Error();
+			if (status == 'VOL') {
+				let volume = parseInt(parts[1]);
+				console.log(`Received volume ${volume}`);
+				this.volumeCallback(volume);
+			}
+			else {
+				let key = parseInt(parts[1]);
+				let velocity = parseFloat(parts[2]);
+
+				// Sanity checks
+				if (velocity == NaN || (status != 'ON' && status != 'OFF') || key < 0 || key > 29) {
+					throw new Error();
+				}
+
+				console.log("Received MIDI input: ", status, key, velocity)
+
+				this.keyCallback(status, key, velocity)
 			}
 
-			console.log("Received MIDI input: ", status, key, velocity)
-
-			this.keyCallback(status, key, velocity)
 		} catch {
 			console.log('Received garbage from MIDI input: ', message)
 		}

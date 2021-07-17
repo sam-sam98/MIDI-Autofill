@@ -83,7 +83,6 @@ let undo = []
 let redo = []
 let metronome = true
 let markerInterval = null
-let interval = 0
 let octave = 4
 let schedule = []
 let showingKeyboard = false
@@ -108,7 +107,6 @@ const resetBtn = document.getElementById('reset')
 const undoBtn = document.getElementById('undo')
 const redoBtn = document.getElementById('redo')
 const tempoBtn = document.getElementById('tempo')
-const playBtn = document.getElementById('play')
 const stopBtn = document.getElementById('stop')
 const addBtn = document.getElementById('add')
 const deleteBtn = document.getElementById('delete')
@@ -245,14 +243,20 @@ document.getElementById('tempo-up').onclick = () => {
   tempoBtn.textContent = tempo
 }
 
-// play midi seuqence
-playBtn.onclick = playMIDI
-
 stopBtn.onclick = () => {
   stopPlayback()
   clearInterval(markerInterval)
   marker.style.left = '0px'
   seeker.style.left = -seeker.offsetWidth / 2 + 'px'
+  enableUI()
+  ipcRenderer.on('record', () => {
+    console.log('Received record GPIO')
+    recordMIDI()
+  })
+  ipcRenderer.on('play', () => {
+    console.log('Received play GPIO')
+    playMIDI()
+  })
 }
 
 // add a note to the piano roll by clicking on the grid
@@ -714,7 +718,10 @@ function seekElem(elem) {
   function seekDown(e) {
     e.preventDefault()
     clearInterval(markerInterval)
-    playBtn.onclick = playMIDI
+    ipcRenderer.on('play', () => {
+      console.log('Received play GPIO')
+      playMIDI()
+    })
   }
 
   function seekMove(e) {
@@ -814,12 +821,19 @@ function stopPlayback() {
     Tone.Transport.clear(schedule.pop())
   }
   clearInterval(markerInterval)
-  playBtn.textContent = 'Play'
-  playBtn.onclick = playMIDI
+  ipcRenderer.on('play', () => {
+    console.log('Received play GPIO')
+    playMIDI()
+  })
 }
 
 // play midi sequence
 async function playMIDI(e) {
+  disableUI()
+  ipcRenderer.on('record', () => {
+    console.log('Received record GPIO')
+  })
+
   await Tone.start()
   // read notes into sequence based on position and dimensions
   sequence = toMIDI(notes)
@@ -829,9 +843,8 @@ async function playMIDI(e) {
     seeker.style.left = -seeker.offsetWidth / 2 + 'px'
   }
   stopBtn.disabled = false
-  playBtn.textContent = 'Pause'
 
-  animateMarker(marker.offsetLeft)
+  animateMarker(marker.offsetLeft, false)
   Tone.loaded().then(() => {
     if (metronome) {
       Tone.Transport.bpm.value = tempo
@@ -862,37 +875,52 @@ async function playMIDI(e) {
   })
 
   // allow pausing during playback
-  playBtn.onclick = () => {
+  ipcRenderer.on('play', () => {
+    console.log('Received play GPIO')
     if (Tone.Transport.state === 'started') {
       Tone.Transport.pause().then(function () {
-        playBtn.textContent = 'Play'
+        enableUI()
+        ipcRenderer.on('record', () => {
+          console.log('Received record GPIO')
+          recordMIDI()
+        })
       })
       clearInterval(markerInterval)
     } else if (Tone.Transport.state === 'paused') {
       Tone.Transport.start().then(function () {
-        playBtn.textContent = 'Pause'
+        disableUI()
+        stopBtn.disabled = false
+        ipcRenderer.on('record', () => {
+          console.log('Received record GPIO')
+        })
       })
-      animateMarker(marker.offsetLeft)
+      animateMarker(marker.offsetLeft, false)
     }
-  }
+  })
 }
 
 // marker moves to show progress of MIDI playback
-function animateMarker(startPos) {
+function animateMarker(startPos, recording) {
   markerInterval = setInterval(function() {
     marker.style.left = startPos + whole / 4 * tempo / 60  * Tone.Transport.seconds
     seeker.style.left = marker.offsetLeft - seeker.offsetWidth / 2 + 'px'
     if (marker.offsetLeft >= expand.offsetLeft) {
+      enableUI()
       clearInterval(markerInterval)
       stopPlayback()
-      exitRecord()
-      for (var i = 0; i < notes.length; i++) {
-        notes.item(i).onclick = null
-        notes.item(i).onmousedown = null
-      }
-      roll.onclick = null
       activeTool = "NONE"
     }
+    if (recording) {
+      exitRecord()
+    }
+    ipcRenderer.on('record', () => {
+      console.log('Received record GPIO')
+      recordMIDI()
+    })
+    ipcRenderer.on('play', () => {
+      console.log('Received play GPIO')
+      playMIDI()
+    })
   }, 0)
 }
 
@@ -1140,39 +1168,50 @@ ipcRenderer.on('receive-track-list', (_, tracks) => {
   };
 })
 
-document.getElementById('record').onclick = recordMIDI
-
 var pitches = []
 for (i = 0; i < 128; i++) {
   pitches.push({on: [], off: [], velocity: []})
 }
 
 ipcRenderer.on('keyboard-input', async (_, status, pitch, velocity) => {
-  await Tone.start()
-  Tone.loaded().then(() => {
-    document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
-    if (status == 'ON') {
-      synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
-    } else {
-      synth.triggerRelease(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
-    }
-  })
+  if (pitch + octave * 12 < 128) {
+    await Tone.start()
+    Tone.loaded().then(() => {
+      document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
+      if (status == 'ON') {
+        synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
+      } else {
+        synth.triggerRelease(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
+      }
+    })
+  }
 })
 
 ipcRenderer.on('record', () => {
   console.log('Received record GPIO')
+  recordMIDI()
 })
 
 ipcRenderer.on('octave-up', () => {
   console.log('Received octave-up GPIO')
+  if (++octave > 10) {
+    octave = 10
+  }
 })
 
 ipcRenderer.on('octave-down', () => {
   console.log('Received octave-down GPIO')
+  if (--octave < 0) {
+    octave = 0
+  }
 })
 
 ipcRenderer.on('play', () => {
   console.log('Received play GPIO')
+  playMIDI()
+})
+
+ipcRenderer.on('volume', (volume) => {
 })
 
 function recordMIDI() {
@@ -1189,15 +1228,10 @@ function recordMIDI() {
   }
 
   // disable all UI buttons
-  var ui = document.getElementsByClassName('ui-bar')
-  for (i = 0; i < ui.length; i++) {
-    var buttons = ui.item(i).getElementsByTagName('BUTTON')
-    for (j = 0; j < buttons.length; j++) {
-      buttons.item(j).disabled = true
-    }
-  }
-  tempoBtn.disabled = true
-  document.getElementById('record').disabled = false
+  disableUI()
+  ipcRenderer.on('play', () => {
+    console.log('Received play GPIO')
+  })
 
   // disable note interactions
   for (i = 0; i < notes.length; i++) {
@@ -1226,62 +1260,55 @@ function recordMIDI() {
     )
     Tone.Transport.stop()
     Tone.Transport.start()
-    animateMarker(marker.offsetLeft)
+    animateMarker(marker.offsetLeft, true)
   }
 
   // begin registering key actions
   ipcRenderer.on('keyboard-input', async (_, status, pitch, velocity) => {
-    await Tone.start()
-    Tone.loaded().then(() => {
-      document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
-      if (status == 'ON') {
-        pitches[pitch + octave * 12].on.push(Tone.Transport.seconds)
-        pitches[pitch + octave * 12].velocity.push(velocity)
-        synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
-      } else {
-        pitches[pitch + octave * 12].off.push(Tone.Transport.seconds)
-        synth.triggerRelease(noteValues[pitch + octave + 12], Tone.now(), velocity / 127)
-      }
-    })
+    if (pitch + octave * 12 < 128) {
+      await Tone.start()
+      Tone.loaded().then(() => {
+        document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
+        if (status == 'ON') {
+          pitches[pitch + octave * 12].on.push(Tone.Transport.seconds)
+          pitches[pitch + octave * 12].velocity.push(velocity)
+          synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
+        } else {
+          pitches[pitch + octave * 12].off.push(Tone.Transport.seconds)
+          synth.triggerRelease(noteValues[pitch + octave + 12], Tone.now(), velocity / 127)
+        }
+      })
+    }
   })
 
-  document.getElementById('record').onclick = () => {
+  ipcRenderer.on('record', () => {
+    console.log('Received record GPIO')
     stopPlayback()
+    enableUI()
     exitRecord()
-
-    // add recorded notes to roll
-    var sequence = toMIDI(notes)
-    for (i = 0; i < 128; i++) {
-      for (j = 0; j < pitches[i].on.length; j++) {
-        var startTime = pitches[i].on[j] + recordStart
-        if (startTime < 0) {
-          continue
-        }
-        var endTime = (pitches[i].off[j] == null) ? measures * 60 / (tempo * 4) : pitches[i].off[j] + recordStart
-
-        sequence.push({pitch: i, startTime: startTime, endTime: endTime})
-      }
-    }
-
-    while (notes.length > 0) {
-      notes.item(0).remove()
-    }
-
-    toNotes(sequence)
-    notes = document.getElementsByClassName('note')
-
-    // clear recorded notes
-    for (var i = 0; i < 128; i++) {
-      pitches[i].on.length = 0
-      pitches[i].off.length = 0
-      pitches[i].velocity.length = 0
-    }
-
-    document.getElementById('record').onclick = recordMIDI
-  }
+    ipcRenderer.on('record', () => {
+      console.log('Received record GPIO')
+      recordMIDI()
+    })
+    ipcRenderer.on('play', () => {
+      console.log('Received play GPIO')
+      playMIDI()
+    })
+  })
 }
 
-function exitRecord() {
+function disableUI() {
+  var ui = document.getElementsByClassName('ui-bar')
+  for (i = 0; i < ui.length; i++) {
+    var buttons = ui.item(i).getElementsByTagName('BUTTON')
+    for (j = 0; j < buttons.length; j++) {
+      buttons.item(j).disabled = true
+    }
+  }
+  tempoBtn.disabled = true
+}
+
+function enableUI() {
   var ui = document.getElementsByClassName('ui-bar')
   for (i = 0; i < ui.length; i++) {
     var buttons = ui.item(i).getElementsByTagName('BUTTON')
@@ -1289,20 +1316,60 @@ function exitRecord() {
       buttons.item(j).disabled = false
     }
   }
-  redoBtn.disabled = true
+  if (redo.length <= 0) {
+    redoBtn.disabled = true
+  }
   tempoBtn.disabled = false
   clearInterval(markerInterval)
 
+  for (var i = 0; i < notes.length; i++) {
+    notes.item(i).onclick = null
+    notes.item(i).onmousedown = null
+  }
+  roll.onclick = null
+}
+
+function exitRecord() {
   // restore live playback without recording
   ipcRenderer.on('keyboard-input', async (_, status, pitch, velocity) => {
-    await Tone.start()
-    Tone.loaded().then(() => {
-      document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
-      if (status == 'ON') {
-        synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
-      } else {
-        synth.triggerRelease(noteValues[pitch + octave * 12], tone.now(), velocity / 127)
-      }
-    })
+    if (pitch + octave * 12 < 128) {
+      await Tone.start()
+      Tone.loaded().then(() => {
+        document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
+        if (status == 'ON') {
+          synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
+        } else {
+          synth.triggerRelease(noteValues[pitch + octave * 12], tone.now(), velocity / 127)
+        }
+      })
+    }
   })
+    
+  // add recorded notes to roll
+  var sequence = toMIDI(notes)
+  for (i = 0; i < 128; i++) {
+    for (j = 0; j < pitches[i].on.length; j++) {
+      var startTime = pitches[i].on[j] + recordStart
+      if (startTime < 0) {
+        continue
+      }
+      var endTime = (pitches[i].off[j] == null) ? measures * 60 / (tempo * 4) : pitches[i].off[j] + recordStart
+
+      sequence.push({pitch: i, startTime: startTime, endTime: endTime})
+    }
+  }
+
+  while (notes.length > 0) {
+    notes.item(0).remove()
+  }
+
+  toNotes(sequence)
+  notes = document.getElementsByClassName('note')
+
+  // clear recorded notes
+  for (var i = 0; i < 128; i++) {
+    pitches[i].on.length = 0
+    pitches[i].off.length = 0
+    pitches[i].velocity.length = 0
+  }
 }

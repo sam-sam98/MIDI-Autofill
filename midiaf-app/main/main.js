@@ -26,6 +26,18 @@ function keyCallback(status, pitch, velocity) {
   win.webContents.send('keyboard-input', status, pitch, velocity)
 }
 
+let RAW_VOLUME_MAX = 700
+let lastVolumeVal = (Math.floor(RAW_VOLUME_MAX/10));
+
+function volumeCallback(volume) {
+  if (Math.floor(lastVolumeVal) != Math.floor(volume / 10)) {
+    lastVolumeVal = Math.floor(volume / 10);
+    let normalizedVolume = volume / (RAW_VOLUME_MAX/10) / 10;
+    console.log(`Sending volume value of ${normalizedVolume} to the UI`)
+    win.webContents.send('volume', normalizedVolume)
+  }
+}
+
 const gpioCallbacks = {
   record: () => {
     win.webContents.send('record')
@@ -54,7 +66,7 @@ async function createWindow() {
 
   try {
     await midiOutput.initialize()
-    await midiInput.initialize(keyCallback)
+    await midiInput.initialize(keyCallback, volumeCallback)
     await gpio.initialize(gpioCallbacks)
   } catch (error) {
     console.error(error);
