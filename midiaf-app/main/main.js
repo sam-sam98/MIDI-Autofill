@@ -26,6 +26,21 @@ function keyCallback(status, pitch, velocity) {
   win.webContents.send('keyboard-input', status, pitch, velocity)
 }
 
+const gpioCallbacks = {
+  record: () => {
+    win.webContents.send('record')
+  },
+  octaveUp: () => {
+    win.webContents.send('octave-up')
+  },
+  octaveDown: () => {
+    win.webContents.send('octave-down')
+  },
+  play: () => {
+    win.webContents.send('play')
+  },
+}
+
 async function createWindow() {
   win = new BrowserWindow({
     width: 800,
@@ -40,6 +55,7 @@ async function createWindow() {
   try {
     await midiOutput.initialize()
     await midiInput.initialize(keyCallback)
+    await gpio.initialize(gpioCallbacks)
   } catch (error) {
     console.error(error);
   }
@@ -105,6 +121,9 @@ app.whenReady().then(async () => {
   await af.initialize()
   let checkpoints = af.checkpoints.map((checkpoint) => checkpoint.name)
   console.log(checkpoints)
+
+  await new Promise(resolve => setTimeout(resolve, 5000));
+  
   win.webContents.send('ready', checkpoints)
 
   sendTrackList();

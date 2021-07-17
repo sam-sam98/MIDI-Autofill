@@ -1,5 +1,7 @@
 const tf = require('@tensorflow/tfjs-node')
+//const tf = require('@tensorflow/tfjs')
 const handler = tf.io.fileSystem('./main/autofill/models/model.json')
+const core = require('@magenta/music/node/core')
 
 const DURATION_TO_INT = [
   [(1/ 12.0), 0],
@@ -65,14 +67,24 @@ var checkpoints = [
 
 function convertDuration(duration)
 {
-  for (let entry of DURATION_TO_INT)
-  {
+  for (let i = DURATION_TO_INT.length - 1; i >= 0; i--) {
+    let entry = DURATION_TO_INT[i]
     if (duration >= entry[0]) {
-      return entry[1];
+      return entry[1]
     }
   }
 
-  return entry[DURATION_TO_INT.length() - 1]
+  return entry[0]
+}
+
+function argMax(array) {
+  return [].reduce.call(array, (m, c, i, arr) => c > arr[m] ? i : m, 0)
+}
+
+function interpretAIResult(noteOutput, durationOutput) {
+  let note = argMax(noteOutput)
+  let durationIdx = argMax(durationOutput)
+  return [note, DURATION_TO_INT[durationIdx][0]]
 }
 
 module.exports = {
@@ -86,7 +98,7 @@ module.exports = {
     let durations = []
     for (let note of noteSequence.notes) { 
       let {pitch, startTime, endTime} = note
-      let region = regions.find(([existingStartTime, existingEndTime]) => existingStartTime <= endTime && existingEndTime >= startTime)
+      let region = regions.find(([existingStartTime, existingEndTime]) => existingStartTime < endTime && existingEndTime > startTime)
       if (region == null)
       {
         regions.push([startTime, endTime])
@@ -95,13 +107,80 @@ module.exports = {
       }
       else
       {
-        console.log('Overlapping region found in range ${startTime} - ${endTime}')
+        console.log(`Overlapping region found in range ${startTime} - ${endTime}`)
       }
+    }
+
+    let originalNotes = [...notes]
+    let originalDurations = [...durations]
+
+    // Repeat melody until we're at 32 notes
+    while (notes.length < 32)
+    {
+      notes.push(...originalNotes)
+      durations.push(...originalDurations)
+    }
+
+    while (notes.length > 32)
+    {
+      notes.pop()
+      durations.pop()
     }
 
     durations = durations.map(convertDuration)
 
-    let output = checkpoint.model.predict([notes, durations])
-    console.log(output)
+    let outputNotes = []
+    let lastEndTime = noteSequence.notes.reduce((accumulator, note) => note.endTime > accumulator ? note.endTime : accumulator, 0)
+    for (let i = 0; i < steps; i++)
+    {
+      let testNotes = [48, 50, 52, 53, 50, 52, 48]
+      let testDurations = [2, 2, 2, 2, 2, 2, 2, 2]
+      let originalTestNotes = [...testNotes]
+      let originalTestDurations = [...testDurations]
+      while (testNotes.length < 32)
+      {
+        testNotes.push(...originalTestNotes)
+        testDurations.push(...originalTestDurations)
+      }
+
+      while (testNotes.length > 32)
+      {
+        testNotes.pop()
+        testDurations.pop()
+      }
+
+      let notes = testNotes
+      let durations = testDurations
+      let input = [tf.tensor1d(notes).expandDims(), tf.tensor1d(durations).expandDims()]
+      console.log("Input notes:")
+      tf.print(input[0])
+      console.log("Input durations:")
+      tf.print(input[1])
+      let output = checkpoint.model.predict(input)
+      let aiNotes = await output[0].data()
+      let aiDurations = await output[1].data()
+      let [note, duration] = interpretAIResult(aiNotes, aiDurations)
+      let startTime = lastEndTime;
+      let endTime = startTime + duration
+      outputNotes.push({
+        pitch: note,
+        startTime,
+        endTime,
+      })
+
+      lastEndTime = endTime
+      notes.push(note)
+      durations.push(duration)
+      notes.pop()
+      durations.pop()
+    }
+
+    let totalTime = outputNotes.reduce((accumulator, note) => note.endTime > accumulator ? note.endTime : accumulator, 0)
+
+    let newNoteSequence = {
+      notes: outputNotes,
+      totalTime,
+    }
+    return core.sequences.quantizeNoteSequence(newNoteSequence, 4)
   }
 }

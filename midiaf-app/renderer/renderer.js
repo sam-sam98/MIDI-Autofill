@@ -39,6 +39,11 @@ const met = new Tone.Synth({
   sustain: 0.05
 }).toDestination()
 
+const gain = new Tone.Gain(1).toDestination()
+
+synth.connect(gain)
+met.connect(gain)
+
 const noteValues = [
   'C0', 'C#0', 'D0', 'D#0', 'E0', 'F0', 'F#0', 'G0', 'G#0', 'A0', 'A#0', 'B0',
   'C1', 'C#1', 'D1', 'D#1', 'E1', 'F1', 'F#1', 'G1', 'G#1', 'A1', 'A#1', 'B1',
@@ -771,8 +776,11 @@ function toMIDI(notes) {
   sequence = []
   totalTime = 0
   for (var i = 0; i < notes.length; i++) {
+    if (notes.item(i).offsetLeft < marker.offsetLeft && notes.item(i).offsetLeft + notes.item(i).offsetWidth < marker.offsetLeft) {
+      continue
+    }
     var pitch = ((key.offsetHeight + 1) * 127 - notes.item(i).offsetTop) / (key.offsetHeight + 1)
-    var startTime = notes.item(i).offsetLeft * 4 / whole * 60 / tempo
+    var startTime = (notes.item(i).offsetLeft - marker.offsetLeft) * 4 / whole * 60 / tempo
     var endTime = notes.item(i).offsetWidth * 4 / whole * 60 / tempo + startTime
     if (endTime > totalTime) {
       totalTime = endTime
@@ -805,6 +813,7 @@ function stopPlayback() {
   while (schedule.length > 0) {
     Tone.Transport.clear(schedule.pop())
   }
+  clearInterval(markerInterval)
   playBtn.textContent = 'Play'
   playBtn.onclick = playMIDI
 }
@@ -1150,6 +1159,22 @@ ipcRenderer.on('keyboard-input', async (_, status, pitch, velocity) => {
   })
 })
 
+ipcRenderer.on('record', () => {
+  console.log('Received record GPIO')
+})
+
+ipcRenderer.on('octave-up', () => {
+  console.log('Received octave-up GPIO')
+})
+
+ipcRenderer.on('octave-down', () => {
+  console.log('Received octave-down GPIO')
+})
+
+ipcRenderer.on('play', () => {
+  console.log('Received play GPIO')
+})
+
 function recordMIDI() {
   undo.push(record(notes))
   undoBtn.disabled = false
@@ -1229,6 +1254,9 @@ function recordMIDI() {
     for (i = 0; i < 128; i++) {
       for (j = 0; j < pitches[i].on.length; j++) {
         var startTime = pitches[i].on[j] + recordStart
+        if (startTime < 0) {
+          continue
+        }
         var endTime = (pitches[i].off[j] == null) ? measures * 60 / (tempo * 4) : pitches[i].off[j] + recordStart
 
         sequence.push({pitch: i, startTime: startTime, endTime: endTime})
