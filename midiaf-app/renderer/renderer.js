@@ -22,6 +22,8 @@ TWINKLE_TWINKLE = {
   totalTime: 8
 };
 
+const gain = new Tone.Gain(1).toDestination()
+
 const synth = new Tone.Sampler({
 	urls: {
 		'C4': 'C4.mp3',
@@ -31,18 +33,13 @@ const synth = new Tone.Sampler({
 	},
 	release: 0.5,
 	baseUrl: 'mp3/',
-}).toDestination()
+}).connect(gain)
 
 const met = new Tone.Synth({
   decay: 0.9,
   release: 0,
   sustain: 0.05
-}).toDestination()
-
-const gain = new Tone.Gain(1).toDestination()
-
-synth.connect(gain)
-met.connect(gain)
+}).connect(gain)
 
 const noteValues = [
   'C0', 'C#0', 'D0', 'D#0', 'E0', 'F0', 'F#0', 'G0', 'G#0', 'A0', 'A#0', 'B0',
@@ -62,7 +59,6 @@ const noteValues = [
 // can be changed to a user uploaded MIDI.
 
 ipcRenderer.once('ready', (_, checkpoints) => {
-  alert("Hello??? Is this fucking thing on???")
   let selector = document.getElementById('checkpoint')
   for (let checkpoint of checkpoints) {
     let option = document.createElement("option")
@@ -81,12 +77,14 @@ let quant = 4
 let tempo = 120
 let undo = []
 let redo = []
-let metronome = true
+let metronome = false
 let markerInterval = null
 let octave = 4
 let schedule = []
 let showingKeyboard = false
-let volume = 1
+let playFlag = false
+let recordFlag = false
+let recordStart = 0
 
 let virtualKeyboard = new Keyboard({
   onChange: input => onVirtualKeyboardInput(input),
@@ -163,6 +161,7 @@ for (var i = 0; i < samples.length; i++) {
 
 // save sequence to reset to
 document.getElementById('save').onclick = () => {
+  saveActiveTrack()
   originalSequence = record(notes)
   resetBtn.disabled = true
 }
@@ -229,8 +228,12 @@ redoBtn.onclick = () => {
 
 // decrease the tempo by 1 bpm (minimum 30 bpm)
 document.getElementById('tempo-down').onclick = () => {
-  tempo = Math.max(30, tempo - 1)
-  tempoBtn.textContent = tempo
+  let tempoOffset = (tempo - 1) % 10
+  for (var i = 0; i < tempoBtn.options.length; i++) {
+    var newTempo = parseInt(tempoBtn.options[i].value) + tempoOffset - 10
+    tempoBtn.options[i].value = newTempo.toString()
+    tempoBtn.options[i].innerHTML = newTempo.toString()
+  }
 }
 
 tempoBtn.onchange = () => {
@@ -239,24 +242,18 @@ tempoBtn.onchange = () => {
 
 // increase tempo by 1 bpm (maximum 300 bpm)
 document.getElementById('tempo-up').onclick = () => {
-  tempo = Math.min(300, tempo + 1)
-  tempoBtn.textContent = tempo
+  let tempoOffset = (tempo + 1) % 10
+  for (var i = 0; i < tempoBtn.options.length; i++) {
+    var newTempo = parseInt(tempoBtn.options[i].value) + tempoOffset
+    tempoBtn.options[i].value = newTempo.toString()
+    tempoBtn.options[i].innerHTML = newTempo.toString()
+  }
 }
 
 stopBtn.onclick = () => {
   stopPlayback()
-  clearInterval(markerInterval)
   marker.style.left = '0px'
   seeker.style.left = -seeker.offsetWidth / 2 + 'px'
-  enableUI()
-  ipcRenderer.on('record', () => {
-    console.log('Received record GPIO')
-    recordMIDI()
-  })
-  ipcRenderer.on('play', () => {
-    console.log('Received play GPIO')
-    playMIDI()
-  })
 }
 
 // add a note to the piano roll by clicking on the grid
@@ -703,7 +700,7 @@ function playSample(elem) {
 
 // move time scroller
 function seekElem(elem) {
-  var playback = false
+  var playback = playFlag
   elem.onmousedown = seekDown
 
   elem.addEventListener('touchstart', seekDown, false)
@@ -718,10 +715,7 @@ function seekElem(elem) {
   function seekDown(e) {
     e.preventDefault()
     clearInterval(markerInterval)
-    ipcRenderer.on('play', () => {
-      console.log('Received play GPIO')
-      playMIDI()
-    })
+    stopPlayback()
   }
 
   function seekMove(e) {
@@ -735,7 +729,7 @@ function seekElem(elem) {
 
   function seekUp(e) {
     e.preventDefault()
-    if (playback) {
+    if (playback == true) {
       playMIDI()
     }
   }
@@ -783,16 +777,16 @@ function toMIDI(notes) {
   sequence = []
   totalTime = 0
   for (var i = 0; i < notes.length; i++) {
-    if (notes.item(i).offsetLeft < marker.offsetLeft && notes.item(i).offsetLeft + notes.item(i).offsetWidth < marker.offsetLeft) {
+    if (playFlag && notes.item(i).offsetLeft < marker.offsetLeft && notes.item(i).offsetLeft + notes.item(i).offsetWidth < marker.offsetLeft) {
       continue
     }
     var pitch = ((key.offsetHeight + 1) * 127 - notes.item(i).offsetTop) / (key.offsetHeight + 1)
-    var startTime = (notes.item(i).offsetLeft - marker.offsetLeft) * 4 / whole * 60 / tempo
+    var startTime = (playFlag) ? (notes.item(i).offsetLeft - marker.offsetLeft) * 4 / whole * 60 / tempo : notes.item(i).offsetLeft * 4 / whole * 60 / tempo
     var endTime = notes.item(i).offsetWidth * 4 / whole * 60 / tempo + startTime
     if (endTime > totalTime) {
       totalTime = endTime
     }
-    if (startTime < (60 * 4 * marker.offsetLeft / whole / tempo)) {
+    if (playFlag && startTime < (60 * 4 * marker.offsetLeft / whole / tempo)) {
       if (endTime < (60 * 4 * marker.offsetLeft / whole / tempo)) {
         continue
       } else {
@@ -820,107 +814,77 @@ function stopPlayback() {
   while (schedule.length > 0) {
     Tone.Transport.clear(schedule.pop())
   }
+  enableUI()
   clearInterval(markerInterval)
-  ipcRenderer.on('play', () => {
-    console.log('Received play GPIO')
-    playMIDI()
-  })
+  playFlag = false
+  recordFlag = false
 }
 
 // play midi sequence
 async function playMIDI(e) {
-  disableUI()
-  ipcRenderer.on('record', () => {
-    console.log('Received record GPIO')
-  })
-
   await Tone.start()
-  // read notes into sequence based on position and dimensions
-  sequence = toMIDI(notes)
-
-  if (marker.offsetLeft >= totalTime * tempo / 60 / 4 * whole) {
-    marker.style.left = '0px'
-    seeker.style.left = -seeker.offsetWidth / 2 + 'px'
-  }
-  stopBtn.disabled = false
-
-  animateMarker(marker.offsetLeft, false)
   Tone.loaded().then(() => {
-    if (metronome) {
-      Tone.Transport.bpm.value = tempo
-      schedule.push(
-        Tone.Transport.scheduleRepeat ((time) => {
-          met.triggerAttackRelease(Tone.Frequency(1000), 0.1, Tone.now(), 0.05)
-        }, '4n', 0, totalTime)
-      )
-      schedule.push(
-        Tone.Transport.scheduleRepeat ((time) => {
-          met.triggerAttackRelease(Tone.Frequency(2000), 0.1, Tone.now(), 0.05)
-        }, '1m', 0, totalTime)
-      )
-    }
+    if (recordFlag == true) {
+      console.log('Cannot play track during recording.')
+    } else if (playFlag == true) {
+      stopPlayback()
+      enableUI()
+    } else {
+      playFlag = true
+      // disable other functions
+      disableUI()
+      stopBtn.disabled = false
 
-    // create tones from MIDI data
-    for (var i = 0; i < sequence.length; i++) {
-      var pitch = sequence[i].pitch
-      var duration = sequence[i].endTime - sequence[i].startTime
-      schedule.push(
-        Tone.Transport.schedule(((pitch, duration) => (time) => {
-          synth.triggerAttackRelease(noteValues[pitch], duration, Tone.now())
-        })(pitch, duration), sequence[i].startTime)
-      )
-    }
-    Tone.Transport.stop()
-    Tone.Transport.start()
-  })
+      if (marker.offsetLeft >= totalTime * tempo / 60 / 4 * whole || marker.offsetLeft < 0) {
+        marker.style.left = '0px'
+        seeker.style.left = -seeker.offsetWidth / 2 + 'px'
+      }
 
-  // allow pausing during playback
-  ipcRenderer.on('play', () => {
-    console.log('Received play GPIO')
-    if (Tone.Transport.state === 'started') {
-      Tone.Transport.pause().then(function () {
-        enableUI()
-        ipcRenderer.on('record', () => {
-          console.log('Received record GPIO')
-          recordMIDI()
-        })
-      })
-      clearInterval(markerInterval)
-    } else if (Tone.Transport.state === 'paused') {
-      Tone.Transport.start().then(function () {
-        disableUI()
-        stopBtn.disabled = false
-        ipcRenderer.on('record', () => {
-          console.log('Received record GPIO')
-        })
-      })
-      animateMarker(marker.offsetLeft, false)
+      //read notes into sequence based on position and dimensions
+      sequence = toMIDI(notes)
+
+      if (metronome) {
+        Tone.Transport.bpm.value = tempo
+        schedule.push(
+          Tone.Transport.scheduleRepeat ((time) => {
+            met.triggerAttackRelease(Tone.Frequency(1000), 0.1, Tone.now(), 0.05)
+          }, '4n', 0, totalTime)
+        )
+        schedule.push(
+          Tone.Transport.scheduleRepeat ((time) => {
+            met.triggerAttackRelease(Tone.Frequency(2000), 0.1, Tone.now(), 0.05)
+          }, '1m', 0, totalTime)
+        )
+      }
+        // create tones from MIDI data
+        for (var i = 0; i < sequence.length; i++) {
+          var pitch = sequence[i].pitch
+          var duration = sequence[i].endTime - sequence[i].startTime
+          schedule.push(
+            Tone.Transport.schedule(((pitch, duration) => (time) => {
+              synth.triggerAttackRelease(noteValues[pitch], duration, Tone.now())
+            })(pitch, duration), sequence[i].startTime)
+          )
+        }
+        Tone.Transport.stop()
+        Tone.Transport.start()
+        animateMarker(marker.offsetLeft, false)
     }
   })
 }
 
 // marker moves to show progress of MIDI playback
 function animateMarker(startPos, recording) {
-  markerInterval = setInterval(function() {
-    marker.style.left = startPos + whole / 4 * tempo / 60  * Tone.Transport.seconds
+  markerInterval = setInterval(async function() {
+    marker.style.left = startPos + whole / 4 * tempo / 60  * Tone.Transport.seconds + 'px'
     seeker.style.left = marker.offsetLeft - seeker.offsetWidth / 2 + 'px'
     if (marker.offsetLeft >= expand.offsetLeft) {
-      enableUI()
-      clearInterval(markerInterval)
       stopPlayback()
       activeTool = "NONE"
+      if (recording == true) {
+        exitRecord()
+      }
     }
-    if (recording) {
-      exitRecord()
-    }
-    ipcRenderer.on('record', () => {
-      console.log('Received record GPIO')
-      recordMIDI()
-    })
-    ipcRenderer.on('play', () => {
-      console.log('Received play GPIO')
-      playMIDI()
-    })
   }, 0)
 }
 
@@ -1177,7 +1141,6 @@ ipcRenderer.on('keyboard-input', async (_, status, pitch, velocity) => {
   if (pitch + octave * 12 < 128) {
     await Tone.start()
     Tone.loaded().then(() => {
-      document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
       if (status == 'ON') {
         synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
       } else {
@@ -1212,88 +1175,81 @@ ipcRenderer.on('play', () => {
 })
 
 ipcRenderer.on('volume', (volume) => {
+  gain.gain.setValueAtTime(volume, Tone.now())
 })
 
-function recordMIDI() {
-  undo.push(record(notes))
-  undoBtn.disabled = false
-  resetBtn.disabled = false
-  while (undo.length > 10) {
-    undo.shift()
-  }
-  // clear redo stack
-  redoBtn.disabled = true
-  while (redo.length > 0) {
-    redo.shift()
-  }
-
-  // disable all UI buttons
-  disableUI()
-  ipcRenderer.on('play', () => {
-    console.log('Received play GPIO')
-  })
-
-  // disable note interactions
-  for (i = 0; i < notes.length; i++) {
-    notes.item(i).onclick = null
-    notes.item(i).onmousedown = null
-  }
-  roll.onclick = null
-
-  // give user a one-measure count-in
-  marker.style.left = Math.round((marker.offsetLeft - whole) / whole) * whole + 'px'
-  seeker.style.left = marker.offsetLeft - seeker.offsetWidth / 2 + 'px'
-  var recordStart =  marker.offsetLeft / whole * 4 * 60 / tempo
-
-  // play metronome audio if activated
-  if (metronome) {
-    Tone.Transport.bpm.value = tempo
-    schedule.push(
-      Tone.Transport.scheduleRepeat ((time) => {
-        met.triggerAttackRelease(Tone.Frequency(1000), 0.1, Tone.now(), 0.05)
-      }, '4n', 0, measures * 60 * 4 / tempo)
-    )
-    schedule.push(
-      Tone.Transport.scheduleRepeat ((time) => {
-        met.triggerAttackRelease(Tone.Frequency(2000), 0.1, Tone.now(), 0.05)
-      }, '1m', 0, measures * 60 * 4 / tempo)
-    )
-    Tone.Transport.stop()
-    Tone.Transport.start()
-    animateMarker(marker.offsetLeft, true)
-  }
-
-  // begin registering key actions
-  ipcRenderer.on('keyboard-input', async (_, status, pitch, velocity) => {
-    if (pitch + octave * 12 < 128) {
-      await Tone.start()
-      Tone.loaded().then(() => {
-        document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
-        if (status == 'ON') {
-          pitches[pitch + octave * 12].on.push(Tone.Transport.seconds)
-          pitches[pitch + octave * 12].velocity.push(velocity)
-          synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
-        } else {
-          pitches[pitch + octave * 12].off.push(Tone.Transport.seconds)
-          synth.triggerRelease(noteValues[pitch + octave + 12], Tone.now(), velocity / 127)
+async function recordMIDI() {
+  await Tone.start()
+  Tone.loaded().then(() => {
+    if (playFlag == true) {
+      console.log('Cannot record during playback.')
+    } else if (recordFlag == true) {
+      stopPlayback()
+      exitRecord()
+    } else {
+      recordFlag = true
+      undo.push(record(notes))
+      undoBtn.disabled = false
+      resetBtn.disabled = false
+      while (undo.length > 10) {
+        undo.shift()
+      }
+  
+      // clear redo stack
+      redoBtn.disabled = true
+      while (redo.length > 0) {
+        redo.shift()
+      }
+  
+      // disable all UI buttons
+      disableUI()
+  
+      // give user a one-measure count-in
+      marker.style.left = Math.floor((Math.max(marker.offsetLeft, 0) - whole) / whole) * whole + 'px'
+      seeker.style.left = marker.offsetLeft - seeker.offsetWidth / 2 + 'px'
+      recordStart =  marker.offsetLeft / whole * 4 * 60 / tempo
+  
+      // play metronome audio if activated
+      if (metronome) {
+        Tone.Transport.stop()
+        Tone.Transport.bpm.value = tempo
+        schedule.push(
+          Tone.Transport.scheduleRepeat ((time) => {
+            met.triggerAttackRelease(Tone.Frequency(1000), 0.1, Tone.now(), 0.05)
+          }, '4n', 0, measures * 60 * 4 / tempo)
+        )
+        schedule.push(
+          Tone.Transport.scheduleRepeat ((time) => {
+            met.triggerAttackRelease(Tone.Frequency(2000), 0.1, Tone.now(), 0.05)
+          }, '1m', 0, measures * 60 * 4 / tempo)
+        )
+        Tone.Transport.start()
+        animateMarker(marker.offsetLeft, true)
+      }
+      else
+      {
+        Tone.Transport.stop()
+        Tone.Transport.start()
+        animateMarker(marker.offsetLeft, true)
+      }
+    
+      // begin registering key actions
+      ipcRenderer.on('keyboard-input', async (_, status, pitch, velocity) => {
+        if (pitch + octave * 12 < 128) {
+          await Tone.start()
+          Tone.loaded().then(() => {
+            if (status == 'ON') {
+              pitches[pitch + octave * 12].on.push(Tone.Transport.seconds)
+              pitches[pitch + octave * 12].velocity.push(velocity / 127)
+              synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
+            } else {
+              pitches[pitch + octave * 12].off.push(Tone.Transport.seconds)
+              synth.triggerRelease(noteValues[pitch + octave + 12], Tone.now(), velocity / 127)
+            }
+          })
         }
       })
     }
-  })
-
-  ipcRenderer.on('record', () => {
-    console.log('Received record GPIO')
-    stopPlayback()
-    enableUI()
-    exitRecord()
-    ipcRenderer.on('record', () => {
-      console.log('Received record GPIO')
-      recordMIDI()
-    })
-    ipcRenderer.on('play', () => {
-      console.log('Received play GPIO')
-      playMIDI()
-    })
   })
 }
 
@@ -1306,6 +1262,12 @@ function disableUI() {
     }
   }
   tempoBtn.disabled = true
+
+  for (var i = 0; i < notes.length; i++) {
+    notes.item(i).onclick = null
+    notes.item(i).onmousedown = null
+  }
+  roll.onclick = null
 }
 
 function enableUI() {
@@ -1320,13 +1282,6 @@ function enableUI() {
     redoBtn.disabled = true
   }
   tempoBtn.disabled = false
-  clearInterval(markerInterval)
-
-  for (var i = 0; i < notes.length; i++) {
-    notes.item(i).onclick = null
-    notes.item(i).onmousedown = null
-  }
-  roll.onclick = null
 }
 
 function exitRecord() {
@@ -1335,7 +1290,6 @@ function exitRecord() {
     if (pitch + octave * 12 < 128) {
       await Tone.start()
       Tone.loaded().then(() => {
-        document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
         if (status == 'ON') {
           synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
         } else {

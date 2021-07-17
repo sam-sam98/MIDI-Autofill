@@ -31,7 +31,7 @@ module.exports = {
     }
 
     play = (button) => {
-      if (rpio.read(button)) {
+      if (!rpio.read(button)) {
         console.log("Received PLAY GPIO")
         this.callbacks.play()
       }

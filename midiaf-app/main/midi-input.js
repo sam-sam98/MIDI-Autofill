@@ -43,7 +43,6 @@ class MIDIInputServer {
 
 			if (status == 'VOL') {
 				let volume = parseInt(parts[1]);
-				console.log(`Received volume ${volume}`);
 				this.volumeCallback(volume);
 			}
 			else {

@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
-const af = require('./autofill/autofill')('midi-autofill')
+const af = require('./autofill/autofill')('magenta')
 const core = require('@magenta/music/node/core')
 const { sequenceProtoToMidi } = require('@magenta/music/node/core')
 const fs = require('fs');
@@ -32,23 +32,53 @@ let lastVolumeVal = (Math.floor(RAW_VOLUME_MAX/10));
 function volumeCallback(volume) {
   if (Math.floor(lastVolumeVal) != Math.floor(volume / 10)) {
     lastVolumeVal = Math.floor(volume / 10);
-    let normalizedVolume = volume / (RAW_VOLUME_MAX/10) / 10;
+    let normalizedVolume = Math.min(volume / (RAW_VOLUME_MAX/10) / 10, 1.0);
     console.log(`Sending volume value of ${normalizedVolume} to the UI`)
     win.webContents.send('volume', normalizedVolume)
   }
 }
 
+const BUTTON_THRESHOLD_DELTA_TIME = 0.5
+let lastPlayButtonTime = 0;
+let lastOctaveUpTime = 0;
+let lastOctaveDownTime = 0;
+let lastRecordButtonTIme = 0;
+
 const gpioCallbacks = {
   record: () => {
+    let currentTimeSeconds = new Date() / 1000;
+    if (currentTimeSeconds - lastRecordButtonTIme < BUTTON_THRESHOLD_DELTA_TIME) {
+      return;
+    }
+
+    lastRecordButtonTIme = currentTimeSeconds
     win.webContents.send('record')
   },
   octaveUp: () => {
+    let currentTimeSeconds = new Date() / 1000;
+    if (currentTimeSeconds - lastOctaveUpTime < BUTTON_THRESHOLD_DELTA_TIME) {
+      return;
+    }
+    
+    lastOctaveUpTime = currentTimeSeconds
     win.webContents.send('octave-up')
   },
   octaveDown: () => {
+    let currentTimeSeconds = new Date() / 1000;
+    if (currentTimeSeconds - lastOctaveDownTime < BUTTON_THRESHOLD_DELTA_TIME) {
+      return;
+    }
+    
+    lastOctaveDownTime = currentTimeSeconds
     win.webContents.send('octave-down')
   },
   play: () => {
+    let currentTimeSeconds = new Date() / 1000;
+    if (currentTimeSeconds - lastPlayButtonTime < BUTTON_THRESHOLD_DELTA_TIME) {
+      return;
+    }
+
+    lastPlayButtonTime = currentTimeSeconds
     win.webContents.send('play')
   },
 }
