@@ -1,12 +1,13 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
-const af = require('./autofill/autofill')('magenta')
+const af = require('./autofill/autofill')('midi-autofill')
 const core = require('@magenta/music/node/core')
 const { sequenceProtoToMidi } = require('@magenta/music/node/core')
 const fs = require('fs');
 const MIDIOutput = require('./midi-output')
 const MIDIInput = require('./midi-input')
-const util = require('util');
+const util = require('util')
+const gpio = require('./gpio')
 
 const SAVE_DATA_DIR = path.join(app.getPath('userData'), 'midiaf')
 

@@ -12,14 +12,15 @@
             "runtimeExecutable": "${workspaceFolder}/midiaf-app/node_modules/.bin/electron",
             "runtimeArgs": [
                 "--remote-debugging-port=9223",
-                "midiaf-app"
+                "."
             ],
             "env": {
-                "DISPLAY": ":1"
+                "DISPLAY": ":0"
             },
             "windows": {
                 "runtimeExecutable": "${workspaceFolder}/midiaf-app/node_modules/electron/dist/electron"
-            }
+            },
+            "cwd": "${workspaceFolder}/midiaf-app"
         },
         {
             "name": "Electron: Renderer",

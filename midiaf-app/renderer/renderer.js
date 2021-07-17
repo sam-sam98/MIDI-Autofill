@@ -57,6 +57,7 @@ const noteValues = [
 // can be changed to a user uploaded MIDI.
 
 ipcRenderer.once('ready', (_, checkpoints) => {
+  alert("Hello??? Is this fucking thing on???")
   let selector = document.getElementById('checkpoint')
   for (let checkpoint of checkpoints) {
     let option = document.createElement("option")
