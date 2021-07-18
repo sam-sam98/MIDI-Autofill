@@ -2,7 +2,7 @@ const { ipcRenderer } = require("electron/renderer")
 const core = require('@magenta/music/node/core');
 const Keyboard = window.SimpleKeyboard.default;
 
-const gain = new Tone.Gain(1).toDestination()
+const gain = new Tone.Gain().toDestination()
 
 const synth = new Tone.Sampler({
 	urls: {
@@ -1236,8 +1236,8 @@ ipcRenderer.on('play', () => {
   playMIDI()
 })
 
-ipcRenderer.on('volume', (volume) => {
-  gain.gain.setValueAtTime(volume, Tone.now())
+ipcRenderer.on('volume', (ev, volume) => {
+  gain.gain.setValueAtTime(volume, 0)
 })
 
 async function recordMIDI() {
