@@ -88,6 +88,7 @@ const resetBtn = document.getElementById('reset')
 const undoBtn = document.getElementById('undo')
 const redoBtn = document.getElementById('redo')
 const tempoBtn = document.getElementById('tempo')
+const metBtn = document.getElementById('metronome')
 const stopBtn = document.getElementById('stop')
 const addBtn = document.getElementById('add')
 const deleteBtn = document.getElementById('delete')
@@ -333,6 +334,10 @@ document.getElementById('tempo-up').onclick = () => {
     tempoBtn.options[i].value = newTempo.toString()
     tempoBtn.options[i].innerHTML = newTempo.toString()
   }
+}
+
+metBtn.onchange = () => {
+  metronome = !metronome
 }
 
 stopBtn.onclick = () => {
