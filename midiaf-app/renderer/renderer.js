@@ -2,26 +2,6 @@ const { ipcRenderer } = require("electron/renderer")
 const core = require('@magenta/music/node/core');
 const Keyboard = window.SimpleKeyboard.default;
 
-TWINKLE_TWINKLE = {
-  notes: [
-    { pitch: 60, startTime: 0.0, endTime: 0.5 },
-    { pitch: 60, startTime: 0.5, endTime: 1.0 },
-    { pitch: 67, startTime: 1.0, endTime: 1.5 },
-    { pitch: 67, startTime: 1.5, endTime: 2.0 },
-    { pitch: 69, startTime: 2.0, endTime: 2.5 },
-    { pitch: 69, startTime: 2.5, endTime: 3.0 },
-    { pitch: 67, startTime: 3.0, endTime: 4.0 },
-    { pitch: 65, startTime: 4.0, endTime: 4.5 },
-    { pitch: 65, startTime: 4.5, endTime: 5.0 },
-    { pitch: 64, startTime: 5.0, endTime: 5.5 },
-    { pitch: 64, startTime: 5.5, endTime: 6.0 },
-    { pitch: 62, startTime: 6.0, endTime: 6.5 },
-    { pitch: 62, startTime: 6.5, endTime: 7.0 },
-    { pitch: 60, startTime: 7.0, endTime: 8.0 },
-  ],
-  totalTime: 8
-};
-
 const gain = new Tone.Gain(1).toDestination()
 
 const synth = new Tone.Sampler({
@@ -68,12 +48,14 @@ ipcRenderer.once('ready', (_, checkpoints) => {
   }
 })
 
-const MOUSE_MODE = true
+const MOUSE_MODE = false
 
 // establish reference values
 const whole = 256
-let sequence = TWINKLE_TWINKLE.notes
-let totalTime = TWINKLE_TWINKLE.totalTime
+let sequence = []
+let originalSequence = []
+let notes
+let totalTime = 0
 let measures = 0
 let quant = 128
 let tempo = 120
@@ -143,12 +125,112 @@ seeker.style.left = seeker.offsetLeft - seeker.offsetWidth / 2 + 'px'
 trackOptions.style.width = trackNameInput.offsetWidth - 2 + 'px'
 trackOptions.style.left = trackNameInput.offsetLeft + 'px'
 trackOptions.style.top = trackNameInput.offsetTop + trackNameInput.offsetHeight + 'px'
+
+// TODO:
+// * Don't start with TWINKLE_TWINKLE, have piano roll disabled
+// * After tracks list is loaded, enable piano roll
+// * If no existing tracks, create a default one and leave it blank
+// * Implement rename MIDI track feature with the text area.
+
+// Receive the list of existing MIDI tracks from main process
+ipcRenderer.on('receive-track-list', (_, tracks) => {
+  if (tracks.length == 0) {
+    // This is a bit hacky.
+    // If no current track exists, create a twinkle twinkle one
+    // and add it to the track list.
+    tracks.push('twinkle-twinkle')
+    trackNameInput.value = "twinkle-twinkle"
+    saveActiveTrack();
+  }
+
+  for (let track of tracks) {
+    let option = document.createElement('option')
+    option.textContent = track
+    option.value = track
+    option.classList.add('track')
+    option.style.height = trackNameInput.style.height
+    option.style.width = trackNameInput.style.width
+    trackOptions.appendChild(option)
+  }
+  let newTrackBtn = document.createElement('option')
+  newTrackBtn.textContent = '-- Add New Track --'
+  newTrackBtn.value = trackNameInput.textContent
+  newTrackBtn.classList.add('new-track')
+  newTrackBtn.style.height = trackNameInput.style.height
+  newTrackBtn.style.width = trackNameInput.style.width
+  trackOptions.appendChild(newTrackBtn)
+
+  newTrackBtn.onclick = async () => {
+    let existingTrackNames = []
+    // Can't map options :/
+    for (let i = 0; i < trackOptions.children.length; i++) {
+      existingTrackNames.push(trackOptions.children[i].value)
+    }
+
+    // Default name, increment a number suffix until we find something unique
+    let newTrackCounter = 0
+    let newTrackName = `NewTrack ${newTrackCounter}`
+    while (existingTrackNames.includes(newTrackName)) {
+      newTrackCounter += 1
+      newTrackName = `NewTrack ${newTrackCounter}`
+    }
+
+    let err = await ipcRenderer.invoke('create-new-track', newTrackName);
+    if (err == null) {
+      let option = document.createElement('option')
+      option.textContent = newTrackName
+      option.value = newTrackName
+      option.classList.add('track')
+      option.style.height = trackNameInput.style.height
+      option.style.width = trackNameInput.style.width
+      trackOptions.insertBefore(option, newTrackBtn)
+    } else {
+      alert("Error occurred creating new track");
+    }
+  }
+
+  if (tracks.length > 0) {
+    // Load first track by default.
+    // TODO: This would be better if the last track worked on was saved somewhere, say a cookie.
+    switchTrack(tracks[0], false)
+  }
+
+  notes = document.getElementsByClassName('note')
+  sequence = record(notes)
+  originalSequence = sequence
+  addMeasures(Math.max(Math.ceil(scroller.offsetWidth / whole), Math.ceil(totalTime * tempo / 60 / 4)))
+
+  let opts = document.getElementsByClassName('track')
+  for (let opt of opts) {
+    selectOpt(opt)
+  }
+
+  function selectOpt(opt) {
+    let onclick = async (event) => {
+      trackOptions.classList.toggle('visible')
+      trackOptions.classList.toggle('invisible')
+      console.log("Onclick called with ", event.target.value);
+      await switchTrack(event.target.value, true)
+    }
+    opt.onclick = onclick
+    opt.addEventListener('touchend', onclick, false)
+  }
+  // When changing tracks:
+  // 1. Save the current track
+  // 2. Fetch the new tracks notes
+  // 3. Clear the piano roll
+  // 4. Fill it with the new notes
+  trackNameInput.onsubmit = async (event) => {
+    await switchTrack(event.target.value, true)
+  };
+})
+
+
 // fill piano roll with grid
 addMeasures(Math.max(Math.ceil(scroller.offsetWidth / whole), Math.ceil(totalTime * tempo / 60 / 4)))
 // add notes to roll
 toNotes(sequence)
-let notes = document.getElementsByClassName('note')
-let originalSequence = record(notes)
+
 
 scroller.onscroll = scrollerMatch
 vert.onscroll = vertMatch
@@ -255,6 +337,7 @@ document.getElementById('tempo-up').onclick = () => {
 
 stopBtn.onclick = () => {
   stopPlayback()
+  activeTool = "NONE"
   marker.style.left = '0px'
   seeker.style.left = -seeker.offsetWidth / 2 + 'px'
 }
@@ -1110,100 +1193,6 @@ function hideKeyboard() {
     trackOptions.classList.add('invisible')
   }
 }
-
-// TODO:
-// * Don't start with TWINKLE_TWINKLE, have piano roll disabled
-// * After tracks list is loaded, enable piano roll
-// * If no existing tracks, create a default one and leave it blank
-// * Implement rename MIDI track feature with the text area.
-
-// Receive the list of existing MIDI tracks from main process
-ipcRenderer.on('receive-track-list', (_, tracks) => {
-  if (tracks.length == 0) {
-    // This is a bit hacky.
-    // If no current track exists, create a twinkle twinkle one
-    // and add it to the track list.
-    tracks.push('twinkle-twinkle')
-    trackNameInput.value = "twinkle-twinkle"
-    saveActiveTrack();
-  }
-
-  for (let track of tracks) {
-    let option = document.createElement('option')
-    option.textContent = track
-    option.value = track
-    option.classList.add('track')
-    option.style.height = trackNameInput.style.height
-    option.style.width = trackNameInput.style.width
-    trackOptions.appendChild(option)
-  }
-  let newTrackBtn = document.createElement('option')
-  newTrackBtn.textContent = '-- Add New Track --'
-  newTrackBtn.value = trackNameInput.textContent
-  newTrackBtn.classList.add('new-track')
-  newTrackBtn.style.height = trackNameInput.style.height
-  newTrackBtn.style.width = trackNameInput.style.width
-  trackOptions.appendChild(newTrackBtn)
-
-  newTrackBtn.onclick = async () => {
-    let existingTrackNames = []
-    // Can't map options :/
-    for (let i = 0; i < trackOptions.children.length; i++) {
-      existingTrackNames.push(trackOptions.children[i].value)
-    }
-
-    // Default name, increment a number suffix until we find something unique
-    let newTrackCounter = 0
-    let newTrackName = `NewTrack ${newTrackCounter}`
-    while (existingTrackNames.includes(newTrackName)) {
-      newTrackCounter += 1
-      newTrackName = `NewTrack ${newTrackCounter}`
-    }
-
-    let err = await ipcRenderer.invoke('create-new-track', newTrackName);
-    if (err == null) {
-      let option = document.createElement('option')
-      option.textContent = newTrackName
-      option.value = newTrackName
-      option.classList.add('track')
-      option.style.height = trackNameInput.style.height
-      option.style.width = trackNameInput.style.width
-      trackOptions.insertBefore(option, newTrackBtn)
-    } else {
-      alert("Error occurred creating new track");
-    }
-  }
-
-  if (tracks.length > 0) {
-    // Load first track by default.
-    // TODO: This would be better if the last track worked on was saved somewhere, say a cookie.
-    switchTrack(tracks[0], false)
-  }
-
-  let opts = document.getElementsByClassName('track')
-  for (let opt of opts) {
-    selectOpt(opt)
-  }
-
-  function selectOpt(opt) {
-    let onclick = async (event) => {
-      trackOptions.classList.toggle('visible')
-      trackOptions.classList.toggle('invisible')
-      console.log("Onclick called with ", event.target.value);
-      await switchTrack(event.target.value, true)
-    }
-    opt.onclick = onclick
-    opt.addEventListener('touchend', onclick, false)
-  }
-  // When changing tracks:
-  // 1. Save the current track
-  // 2. Fetch the new tracks notes
-  // 3. Clear the piano roll
-  // 4. Fill it with the new notes
-  trackNameInput.onsubmit = async (event) => {
-    await switchTrack(event.target.value, true)
-  };
-})
 
 var pitches = []
 for (i = 0; i < 128; i++) {
