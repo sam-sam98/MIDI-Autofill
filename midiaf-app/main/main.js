@@ -42,6 +42,47 @@ async function createWindow() {
   } catch (error) {
     console.error(error);
   }
+  win.webContents.on('before-input-event', (event, input) => {
+    let pitch = null
+    let status = null
+    let velocity = 127
+
+    if (input.type == 'keyDown') {
+      status = 'ON'
+    } else if (input.type == 'keyUp') {
+      status = 'OFF'
+    } else {
+      return
+    }
+
+    switch (input.key.toLowerCase()) {
+      case '1':
+        pitch = 69
+        break;
+      case '2':
+        pitch = 70
+        break;
+      case '3':
+        pitch = 71
+        break;
+      case '4':
+        pitch = 72
+        break;
+      case '5':
+        pitch = 73
+        break;
+      case '6':
+        pitch = 74
+        break;
+      case '7':
+        pitch = 75
+        break;
+    }
+
+    if (pitch != null && status != null) {
+      win.webContents.send('keyboard-input', status, pitch, velocity)
+    }
+  })
 
   win.loadFile('static/index.html')
 }
