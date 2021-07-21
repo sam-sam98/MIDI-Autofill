@@ -57,25 +57,25 @@ async function createWindow() {
 
     switch (input.key.toLowerCase()) {
       case '1':
-        pitch = 69
+        pitch = 0
         break;
       case '2':
-        pitch = 70
+        pitch = 1
         break;
       case '3':
-        pitch = 71
+        pitch = 2
         break;
       case '4':
-        pitch = 72
+        pitch = 3
         break;
       case '5':
-        pitch = 73
+        pitch = 4
         break;
       case '6':
-        pitch = 74
+        pitch = 5
         break;
       case '7':
-        pitch = 75
+        pitch = 6
         break;
     }
 
