@@ -78,8 +78,8 @@ const stretchBtn = document.getElementById('stretch')
 const timebar = document.getElementById('time-bar')
 const spacer = document.getElementById('spacer')
 const seeker = document.getElementById('seeker')
-const trackNameInput = document.getElementById('current-track-name');
-const trackOptions = document.getElementById('track-options');
+const trackNameInput = document.getElementById('current-track-name')
+const trackOptions = document.getElementById('track-options')
 const directory = document.getElementById('open-directory')
 
 resetBtn.disabled = true
@@ -777,7 +777,7 @@ function playMidi(e) {
   gain.gain.setValueAtTime(0.02, audio.currentTime)
   stopBtn.disabled = false
   playBtn.textContent = 'Pause'
-  animateMarker()
+  animateMarker(true)
   // allow pausing during playback
   playBtn.onclick = () => {
     if (audio.state === 'running') {
@@ -789,7 +789,7 @@ function playMidi(e) {
       audio.resume().then(function () {
         playBtn.textContent = 'Pause'
       })
-      animateMarker()
+      animateMarker(true)
     }
   }
   // play metronome audio if activated
@@ -832,14 +832,24 @@ function playMidi(e) {
 }
 
 // marker moves to show progress of MIDI playback
-function animateMarker() {
-  interval = 4 * 60 * 1000 / (whole * tempo)
+function animateMarker(playing) {
+  interval = 4.1 * 60 * 1000 / (whole * tempo)
   markerInterval = setInterval(function() {
     marker.style.left = marker.offsetLeft + 1 + 'px'
     seeker.style.left = seeker.offsetLeft + 1 + 'px'
-    if (marker.offsetLeft >= totalTime * tempo / 60 / 4 * whole) {
-      clearInterval(markerInterval)
+    if (playing) {
+      if (marker.offsetLeft >= totalTime * tempo / 60 / 4 * whole) {
+        clearInterval(markerInterval)
+      }
+    } else {
+      if (marker.offsetLeft >= expand.offsetLeft) {
+        clearInterval(markerInterval)
+        if (audio != null) {
+          audio.close()
+        }
+      }
     }
+
   }, interval)
 }
 
@@ -906,6 +916,8 @@ async function switchTrack(trackName, saveTrack) {
       trackNameInput.onfocus = () => {
         showKeyboard();
       }
+      notes = document.getElementsByClassName('note')
+      originalSequence = record(notes)
     } else {
       alert("Failed to load MIDI track")
     }
@@ -1087,6 +1099,118 @@ ipcRenderer.on('receive-track-list', (_, tracks) => {
   };
 })
 
-ipcRenderer.on('keyboard-input', (_, status, pitch, velocity) => {
-  document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
-})
+document.getElementById('record').onclick = recordMIDI
+function recordMIDI() {
+  undo.push(record(notes))
+  undoBtn.disabled = false
+  resetBtn.disabled = false
+  while (undo.length > 10) {
+    undo.shift()
+  }
+  // clear redo stack
+  redoBtn.disabled = true
+  while (redo.length > 0) {
+    redo.shift()
+  }
+
+  // disable all UI buttons
+  var ui = document.getElementsByClassName('ui-bar')
+  for (i = 0; i < ui.length; i++) {
+    var buttons = ui.item(i).getElementsByTagName('BUTTON')
+    for (j = 0; j < buttons.length; j++) {
+      buttons.item(j).disabled = true
+    }
+  }
+  tempoBtn.disabled = true
+  document.getElementById('record').disabled = false
+
+  // disable note interactions
+  for (i = 0; i < notes.length; i++) {
+    notes.item(i).onclick = null
+    notes.item(i).onmousedown = null
+  }
+  roll.onclick = null
+
+  // give user a one-measure count-in
+  marker.style.left = Math.round((marker.offsetLeft - whole) / whole) * whole + 'px'
+  seeker.style.left = marker.offsetLeft - seeker.offsetWidth / 2 + 'px'
+  var recordStart =  marker.offsetLeft / whole * 4 * 60 / tempo
+
+  audio = new (window.AudioContext || window.webkitAudioContext)()
+  var gain = audio.createGain()
+  gain.connect(audio.destination)
+  gain.gain.setValueAtTime(0.02, audio.currentTime)
+  animateMarker(false)
+
+  // play metronome audio if activated
+  var counts = 4
+  if (metronome) {
+    counts = measures * 4
+  }
+
+  for (var i = 0; i < counts; i++) {
+    if (i * (60 / tempo) < (60 * 4 * marker.offsetLeft / whole / tempo)) {
+      continue
+    }
+    var metOsc = audio.createOscillator()
+    metOsc.detune = 10
+    metOsc.connect(gain)
+    if (i % 4 == 0) {
+      metOsc.frequency.setValueAtTime(4000, 0)
+    } else {
+      metOsc.frequency.setValueAtTime(3000, 0)
+    }
+    metOsc.start(i * (60 / tempo) - (60 * 4 * marker.offsetLeft / whole / tempo))
+    metOsc.stop(i * (60 / tempo) - (60 * 4 * marker.offsetLeft / whole / tempo) + 0.01)
+  }
+
+  var keys = []
+  for (i = 0; i < 128; i++) {
+    keys.push({on: [], off: [], velocity: []})
+  }
+  // begin registering key actions
+  ipcRenderer.on('keyboard-input', (_, status, pitch, velocity) => {
+    document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
+    if (status == 'ON') {
+      keys[pitch].on.push(audio.currentTime)
+      keys[pitch].velocity.push(velocity)
+    } else {
+      keys[pitch].off.push(audio.currentTime)
+    }
+  })
+
+  document.getElementById('record').onclick = () => {
+    var ui = document.getElementsByClassName('ui-bar')
+    for (i = 0; i < ui.length; i++) {
+      var buttons = ui.item(i).getElementsByTagName('BUTTON')
+      for (j = 0; j < buttons.length; j++) {
+        buttons.item(j).disabled = false
+      }
+    }
+    redoBtn.disabled = true
+    tempoBtn.disabled = false
+    clearInterval(markerInterval)
+    audio.close()
+
+    // add recorded notes to roll
+    var sequence = toMIDI(notes)
+    for (i = 0; i < 128; i++) {
+      for (j = 0; j < keys[i].on.length; j++) {
+        var startTime = keys[i].on[j] + recordStart
+        var pitch = i + 72
+        var endTime = (keys[i].off[j] == null) ? measures * 60 / (tempo * 4) : keys[i].off[j] + recordStart
+
+        sequence.push({pitch: pitch, startTime: startTime, endTime: endTime})
+      }
+    }
+
+    for (i = 0; i < notes.length; i++) {
+      notes.item(i).remove()
+    }
+
+    toNotes(sequence)
+    notes = document.getElementsByClassName('note')
+
+    document.getElementById('record').onclick = recordMIDI
+  }
+}

@@ -8,32 +8,52 @@
 </head>
 
 <link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="simple-keyboard.css">
 
 <body>
   <div class="ui-bar">
-    <button id="save" class="ui l">Save</button>
-    <button id="reset" class="ui l">Reset</button>
-    <button id="undo" class="ui l">Undo</button>
-    <button id="redo" class="ui l">Redo</button>
-    <button id="tempo-up" class="ui r">+</button>
-    <select id="tempo" class="ui r">
-      <option value="40">40</option>
-      <option value="60">60</option>
-      <option value="80">80</option>
-      <option value="100">100</option>
-      <option value="120" selected>120</option>
-      <option value="140">140</option>
-      <option value="160">160</option>
-      <option value="180">180</option>
-      <option value="200">200</option>
-      <option value="220">220</option>
-      <option value="240">240</option>
-      <option value="260">260</option>
-      <option value="280">280</option>
-      <option value="300">300</option>
-    </select>
-    <button id="tempo-down" class="ui r">-</button>
-    <label for="tempo" class="r">Tempo:</label>
+    <div id="left">
+      <button id="save" class="ui">Save</button>
+      <button id="reset" class="ui">Reset</button>
+      <button id="undo" class="ui">Undo</button>
+      <button id="redo" class="ui">Redo</button>
+      <label for="checkpoint">Checkpoint:</label>
+      <select name="checkpoint" id="checkpoint" class="ui">
+      </select>
+    </div>
+
+    <div id="track-bar">
+      <label id="track-label" for="current-track-name">Current track:</label>
+      <input type="text" id="current-track-name">
+        <div id="track-options" class="invisible">
+        </div>
+      </input>
+      <button id="open-directory" class="ui">
+        <img id="icon" src="img/directory-icon.png"/>
+      </button>
+    </div>
+
+    <div id="right">
+      <button id="tempo-up" class="ui">+</button>
+      <select id="tempo" class="ui">
+        <option value="40">40</option>
+        <option value="60">60</option>
+        <option value="80">80</option>
+        <option value="100">100</option>
+        <option value="120" selected>120</option>
+        <option value="140">140</option>
+        <option value="160">160</option>
+        <option value="180">180</option>
+        <option value="200">200</option>
+        <option value="220">220</option>
+        <option value="240">240</option>
+        <option value="260">260</option>
+        <option value="280">280</option>
+        <option value="300">300</option>
+      </select>
+      <button id="tempo-down" class="ui">-</button>
+      <label for="tempo">Tempo:</label>
+    </div>
   </div>
   <div id="window">
     <div class="container">
@@ -102,10 +122,15 @@
     <div class="container">
       <div id="scroller">
         <div id="roll">
+          <div id="marker"></div>
           <button id="expand" class="ui r">+</button>
         </div>
       </div>
     </div>
+  </div>
+  <div id="time-bar">
+    <div id="spacer"></div>
+    <button id="seeker"></div>
   </div>
   <div class="ui-bar">
     <button id="quantize" class="ui r">Quantize</button>
@@ -126,10 +151,15 @@
     <button id="delete" class="ui l">Delete</button>
     <button id="move" class="ui l">Move</button>
     <button id="stretch" class="ui l">Stretch</button>
+    <button id="generate" class="ui l">Generate</button>
   </div>
 
-  <script src="../renderer/renderer.js"></script>
+  <div id="keyboard-container">
+    <div class="simple-keyboard"></div>
+  </div>
 
+  <script src="simple-keyboard.js"></script>
+  <script src="../renderer/renderer.js"></script>
 </body>
 
 </html>

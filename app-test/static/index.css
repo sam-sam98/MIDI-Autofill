@@ -1,8 +1,63 @@
+#left {
+  width: 33%;
+  display: inline-block;
+  vertical-align: top;
+}
+#left>* {
+  float: left;
+}
+#track-bar {
+  height: 25px;
+  width: 33%;
+  display: inline-flex;
+  vertical-align: top;
+  justify-content: center;
+}
+#right {
+  width: 33%;
+  display: inline;
+  vertical-align: top;
+}
+#right>* {
+  float: right;
+}
+#track-options {
+  border: 1px solid grey;
+  background: white;
+  position: absolute;
+  z-index: 100;
+}
+.visible {
+  display: block;
+}
+.invisible {
+  display: none;
+}
+
+.track {
+  color:rgb(098, 096, 200);
+  font-family: Arial;
+  font-size: 14px;
+}
+.track:hover {
+  background: rgb(098, 096, 200);
+  color: white;
+}
+
+.new-track {
+  color:rgb(098, 096, 200);
+  font-family: Arial;
+  font-size: 14px;
+}
+.new-track:hover {
+  background: rgb(098, 096, 200);
+  color: white;
+}
+
 #window {
   display: inline-grid;
   grid-template-columns: auto auto;
   padding-top: 5px;
-  padding-bottom: 5px;
   width: 100%;
 }
 
@@ -38,9 +93,15 @@
   position: relative;
 }
 
+#marker{
+  border-left: 1px solid rgb(185, 66, 210);
+  position: absolute;
+  z-index: 100;
+}
+
 .ui-bar {
   display: block;
-  height:22px;
+  height: 25px;
   width 100%;
 }
 
@@ -50,25 +111,25 @@
   background-color: rgb(098, 096, 200);
   border: 1px solid rgb(098, 096, 200);
   border-radius: 5px;
-  height: 20px;
+  height: 25px;
   text-align: center;
   font-family: Arial;
-  font-size: 14px;
+  font-size: 16px;
   color: white;
   transition: all 0.4s;
 }
 .ui:hover {
   background-color: white;
   border-radius: 6px;
-  height: 22px;
+  height: 27px;
   font-size: 16px;
   color: rgb(098, 096, 200);
 }
 .ui:disabled {
   background-color: white;
   border-radius: 5px;
-  height: 20px;
-  font-size: 14px;
+  height: 25px;
+  font-size: 16px;
   color: rgb(098, 096, 200);
 }
 
@@ -100,6 +161,7 @@ label {
   grid-gap: 1px 1px;
   background: grey;
   padding-right: 1px;
+  z-index: -1;
 }
 
 .wht {
@@ -115,7 +177,7 @@ label {
 }
 
 .key {
-  height: 15px;
+  height: 22px;
   border-radius: 1px;
 }
 
@@ -132,4 +194,37 @@ label {
 .note:active {
   background-color: rgb(098, 096, 200);
   border: 1px solid rgb(098, 096, 200);
+}
+
+#time-bar {
+  border: 1px solid grey;
+  display: block;
+  overflow-y: hidden;
+  overflow-x: scroll;
+  margin-bottom: 5px;
+  position: relative;
+}
+
+#spacer {
+  height: 100%;
+  position: absolute;
+}
+
+#seeker {
+  height: 100%;
+  background-color: rgb(185, 66, 210);
+  border: none;
+  position: absolute;
+  z-index: 100;
+}
+
+#keyboard-container {
+  position: fixed;
+  bottom: 0;
+  width: 800px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  left: 50%;
+  transform: translate(-50%, 0);
 }
