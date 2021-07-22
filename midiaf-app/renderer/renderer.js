@@ -720,8 +720,8 @@ function toNotes(sequence) {
     var newNote = document.createElement('BUTTON')
     newNote.classList.add('note')
     newNote.style.top = (key.offsetHeight + 1) * 28 - (sequence[i].pitch - 60) * (key.offsetHeight + 1) + 'px'
-    newNote.style.left = Math.round(sequence[i].startTime * tempo / 60) * whole / 4 + 'px'
-    newNote.style.width = Math.round((sequence[i].endTime - sequence[i].startTime) * tempo / 60) * whole / 4 + 'px'
+    newNote.style.left = sequence[i].startTime * tempo / 60 * whole / 4 + 'px'
+    newNote.style.width = (sequence[i].endTime - sequence[i].startTime) * tempo / 60 * whole / 4 + 'px'
     newNote.style.height = key.offsetHeight + 'px'
     roll.appendChild(newNote)
     setupNoteCallbacks(newNote);
@@ -1204,8 +1204,8 @@ function recordMIDI() {
       }
     }
 
-    for (i = 0; i < notes.length; i++) {
-      notes.item(i).remove()
+    while (notes.length > 0) {
+      notes.item(0).remove()
     }
 
     toNotes(sequence)
