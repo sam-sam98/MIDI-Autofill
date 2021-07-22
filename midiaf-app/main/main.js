@@ -47,6 +47,10 @@ async function createWindow() {
     let status = null
     let velocity = 127
 
+    if (input.isAutoRepeat) {
+      return
+    }
+
     if (input.type == 'keyDown') {
       status = 'ON'
     } else if (input.type == 'keyUp') {
