@@ -47,6 +47,7 @@ let redo = []
 let metronome = true
 let markerInterval = null
 let interval = 0
+let octave = 0
 var audio = null
 let showingKeyboard = false
 
@@ -86,11 +87,11 @@ resetBtn.disabled = true
 undoBtn.disabled = true
 redoBtn.disabled = true
 // flexible dimensions
-keys.style.height = (key.offsetHeight + 1) * 53 - 1 + 'px'
+keys.style.height = (key.offsetHeight + 1) * 128 - 1 + 'px'
 roll.style.height = keys.style.height
 marker.style.height = roll.style.height
 vert.style.height = (key.offsetHeight + 1) * 29 - 1 + 'px'
-vert.scrollTop = (key.offsetHeight + 1) * 12
+vert.scrollTop = (key.offsetHeight + 1) * 44
 scroller.style.height = vert.style.height
 scroller.style.width = window.innerWidth - keys.offsetWidth - keys.offsetLeft * 2 + 'px'
 scroller.scrollTop = vert.scrollTop
@@ -207,7 +208,7 @@ document.getElementById('tempo-up').onclick = () => {
 }
 
 // play midi seuqence
-playBtn.onclick = playMidi
+playBtn.onclick = playMIDI
 
 stopBtn.onclick = () => {
   stopPlayback()
@@ -475,6 +476,22 @@ function addMeasures(n) {
       newMeasure.appendChild(newCell)
     }
 
+    for (var k = 0; k < 8; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('wht')
+      newMeasure.appendChild(newCell)
+    }
+
+    for (var k = 0; k < 4; k++) {
+      var newCell = document.createElement('DIV')
+      newCell.style.height = key.offsetHeight + 'px'
+      newCell.style.width = whole / 4 - 1 + 'px'
+      newCell.classList.add('blk')
+      newMeasure.appendChild(newCell)
+    }
+
     for (var k = 0; k < 4; k++) {
       var newCell = document.createElement('DIV')
       newCell.style.height = key.offsetHeight + 'px'
@@ -499,7 +516,7 @@ function addMeasures(n) {
       newMeasure.appendChild(newCell)
     }
 
-    for (var j = 0; j < 4; j++) {
+    for (var j = 0; j < 10; j++) {
       for (var k = 0; k < 4; k++) {
         var newCell = document.createElement('DIV')
         newCell.style.height = key.offsetHeight + 'px'
@@ -670,7 +687,7 @@ function seekElem(elem) {
         playback = true
       }
       audio.close()
-      playBtn.onclick = playMidi
+      playBtn.onclick = playMIDI
     }
   }
 
@@ -686,7 +703,7 @@ function seekElem(elem) {
   function seekUp(e) {
     e.preventDefault()
     if (playback) {
-      playMidi()
+      playMIDI()
     }
   }
 }
@@ -719,7 +736,7 @@ function toNotes(sequence) {
   for (var i = 0; i < sequence.length; i++) {
     var newNote = document.createElement('BUTTON')
     newNote.classList.add('note')
-    newNote.style.top = (key.offsetHeight + 1) * 28 - (sequence[i].pitch - 60) * (key.offsetHeight + 1) + 'px'
+    newNote.style.top = (key.offsetHeight + 1) * 127 - sequence[i].pitch * (key.offsetHeight + 1) + 'px'
     newNote.style.left = sequence[i].startTime * tempo / 60 * whole / 4 + 'px'
     newNote.style.width = (sequence[i].endTime - sequence[i].startTime) * tempo / 60 * whole / 4 + 'px'
     newNote.style.height = key.offsetHeight + 'px'
@@ -733,7 +750,7 @@ function toMIDI(notes) {
   sequence = []
   totalTime = 0
   for (var i = 0; i < notes.length; i++) {
-    var pitch = 60 + ((key.offsetHeight + 1) * 28 - notes.item(i).offsetTop) / (key.offsetHeight + 1)
+    var pitch = ((key.offsetHeight + 1) * 127 - notes.item(i).offsetTop) / (key.offsetHeight + 1)
     var startTime = notes.item(i).offsetLeft * 4 / whole * 60 / tempo
     var endTime = notes.item(i).offsetWidth * 4 / whole * 60 / tempo + startTime
     if (endTime > totalTime) {
@@ -758,11 +775,11 @@ function stopPlayback() {
   console.log("stopPlayback was called")
   audio.close()
   playBtn.textContent = 'Play'
-  playBtn.onclick = playMidi
+  playBtn.onclick = playMIDI
 }
 
 // play midi sequence
-function playMidi(e) {
+function playMIDI(e) {
   // read notes into sequence based on position and dimensions
   sequence = toMIDI(notes)
 
@@ -825,7 +842,7 @@ function playMidi(e) {
       osc.onended = () => {
         audio.close()
         playBtn.textContent = 'Play'
-        playBtn.onclick = playMidi
+        playBtn.onclick = playMIDI
       }
     }
   }
@@ -1110,7 +1127,7 @@ var pitches = []
 for (i = 0; i < 128; i++) {
   var osc = live.createOscillator()
   osc.type = 'square'
-  osc.frequency.setValueAtTime(Math.pow(2, i / 12) * 440, 0)
+  osc.frequency.setValueAtTime(Math.pow(2, (i - 9) / 12) * 440, 0)
   osc.connect(liveGain)
   pitches.push({on: [], off: [], velocity: [], osc: osc})
 }
@@ -1118,14 +1135,14 @@ for (i = 0; i < 128; i++) {
 ipcRenderer.on('keyboard-input', (_, status, pitch, velocity) => {
   document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
   if (status == 'ON') {
-    pitches[pitch].osc.start()
+    pitches[pitch + octave * 12].osc.start()
   } else {
-    pitches[pitch].osc.stop()
+    pitches[pitch + octave * 12].osc.stop()
     var osc = live.createOscillator()
     osc.type = 'square'
-    osc.frequency.setValueAtTime(Math.pow(2, pitch / 12) * 440, 0)
+    osc.frequency.setValueAtTime(Math.pow(2, (pitch - 9) / 12) * 440, 0)
     osc.connect(liveGain)
-    pitches[pitch].osc = osc
+    pitches[pitch + octave * 12].osc = osc
   }
 })
 
@@ -1195,17 +1212,17 @@ function recordMIDI() {
   ipcRenderer.on('keyboard-input', (_, status, pitch, velocity) => {
     document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
     if (status == 'ON') {
-      pitches[pitch].on.push(audio.currentTime)
-      pitches[pitch].velocity.push(velocity)
-      pitches[pitch].osc.start()
+      pitches[pitch + octave * 12].on.push(audio.currentTime)
+      pitches[pitch + octave * 12].velocity.push(velocity)
+      pitches[pitch + octave * 12].osc.start()
     } else {
-      pitches[pitch].off.push(audio.currentTime)
-      pitches[pitch].osc.stop()
+      pitches[pitch + octave * 12].off.push(audio.currentTime)
+      pitches[pitch + octave * 12].osc.stop()
       var osc = live.createOscillator()
       osc.type = 'square'
-      osc.frequency.setValueAtTime(Math.pow(2, pitch / 12) * 440, 0)
+      osc.frequency.setValueAtTime(Math.pow(2, (pitch - 9) / 12) * 440, 0)
       osc.connect(liveGain)
-      pitches[pitch].osc = osc
+      pitches[pitch + octave * 12].osc = osc
     }
   })
 
