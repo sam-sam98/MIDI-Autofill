@@ -651,7 +651,7 @@ function timebarMatch() {
 // play sample audio of note
 function playSample(elem) {
   elem.onclick = () => {
-    var pitch = 60 + ((key.offsetHeight + 1) * 28 + keys.offsetTop - elem.offsetTop) / (key.offsetHeight + 1)
+    var pitch = ((key.offsetHeight + 1) * 127 + keys.offsetTop - elem.offsetTop) / (key.offsetHeight + 1)
     var sampleAudio = new (window.AudioContext || window.webkitAudioContext)()
     var sampleGain = sampleAudio.createGain()
     sampleGain.connect(sampleAudio.destination)
@@ -662,6 +662,10 @@ function playSample(elem) {
     sampleOsc.frequency.setValueAtTime(Math.pow(2, (pitch - 69) / 12) * 440, 0)
     sampleOsc.start(0)
     sampleOsc.stop(0.5)
+    sampleOsc.onended = () => {
+      sampleAudio.close()
+      delete this
+    }
   }
 }
 
@@ -825,6 +829,7 @@ function playMIDI(e) {
         }
         metOsc.start(i * (60 / tempo) - (60 * 4 * marker.offsetLeft / whole / tempo))
         metOsc.stop(i * (60 / tempo) - (60 * 4 * marker.offsetLeft / whole / tempo) + 0.01)
+        metOsc.onended = () => { delete this }
       }
   }
   // create tones from MIDI data
@@ -843,6 +848,7 @@ function playMIDI(e) {
         audio.close()
         playBtn.textContent = 'Play'
         playBtn.onclick = playMIDI
+        delete this
       }
     }
   }
@@ -1129,6 +1135,7 @@ for (i = 0; i < 128; i++) {
   osc.type = 'square'
   osc.frequency.setValueAtTime(Math.pow(2, (i - 9) / 12) * 440, 0)
   osc.connect(liveGain)
+  osc.onended = () => { delete this }
   pitches.push({on: [], off: [], velocity: [], osc: osc})
 }
 
@@ -1142,6 +1149,7 @@ ipcRenderer.on('keyboard-input', (_, status, pitch, velocity) => {
     osc.type = 'square'
     osc.frequency.setValueAtTime(Math.pow(2, (pitch - 9) / 12) * 440, 0)
     osc.connect(liveGain)
+    osc.onended = () => { delete this }
     pitches[pitch + octave * 12].osc = osc
   }
 })
@@ -1205,6 +1213,7 @@ function recordMIDI() {
       }
       metOsc.start(i * (60 / tempo) - (60 * 4 * (marker.offsetLeft - markerStart) / whole / tempo))
       metOsc.stop(i * (60 / tempo) - (60 * 4 * (marker.offsetLeft - markerStart) / whole / tempo) + 0.01)
+      metOsc.onended = () => { delete this }
     }
   }
 
@@ -1222,6 +1231,7 @@ function recordMIDI() {
       osc.type = 'square'
       osc.frequency.setValueAtTime(Math.pow(2, (pitch - 9) / 12) * 440, 0)
       osc.connect(liveGain)
+      osc.onended = () => { delete this }
       pitches[pitch + octave * 12].osc = osc
     }
   })
@@ -1249,8 +1259,9 @@ function recordMIDI() {
         var osc = live.createOscillator()
         osc.type = 'square'
         osc.frequency.setValueAtTime(Math.pow(2, pitch / 12) * 440, 0)
+        osc.onended = () => { delete this }
         osc.connect(gain)
-        pitches[pitch].osc = osc
+        pitches[pitch + octave * 12].osc = osc
       }
     })
 
