@@ -22,6 +22,38 @@ TWINKLE_TWINKLE = {
   totalTime: 8
 };
 
+const synth = new Tone.Sampler({
+	urls: {
+		'C4': 'C4.mp3',
+		'E4': 'E4.mp3',
+		'G4': 'G4.mp3',
+		'B4': 'B4.mp3',
+	},
+	release: 0.5,
+	baseUrl: 'mp3/',
+}).toDestination()
+
+const met = new Tone.Synth({
+  decay: 0.9,
+  release: 0,
+  sustain: 0.05
+}).toDestination()
+met.volume.value = -6
+
+const noteValues = [
+  'C0', 'C#0', 'D0', 'D#0', 'E0', 'F0', 'F#0', 'G0', 'G#0', 'A0', 'A#0', 'B0',
+  'C1', 'C#1', 'D1', 'D#1', 'E1', 'F1', 'F#1', 'G1', 'G#1', 'A1', 'A#1', 'B1',
+  'C2', 'C#2', 'D2', 'D#2', 'E2', 'F2', 'F#2', 'G2', 'G#2', 'A2', 'A#2', 'B2',
+  'C3', 'C#3', 'D3', 'D#3', 'E3', 'F3', 'F#3', 'G3', 'G#3', 'A3', 'A#3', 'B3',
+  'C4', 'C#4', 'D4', 'D#4', 'E4', 'F4', 'F#4', 'G4', 'G#4', 'A4', 'A#4', 'B4',
+  'C5', 'C#5', 'D5', 'D#5', 'E5', 'F5', 'F#5', 'G5', 'G#5', 'A5', 'A#5', 'B5',
+  'C6', 'C#6', 'D6', 'D#6', 'E6', 'F6', 'F#6', 'G6', 'G#6', 'A6', 'A#6', 'B6',
+  'C7', 'C#7', 'D7', 'D#7', 'E7', 'F7', 'F#7', 'G7', 'G#7', 'A7', 'A#7', 'B7',
+  'C8', 'C#8', 'D8', 'D#8', 'E8', 'F8', 'F#8', 'G8', 'G#8', 'A8', 'A#8', 'B8',
+  'C9', 'C#9', 'D9', 'D#9', 'E9', 'F9', 'F#9', 'G9', 'G#9', 'A9', 'A#9', 'B9',
+  'C10', 'C#10', 'D10', 'D#10', 'E10', 'F10', 'F#10', 'G10'
+]
+
 // The starting melody. This starts as twinkle twinkle, but
 // can be changed to a user uploaded MIDI.
 
@@ -47,8 +79,8 @@ let redo = []
 let metronome = true
 let markerInterval = null
 let interval = 0
-let octave = 0
-var audio = null
+let octave = 5
+let schedule = []
 let showingKeyboard = false
 
 let virtualKeyboard = new Keyboard({
@@ -650,22 +682,12 @@ function timebarMatch() {
 
 // play sample audio of note
 function playSample(elem) {
-  elem.onclick = () => {
-    var pitch = ((key.offsetHeight + 1) * 127 + keys.offsetTop - elem.offsetTop) / (key.offsetHeight + 1)
-    var sampleAudio = new (window.AudioContext || window.webkitAudioContext)()
-    var sampleGain = sampleAudio.createGain()
-    sampleGain.connect(sampleAudio.destination)
-    sampleGain.gain.setValueAtTime(0.02, sampleAudio.currentTime)
-    var sampleOsc = sampleAudio.createOscillator()
-    sampleOsc.type = 'square'
-    sampleOsc.connect(sampleGain)
-    sampleOsc.frequency.setValueAtTime(Math.pow(2, (pitch - 69) / 12) * 440, 0)
-    sampleOsc.start(0)
-    sampleOsc.stop(0.5)
-    sampleOsc.onended = () => {
-      sampleAudio.close()
-      delete this
-    }
+  elem.onclick = async () => {
+    await Tone.start()
+    Tone.loaded().then(() => {
+      let pitch = ((key.offsetHeight + 1) * 127 + keys.offsetTop - elem.offsetTop) / (key.offsetHeight + 1)
+      synth.triggerAttackRelease(noteValues[pitch], 0.5)
+    })
   }
 }
 
@@ -686,13 +708,7 @@ function seekElem(elem) {
   function seekDown(e) {
     e.preventDefault()
     clearInterval(markerInterval)
-    if (audio != null) {
-      if (audio.state === 'running') {
-        playback = true
-      }
-      audio.close()
-      playBtn.onclick = playMIDI
-    }
+    playBtn.onclick = playMIDI
   }
 
   function seekMove(e) {
@@ -777,13 +793,17 @@ function toNoteSequence(notes) {
 
 function stopPlayback() {
   console.log("stopPlayback was called")
-  audio.close()
+  Tone.Transport.stop()
+  while (schedule.length > 0) {
+    Tone.Transport.clear(schedule.pop())
+  }
   playBtn.textContent = 'Play'
   playBtn.onclick = playMIDI
 }
 
 // play midi sequence
-function playMIDI(e) {
+async function playMIDI(e) {
+  await Tone.start()
   // read notes into sequence based on position and dimensions
   sequence = toMIDI(notes)
 
@@ -791,72 +811,61 @@ function playMIDI(e) {
     marker.style.left = '0px'
     seeker.style.left = -seeker.offsetWidth / 2 + 'px'
   }
-  // translate sequence into audio
-  audio = new (window.AudioContext || window.webkitAudioContext)()
-  var gain = audio.createGain()
-  gain.connect(audio.destination)
-  gain.gain.setValueAtTime(0.02, audio.currentTime)
   stopBtn.disabled = false
   playBtn.textContent = 'Pause'
+  
   animateMarker(true)
+  Tone.loaded().then(() => {
+    if (metronome) {
+      Tone.Transport.bpm.value = tempo
+      schedule.push(
+        Tone.Transport.scheduleRepeat ((time) => {
+          met.triggerAttackRelease(Tone.Frequency(1000), 0.1, Tone.now(), 0.05)
+        }, '4n', 0, totalTime)
+      )
+      schedule.push(
+        Tone.Transport.scheduleRepeat ((time) => {
+          met.triggerAttackRelease(Tone.Frequency(2000), 0.1, Tone.now(), 0.05)
+        }, '1m', 0, totalTime)
+      )
+    }
+    
+    // create tones from MIDI data
+    for (var i = 0; i < sequence.length; i++) {
+      if (sequence[i].startTime < (60 * 4 * marker.offsetLeft / whole / tempo)) {
+        continue
+      }
+      var pitch = sequence[i].pitch
+      var duration = sequence[i].endTime - sequence[i].startTime
+      schedule.push(
+        Tone.Transport.schedule(((pitch, duration) => (time) => {
+          synth.triggerAttackRelease(noteValues[pitch], duration, Tone.now())
+        })(pitch, duration), sequence[i].startTime)
+      )
+    }
+    Tone.Transport.stop()
+    Tone.Transport.start()
+  })
+
   // allow pausing during playback
   playBtn.onclick = () => {
-    if (audio.state === 'running') {
-      audio.suspend().then(function () {
+    if (Tone.Transport.state === 'started') {
+      Tone.Transport.pause().then(function () {
         playBtn.textContent = 'Play'
       })
       clearInterval(markerInterval)
-    } else if (audio.state === 'suspended') {
-      audio.resume().then(function () {
+    } else if (Tone.Transport.state === 'paused') {
+      Tone.Transport.start().then(function () {
         playBtn.textContent = 'Pause'
       })
       animateMarker(true)
-    }
-  }
-  // play metronome audio if activated
-  if (metronome) {
-      for (var i = 0; i < measures * 4; i++) {
-        if (i * (60 / tempo) < (60 * 4 * marker.offsetLeft / whole / tempo)) {
-          continue
-        }
-        var metOsc = audio.createOscillator()
-        metOsc.detune = 10
-        metOsc.connect(gain)
-        if (i % 4 == 0) {
-          metOsc.frequency.setValueAtTime(4000, 0)
-        } else {
-          metOsc.frequency.setValueAtTime(3000, 0)
-        }
-        metOsc.start(i * (60 / tempo) - (60 * 4 * marker.offsetLeft / whole / tempo))
-        metOsc.stop(i * (60 / tempo) - (60 * 4 * marker.offsetLeft / whole / tempo) + 0.01)
-        metOsc.onended = () => { delete this }
-      }
-  }
-  // create tones from MIDI data
-  for (var i = 0; i < notes.length; i++) {
-    if (sequence[i].startTime < (60 * 4 * marker.offsetLeft / whole / tempo)) {
-      continue
-    }
-    var osc = audio.createOscillator()
-    osc.type = 'square'
-    osc.connect(gain)
-    osc.frequency.setValueAtTime(Math.pow(2, (sequence[i].pitch - 69) / 12) * 440, 0)
-    osc.start(sequence[i].startTime - (60 * 4 * marker.offsetLeft / whole / tempo))
-    osc.stop(sequence[i].endTime - (60 * 4 * marker.offsetLeft / whole / tempo))
-    if (sequence[i].endTime === totalTime) {
-      osc.onended = () => {
-        audio.close()
-        playBtn.textContent = 'Play'
-        playBtn.onclick = playMIDI
-        delete this
-      }
     }
   }
 }
 
 // marker moves to show progress of MIDI playback
 function animateMarker(playing) {
-  interval = 4.1 * 60 * 1000 / (whole * tempo)
+  interval = 4 * 60 * 1000 / (whole * tempo)
   markerInterval = setInterval(function() {
     marker.style.left = marker.offsetLeft + 1 + 'px'
     seeker.style.left = seeker.offsetLeft + 1 + 'px'
@@ -867,9 +876,6 @@ function animateMarker(playing) {
     } else {
       if (marker.offsetLeft >= expand.offsetLeft) {
         clearInterval(markerInterval)
-        if (audio != null) {
-          audio.close()
-        }
       }
     }
 
@@ -979,9 +985,7 @@ document.getElementById('generate').onclick = () => {
   }
 
   console.log("generate onclick was called")
-  if (audio != null) {
-    stopPlayback()
-  }
+  stopPlayback()
 
   let selector = document.getElementById('checkpoint')
   let checkpoint = selector.value
@@ -1124,34 +1128,21 @@ ipcRenderer.on('receive-track-list', (_, tracks) => {
 
 document.getElementById('record').onclick = recordMIDI
 
-live = new (window.AudioContext || window.webkitAudioContext)()
-var liveGain = live.createGain()
-liveGain.connect(live.destination)
-liveGain.gain.setValueAtTime(0.02, live.currentTime)
-
 var pitches = []
 for (i = 0; i < 128; i++) {
-  var osc = live.createOscillator()
-  osc.type = 'square'
-  osc.frequency.setValueAtTime(Math.pow(2, (i - 9) / 12) * 440, 0)
-  osc.connect(liveGain)
-  osc.onended = () => { delete this }
-  pitches.push({on: [], off: [], velocity: [], osc: osc})
+  pitches.push({on: [], off: [], velocity: []})
 }
 
-ipcRenderer.on('keyboard-input', (_, status, pitch, velocity) => {
-  document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
-  if (status == 'ON') {
-    pitches[pitch + octave * 12].osc.start()
-  } else {
-    pitches[pitch + octave * 12].osc.stop()
-    var osc = live.createOscillator()
-    osc.type = 'square'
-    osc.frequency.setValueAtTime(Math.pow(2, (pitch - 9) / 12) * 440, 0)
-    osc.connect(liveGain)
-    osc.onended = () => { delete this }
-    pitches[pitch + octave * 12].osc = osc
-  }
+ipcRenderer.on('keyboard-input', async (_, status, pitch, velocity) => {
+  await Tone.start()
+  Tone.loaded().then(() => {
+    document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
+    if (status == 'ON') {
+      synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity)
+    } else {
+      synth.triggerRelease(noteValues[pitch + octave * 12], Tone.now(), velocity)
+    }
+  })
 })
 
 function recordMIDI() {
@@ -1191,52 +1182,41 @@ function recordMIDI() {
   var recordStart =  marker.offsetLeft / whole * 4 * 60 / tempo
   var markerStart = marker.offsetLeft
 
-  audio = new (window.AudioContext || window.webkitAudioContext)()
-  var gain = audio.createGain()
-  gain.connect(audio.destination)
-  gain.gain.setValueAtTime(0.02, audio.currentTime)
-  animateMarker(false)
-
   // play metronome audio if activated
   if (metronome) {
-    for (var i = 0; i < measures * 4; i++) {
-      if (i * (60 / tempo) < (60 * 4 * marker.offsetLeft / whole / tempo)) {
-        continue
-      }
-      var metOsc = audio.createOscillator()
-      metOsc.detune = 10
-      metOsc.connect(gain)
-      if (i % 4 == 0) {
-        metOsc.frequency.setValueAtTime(4000, 0)
-      } else {
-        metOsc.frequency.setValueAtTime(3000, 0)
-      }
-      metOsc.start(i * (60 / tempo) - (60 * 4 * (marker.offsetLeft - markerStart) / whole / tempo))
-      metOsc.stop(i * (60 / tempo) - (60 * 4 * (marker.offsetLeft - markerStart) / whole / tempo) + 0.01)
-      metOsc.onended = () => { delete this }
-    }
+    Tone.Transport.bpm.value = tempo
+    schedule.push(
+      Tone.Transport.scheduleRepeat ((time) => {
+        met.triggerAttackRelease(Tone.Frequency(1000), 0.1, Tone.now(), 0.05)
+      }, '4n', 0, measures * 60 * 4 / tempo)
+    )
+    schedule.push(
+      Tone.Transport.scheduleRepeat ((time) => {
+        met.triggerAttackRelease(Tone.Frequency(2000), 0.1, Tone.now(), 0.05)
+      }, '1m', 0, measures * 60 * 4 / tempo)
+    )
+    Tone.Transport.stop()
+    Tone.Transport.start()
   }
 
   // begin registering key actions
-  ipcRenderer.on('keyboard-input', (_, status, pitch, velocity) => {
-    document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
-    if (status == 'ON') {
-      pitches[pitch + octave * 12].on.push(audio.currentTime)
-      pitches[pitch + octave * 12].velocity.push(velocity)
-      pitches[pitch + octave * 12].osc.start()
-    } else {
-      pitches[pitch + octave * 12].off.push(audio.currentTime)
-      pitches[pitch + octave * 12].osc.stop()
-      var osc = live.createOscillator()
-      osc.type = 'square'
-      osc.frequency.setValueAtTime(Math.pow(2, (pitch - 9) / 12) * 440, 0)
-      osc.connect(liveGain)
-      osc.onended = () => { delete this }
-      pitches[pitch + octave * 12].osc = osc
-    }
+  ipcRenderer.on('keyboard-input', async (_, status, pitch, velocity) => {
+    await Tone.start()
+    Tone.loaded().then(() => {
+      document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
+      if (status == 'ON') {
+        pitches[pitch + octave * 12].on.push(Tone.Transport.seconds)
+        pitches[pitch + octave * 12].velocity.push(velocity)
+        synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity)
+      } else {
+        pitches[pitch + octave * 12].off.push(Tone.Transport.seconds)
+        synth.triggerRelease(noteValues[pitch + octave + 12], Tone.now(), velocity)
+      }
+    })
   })
 
   document.getElementById('record').onclick = () => {
+    stopPlayback()
     var ui = document.getElementsByClassName('ui-bar')
     for (i = 0; i < ui.length; i++) {
       var buttons = ui.item(i).getElementsByTagName('BUTTON')
@@ -1247,22 +1227,18 @@ function recordMIDI() {
     redoBtn.disabled = true
     tempoBtn.disabled = false
     clearInterval(markerInterval)
-    audio.close()
 
     // restore live playback without recording
-    ipcRenderer.on('keyboard-input', (_, status, pitch, velocity) => {
-      document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
-      if (status == 'ON') {
-        pitches[pitch].osc.start()
-      } else {
-        pitches[pitch].osc.stop()
-        var osc = live.createOscillator()
-        osc.type = 'square'
-        osc.frequency.setValueAtTime(Math.pow(2, pitch / 12) * 440, 0)
-        osc.onended = () => { delete this }
-        osc.connect(gain)
-        pitches[pitch + octave * 12].osc = osc
-      }
+    ipcRenderer.on('keyboard-input', async (_, status, pitch, velocity) => {
+      await Tone.start()
+      Tone.loaded().then(() => {
+        document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
+        if (status == 'ON') {
+          synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity)
+        } else {
+          synth.triggerRelease(noteValues[pitch + octave * 12], tone.now(), velocity)
+        }
+      })
     })
 
     // add recorded notes to roll
@@ -1270,10 +1246,9 @@ function recordMIDI() {
     for (i = 0; i < 128; i++) {
       for (j = 0; j < pitches[i].on.length; j++) {
         var startTime = pitches[i].on[j] + recordStart
-        var pitch = i + 69
         var endTime = (pitches[i].off[j] == null) ? measures * 60 / (tempo * 4) : pitches[i].off[j] + recordStart
 
-        sequence.push({pitch: pitch, startTime: startTime, endTime: endTime})
+        sequence.push({pitch: i, startTime: startTime, endTime: endTime})
       }
     }
 

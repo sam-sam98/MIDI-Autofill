@@ -2650,7 +2650,7 @@ tonal@^2.0.0:
     tonal-pcset "^2.2.2"
     tonal-scale "^2.2.2"
 
-tone@^14.7.58:
+tone@^14.7.58, tone@^14.7.77:
   version "14.7.77"
   resolved "https://registry.yarnpkg.com/tone/-/tone-14.7.77.tgz#12a2a9f033952ccdb552275a6384ca5d36d4b5ed"
   integrity sha512-tCfK73IkLHyzoKUvGq47gyDyxiKLFvKiVCOobynGgBB9Dl0NkxTM2p+eRJXyCYrjJwy9Y0XCMqD3uOYsYt2Fdg==
