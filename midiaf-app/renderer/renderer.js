@@ -38,7 +38,6 @@ const met = new Tone.Synth({
   release: 0,
   sustain: 0.05
 }).toDestination()
-met.volume.value = -6
 
 const noteValues = [
   'C0', 'C#0', 'D0', 'D#0', 'E0', 'F0', 'F#0', 'G0', 'G#0', 'A0', 'A#0', 'B0',
@@ -79,7 +78,7 @@ let redo = []
 let metronome = true
 let markerInterval = null
 let interval = 0
-let octave = 5
+let octave = 4
 let schedule = []
 let showingKeyboard = false
 
@@ -123,7 +122,7 @@ keys.style.height = (key.offsetHeight + 1) * 128 - 1 + 'px'
 roll.style.height = keys.style.height
 marker.style.height = roll.style.height
 vert.style.height = (key.offsetHeight + 1) * 29 - 1 + 'px'
-vert.scrollTop = (key.offsetHeight + 1) * 44
+vert.scrollTop = (key.offsetHeight + 1) * 51
 scroller.style.height = vert.style.height
 scroller.style.width = window.innerWidth - keys.offsetWidth - keys.offsetLeft * 2 + 'px'
 scroller.scrollTop = vert.scrollTop
@@ -813,7 +812,7 @@ async function playMIDI(e) {
   }
   stopBtn.disabled = false
   playBtn.textContent = 'Pause'
-  
+
   animateMarker(true)
   Tone.loaded().then(() => {
     if (metronome) {
@@ -829,7 +828,7 @@ async function playMIDI(e) {
         }, '1m', 0, totalTime)
       )
     }
-    
+
     // create tones from MIDI data
     for (var i = 0; i < sequence.length; i++) {
       if (sequence[i].startTime < (60 * 4 * marker.offsetLeft / whole / tempo)) {
@@ -1138,9 +1137,9 @@ ipcRenderer.on('keyboard-input', async (_, status, pitch, velocity) => {
   Tone.loaded().then(() => {
     document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
     if (status == 'ON') {
-      synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity)
+      synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
     } else {
-      synth.triggerRelease(noteValues[pitch + octave * 12], Tone.now(), velocity)
+      synth.triggerRelease(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
     }
   })
 })
@@ -1207,10 +1206,10 @@ function recordMIDI() {
       if (status == 'ON') {
         pitches[pitch + octave * 12].on.push(Tone.Transport.seconds)
         pitches[pitch + octave * 12].velocity.push(velocity)
-        synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity)
+        synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
       } else {
         pitches[pitch + octave * 12].off.push(Tone.Transport.seconds)
-        synth.triggerRelease(noteValues[pitch + octave + 12], Tone.now(), velocity)
+        synth.triggerRelease(noteValues[pitch + octave + 12], Tone.now(), velocity / 127)
       }
     })
   })
@@ -1234,9 +1233,9 @@ function recordMIDI() {
       Tone.loaded().then(() => {
         document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
         if (status == 'ON') {
-          synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity)
+          synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
         } else {
-          synth.triggerRelease(noteValues[pitch + octave * 12], tone.now(), velocity)
+          synth.triggerRelease(noteValues[pitch + octave * 12], tone.now(), velocity / 127)
         }
       })
     })
