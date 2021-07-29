@@ -82,6 +82,7 @@ let interval = 0
 let octave = 4
 let schedule = []
 let showingKeyboard = false
+let volume = 1
 
 let virtualKeyboard = new Keyboard({
   onChange: input => onVirtualKeyboardInput(input),
@@ -776,6 +777,13 @@ function toMIDI(notes) {
     if (endTime > totalTime) {
       totalTime = endTime
     }
+    if (startTime < (60 * 4 * marker.offsetLeft / whole / tempo)) {
+      if (endTime < (60 * 4 * marker.offsetLeft / whole / tempo)) {
+        continue
+      } else {
+        startTime = 0
+      }
+    }
     sequence.push({ pitch: pitch, startTime: startTime, endTime: endTime })
   }
   return sequence
@@ -814,7 +822,7 @@ async function playMIDI(e) {
   stopBtn.disabled = false
   playBtn.textContent = 'Pause'
 
-  animateMarker(true)
+  animateMarker(marker.offsetLeft)
   Tone.loaded().then(() => {
     if (metronome) {
       Tone.Transport.bpm.value = tempo
@@ -832,9 +840,6 @@ async function playMIDI(e) {
 
     // create tones from MIDI data
     for (var i = 0; i < sequence.length; i++) {
-      if (sequence[i].startTime < (60 * 4 * marker.offsetLeft / whole / tempo)) {
-        continue
-      }
       var pitch = sequence[i].pitch
       var duration = sequence[i].endTime - sequence[i].startTime
       schedule.push(
@@ -858,28 +863,28 @@ async function playMIDI(e) {
       Tone.Transport.start().then(function () {
         playBtn.textContent = 'Pause'
       })
-      animateMarker(true)
+      animateMarker(marker.offsetLeft)
     }
   }
 }
 
 // marker moves to show progress of MIDI playback
-function animateMarker(playing) {
-  interval = 4 * 60 * 1000 / (whole * tempo)
+function animateMarker(startPos) {
   markerInterval = setInterval(function() {
-    marker.style.left = marker.offsetLeft + 1 + 'px'
-    seeker.style.left = seeker.offsetLeft + 1 + 'px'
-    if (playing) {
-      if (marker.offsetLeft >= totalTime * tempo / 60 / 4 * whole) {
-        clearInterval(markerInterval)
+    marker.style.left = startPos + whole / 4 * tempo / 60  * Tone.Transport.seconds
+    seeker.style.left = marker.offsetLeft - seeker.offsetWidth / 2 + 'px'
+    if (marker.offsetLeft >= expand.offsetLeft) {
+      clearInterval(markerInterval)
+      stopPlayback()
+      exitRecord()
+      for (var i = 0; i < notes.length; i++) {
+        notes.item(i).onclick = null
+        notes.item(i).onmousedown = null
       }
-    } else {
-      if (marker.offsetLeft >= expand.offsetLeft) {
-        clearInterval(markerInterval)
-      }
+      roll.onclick = null
+      activeTool = "NONE"
     }
-
-  }, interval)
+  }, 0)
 }
 
 // delete selected note from piano roll
@@ -1180,7 +1185,6 @@ function recordMIDI() {
   marker.style.left = Math.round((marker.offsetLeft - whole) / whole) * whole + 'px'
   seeker.style.left = marker.offsetLeft - seeker.offsetWidth / 2 + 'px'
   var recordStart =  marker.offsetLeft / whole * 4 * 60 / tempo
-  var markerStart = marker.offsetLeft
 
   // play metronome audio if activated
   if (metronome) {
@@ -1197,6 +1201,7 @@ function recordMIDI() {
     )
     Tone.Transport.stop()
     Tone.Transport.start()
+    animateMarker(marker.offsetLeft)
   }
 
   // begin registering key actions
@@ -1217,29 +1222,7 @@ function recordMIDI() {
 
   document.getElementById('record').onclick = () => {
     stopPlayback()
-    var ui = document.getElementsByClassName('ui-bar')
-    for (i = 0; i < ui.length; i++) {
-      var buttons = ui.item(i).getElementsByTagName('BUTTON')
-      for (j = 0; j < buttons.length; j++) {
-        buttons.item(j).disabled = false
-      }
-    }
-    redoBtn.disabled = true
-    tempoBtn.disabled = false
-    clearInterval(markerInterval)
-
-    // restore live playback without recording
-    ipcRenderer.on('keyboard-input', async (_, status, pitch, velocity) => {
-      await Tone.start()
-      Tone.loaded().then(() => {
-        document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
-        if (status == 'ON') {
-          synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
-        } else {
-          synth.triggerRelease(noteValues[pitch + octave * 12], tone.now(), velocity / 127)
-        }
-      })
-    })
+    exitRecord()
 
     // add recorded notes to roll
     var sequence = toMIDI(notes)
@@ -1268,4 +1251,30 @@ function recordMIDI() {
 
     document.getElementById('record').onclick = recordMIDI
   }
+}
+
+function exitRecord() {
+  var ui = document.getElementsByClassName('ui-bar')
+  for (i = 0; i < ui.length; i++) {
+    var buttons = ui.item(i).getElementsByTagName('BUTTON')
+    for (j = 0; j < buttons.length; j++) {
+      buttons.item(j).disabled = false
+    }
+  }
+  redoBtn.disabled = true
+  tempoBtn.disabled = false
+  clearInterval(markerInterval)
+
+  // restore live playback without recording
+  ipcRenderer.on('keyboard-input', async (_, status, pitch, velocity) => {
+    await Tone.start()
+    Tone.loaded().then(() => {
+      document.getElementById('debug').textContent = `${status}, ${pitch}, ${velocity}`
+      if (status == 'ON') {
+        synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
+      } else {
+        synth.triggerRelease(noteValues[pitch + octave * 12], tone.now(), velocity / 127)
+      }
+    })
+  })
 }
