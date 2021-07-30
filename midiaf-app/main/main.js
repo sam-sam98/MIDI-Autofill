@@ -1,6 +1,11 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
-const af = require('./autofill/autofill')('magenta')
+
+const af = [
+  require('./autofill/autofill')('magenta'),
+  require('./autofill/autofill')('midi-autofill'),
+]
+
 const core = require('@magenta/music/node/core')
 const { sequenceProtoToMidi } = require('@magenta/music/node/core')
 const fs = require('fs');
@@ -119,25 +124,25 @@ async function createWindow() {
     }
 
     switch (input.key.toLowerCase()) {
-      case '1':
+      case 'a':
         pitch = 0
         break;
-      case '2':
+      case 's':
         pitch = 1
         break;
-      case '3':
+      case 'd':
         pitch = 2
         break;
-      case '4':
+      case 'f':
         pitch = 3
         break;
-      case '5':
+      case 'g':
         pitch = 4
         break;
-      case '6':
+      case 'h':
         pitch = 5
         break;
-      case '7':
+      case 'j':
         pitch = 6
         break;
       case 'p':
@@ -146,9 +151,26 @@ async function createWindow() {
           win.webContents.send('play')
         }
         return
+      case 'r':
+        if  (input.type == 'keyUp')
+        {
+          win.webContents.send('record')
+        }
+        return
+      case 'i':
+        if  (input.type == 'keyUp')
+        {
+          if (win.webContents.isDevToolsOpened()) {
+            win.webContents.closeDevTools()
+          } else {
+            win.webContents.openDevTools()
+          }
+        }
+        return
     }
 
     if (pitch != null && status != null) {
+      console.log(`Sending over ${status} ${pitch} ${velocity}`)
       win.webContents.send('keyboard-input', status, pitch, velocity)
     }
   })
@@ -168,8 +190,13 @@ app.whenReady().then(async () => {
     }
   })
 
-  await af.initialize()
-  let checkpoints = af.checkpoints.map((checkpoint) => checkpoint.name)
+  for (let backend of af)
+  {
+    // TODO: Slow. Should all happen simultaneously.
+    await backend.initialize()
+  }
+
+  let checkpoints = af.flatMap(backend => backend.checkpoints.map((checkpoint) => checkpoint.name))
   console.log(checkpoints)
 
   await new Promise(resolve => setTimeout(resolve, 5000));
@@ -223,9 +250,13 @@ function getTrackPath(trackName) {
 }
 
 ipcMain.handle('generate', async (_, checkpointName, noteSequence, steps, temperature) => {
-  // let qns = core.sequences.quantizeNoteSequence(noteSequence, 4)
-  let checkpoint = af.checkpoints.find(check => check.name == checkpointName)
-  return await af.autofill(checkpoint, noteSequence, steps, temperature)
+  for (let backend of af)
+  {
+    let checkpoint = backend.checkpoints.find(check => check.name == checkpointName)
+    if (checkpoint != null) {
+      return await backend.autofill(checkpoint, noteSequence, steps, temperature)
+    }
+  }
 })
 
 ipcMain.handle('save', async (_, noteSequence, name) => {

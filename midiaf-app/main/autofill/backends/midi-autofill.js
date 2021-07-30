@@ -90,7 +90,7 @@ function interpretAIResult(noteOutput, durationOutput) {
 module.exports = {
   checkpoints: checkpoints,
   initialize: async () => {
-    checkpoints[0].model = await tf.loadLayersModel(handler)
+    // checkpoints[0].model = await tf.loadLayersModel(handler)
   },
   autofill: async (checkpoint, noteSequence, steps, temperature) => {
     let regions = []

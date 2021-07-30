@@ -68,16 +68,18 @@ ipcRenderer.once('ready', (_, checkpoints) => {
   }
 })
 
+const MOUSE_MODE = true
+
 // establish reference values
 const whole = 256
 let sequence = TWINKLE_TWINKLE.notes
 let totalTime = TWINKLE_TWINKLE.totalTime
 let measures = 0
-let quant = 4
+let quant = 128
 let tempo = 120
 let undo = []
 let redo = []
-let metronome = false
+let metronome = true
 let markerInterval = null
 let octave = 4
 let schedule = []
@@ -312,11 +314,11 @@ deleteBtn.onclick = () => {
   moveBtn.disabled = false
   stretchBtn.disabled = false
   roll.onclick = null
-  activeTool = "NONE"
-  // set note interaction to delete
-  for (var i = 0; i < notes.length; i++) {
-    deleteElem(notes.item(i))
-  }
+  activeTool = "DELETE"
+  // // set note interaction to delete
+  // for (var i = 0; i < notes.length; i++) {
+  //   deleteElem(notes.item(i))
+  // }
 }
 
 let activeTool = "NONE"
@@ -344,9 +346,20 @@ stretchBtn.onclick = () => {
 }
 
 function setupNoteCallbacks(noteElem) {
-  noteElem.addEventListener('touchstart', noteTouchStart, false)
-  noteElem.addEventListener('touchmove', noteTouchMove, false)
-  noteElem.addEventListener('touchend', noteTouchEnd, false)
+  if (!MOUSE_MODE)
+  {
+    noteElem.addEventListener('touchstart', noteTouchStart, false)
+    noteElem.addEventListener('touchmove', noteTouchMove, false)
+    noteElem.addEventListener('touchend', noteTouchEnd, false)
+  }
+  else
+  {
+    noteElem.addEventListener('mousedown', noteTouchStart)
+    noteElem.addEventListener('mouseup', noteTouchEnd)
+  }
+
+  noteElem.addEventListener('click', noteClick)
+
   noteElem.style.touchAction = 'none'
 
   const toolCallbacks = {
@@ -415,24 +428,73 @@ function setupNoteCallbacks(noteElem) {
         // snap note to quantized width
         elem.style.width = elem.offsetWidth - ((elem.offsetWidth + whole / quant / 2) % (whole / quant)) + whole / quant / 2 + 'px'
       }
+    },
+    'DELETE': {
+      onClick: e => {
+        // save state to stack for restoration via undo, maintain stack size < 10
+        undo.push(record(notes))
+        undoBtn.disabled = false
+        resetBtn.disabled = false
+        while (undo.length > 10) {
+          undo.shift()
+        }
+        // clear redo stack
+        redoBtn.disabled = true
+        while (redo.length > 0) {
+          redo.shift()
+        }
+
+        e.target.remove()
+      }
+    }
+  }
+
+  function mouseify(e) {
+    if (MOUSE_MODE)
+    {
+      e.changedTouches = [
+        {
+          pageX: e.clientX,
+          pageY: e.clientY
+        }
+      ]
     }
   }
 
   function noteTouchStart(e) {
-    if (activeTool in toolCallbacks) {
+    if (activeTool in toolCallbacks && 'touchStart' in toolCallbacks[activeTool]) {
+      mouseify(e)
+      if (MOUSE_MODE)
+      {
+        //e.addEventListener('mousemove', noteTouchMove, false)
+        document.onmousemove = noteTouchMove
+      }
       toolCallbacks[activeTool].touchStart(e)
     }
   }
 
   function noteTouchMove(e) {
-    if (activeTool in toolCallbacks) {
+    if (activeTool in toolCallbacks && 'touchMove' in toolCallbacks[activeTool]) {
+      mouseify(e)
       toolCallbacks[activeTool].touchMove(e)
     }
   }
 
   function noteTouchEnd(e) {
-    if (activeTool in toolCallbacks) {
+    if (activeTool in toolCallbacks && 'touchEnd' in toolCallbacks[activeTool]) {
+      mouseify(e)
+      if (MOUSE_MODE)
+      {
+        //e.removeEventListener('mousemove', noteTouchMove)
+        document.onmousemove = null
+      }
       toolCallbacks[activeTool].touchEnd(e)
+    }
+  }
+  
+  function noteClick(e) {
+    if (activeTool in toolCallbacks) {
+      toolCallbacks[activeTool].onClick(e)
     }
   }
 }
@@ -1004,7 +1066,7 @@ document.getElementById('generate').onclick = () => {
   let noteSequence = toNoteSequence(notes);
   // minimum quantization value set at 8th
   noteSequence = core.sequences.quantizeNoteSequence(noteSequence, Math.min(quant, 8))
-  ipcRenderer.invoke('generate', checkpoint, noteSequence, 20, 1.5).then((newNotes) => {
+  ipcRenderer.invoke('generate', checkpoint, noteSequence, 40, 1.5).then((newNotes) => {
     let end = 0
     newNotes.notes = newNotes.notes.map((note) => {
       let startTime = totalTime + note.quantizedStartStep / Math.min(quant, 8);
@@ -1086,8 +1148,8 @@ ipcRenderer.on('receive-track-list', (_, tracks) => {
   newTrackBtn.onclick = async () => {
     let existingTrackNames = []
     // Can't map options :/
-    for (let i = 0; i < trackList.options.length; i++) {
-      existingTrackNames.push(trackList.options[i].value)
+    for (let i = 0; i < trackOptions.children.length; i++) {
+      existingTrackNames.push(trackOptions.children[i].value)
     }
 
     // Default name, increment a number suffix until we find something unique
@@ -1103,9 +1165,10 @@ ipcRenderer.on('receive-track-list', (_, tracks) => {
       let option = document.createElement('option')
       option.textContent = newTrackName
       option.value = newTrackName
-      trackList.add(option)
-      trackList.selectedIndex = trackList.options.length - 1;
-      switchTrack(newTrackName, true)
+      option.classList.add('track')
+      option.style.height = trackNameInput.style.height
+      option.style.width = trackNameInput.style.width
+      trackOptions.insertBefore(option, newTrackBtn)
     } else {
       alert("Error occurred creating new track");
     }

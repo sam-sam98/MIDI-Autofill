@@ -1,3 +1,4 @@
+require('@tensorflow/tfjs-node')
 const rnn = require('@magenta/music/node/music_rnn')
 const core = require('@magenta/music/node/core')
 
