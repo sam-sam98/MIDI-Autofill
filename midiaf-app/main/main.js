@@ -85,9 +85,9 @@ const gpioCallbacks = {
 
 async function createWindow() {
   win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    fullscreen: true,
+    width: 1920,
+    height: 1080,
+    fullscreen: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -140,12 +140,20 @@ async function createWindow() {
       case '7':
         pitch = 6
         break;
+      case 'p':
+        if  (input.type == 'keyUp')
+        {
+          win.webContents.send('play')
+        }
+        return
     }
 
     if (pitch != null && status != null) {
       win.webContents.send('keyboard-input', status, pitch, velocity)
     }
   })
+
+  win.removeMenu()
 
   win.loadFile('static/index.html')
 }

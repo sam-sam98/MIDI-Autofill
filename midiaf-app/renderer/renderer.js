@@ -91,7 +91,6 @@ let virtualKeyboard = new Keyboard({
   onKeyPress: button => onVirtualKeyboardPressed(button)
 });
 
-hideKeyboard();
 
 const key = { offsetHeight: document.getElementById('key-sample').offsetHeight }
 const keys = document.getElementById('keys')
@@ -116,6 +115,8 @@ const seeker = document.getElementById('seeker')
 const trackNameInput = document.getElementById('current-track-name')
 const trackOptions = document.getElementById('track-options')
 const directory = document.getElementById('open-directory')
+
+hideKeyboard();
 
 resetBtn.disabled = true
 undoBtn.disabled = true
@@ -445,14 +446,13 @@ directory.onmouseout = () => {
 directory.onclick = () => {
   trackOptions.classList.toggle('visible')
   trackOptions.classList.toggle('invisible')
-  if (trackOptions.classList.contains('visible')) {
-    document.onmousedown = (event) => {
-      if(!trackOptions.contains(event.target) && !trackNameInput.contains(event.target)){
-        trackOptions.classList.toggle('visible')
-        trackOptions.classList.toggle('invisible')
-        document.onmousedown = null
-      }
-    }
+}
+
+document.onmouseup = (event) => {
+  if(!trackOptions.contains(event.target) && !trackNameInput.contains(event.target) && trackOptions.classList.contains('visible')){
+    trackOptions.classList.toggle('visible')
+    trackOptions.classList.toggle('invisible')
+    event.preventDefault()
   }
 }
 
@@ -922,24 +922,29 @@ function loadNewSequence(noteSequence) {
 }
 
 async function renameTrack() {
-  // Jeez...
-  let oldName = trackList.options[trackList.selectedIndex].value
+  let oldName = activeTrackName
   let newName = trackNameInput.value
   let err = await ipcRenderer.invoke('rename-track', oldName, newName)
 
   if (err != null) {
     trackNameInput.value = oldName
   } else {
-    let option = trackList.options[trackList.selectedIndex]
-    option.textContent = newName
-    option.value = newName
+    let trackElem = Array.prototype.find.call(document.getElementsByClassName('track'), elem => elem.textContent === oldName)
+    trackElem.textContent = newName
+    trackElem.value = newName
+    trackNameInput.textContent = newName
+    activeTrackName = newName
   }
 }
+
+let activeTrackName = null
 
 async function switchTrack(trackName, saveTrack) {
   if (saveTrack) {
     await saveActiveTrack()
   }
+
+  activeTrackName = trackName
 
   ipcRenderer.invoke('fetch-track-notes', trackName).then((noteSequence) => {
     if (noteSequence != null) {
@@ -965,8 +970,8 @@ function onVirtualKeyboardInput(input) {
 
 async function onVirtualKeyboardPressed(button) {
   if (button == '{enter}') {
-    await renameTrack()
     hideKeyboard();
+    await renameTrack()
   }
 }
 
@@ -1037,6 +1042,11 @@ function hideKeyboard() {
   let keyboardContainer = document.getElementById('keyboard-container')
   showingKeyboard = false;
   keyboardContainer.style.display = 'none';
+  if (trackOptions != null)
+  {
+    trackOptions.classList.remove('visible')
+    trackOptions.classList.add('invisible')
+  }
 }
 
 // TODO:
