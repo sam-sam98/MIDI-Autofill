@@ -102,6 +102,8 @@ Although the WB Jones offers cheaper options, it is more difficult to distinguis
 
 Since we are very unaware of the mechanical properties associated with the diameter of the spring wire, the actual feel in the implementation of the pounds per inch or millimeter, or the utilization of a spring in this mechanical system, we are going to decide by approximate parameters and look of each spring. To play it safe, we are choosing to initially purchase the spring which has the least amount of lbs/m. There is no reliable documentation on exactly how much force it takes to compress a piano key and therefore we will be attempting trial and error during the second semester of this project to find the best spring load.
 
+After evaluating the cost and difference of each type of spring, we ended up using a 2.5 in x .25 in x .035 in zinc plated extension springs to create the actuation. These were purchased from Ace Hardware and cost significantly less than any of the previous options.
+
 \newpage
 \begin{figure}[h!]
   \centering
@@ -144,7 +146,7 @@ As discussed in the \textbf{Prototyping} subsection of \textbf{Implementation}, 
   \label{Tab:rail_brand}
 \end{table}
 
-At the beginning of the discussion, we immediately eliminated the option of the ‘Natural Wood’ dowels. Our aim to create a device that is not only functional, but also robust and can handle the perturbations that come along with a portable device. Wood cannot handle nearly as much force as metal and it is difficult to even compare that type of wood with the other options because there was little descriptive information on the type of wood other than ‘natural’.
+At the beginning of the discussion, we immediately eliminated the option of the ‘Natural Wood’ dowels. Our aim is to create a device that is not only functional, but also robust and can handle the perturbations that come along with a portable device. Wood cannot handle nearly as much force as metal and it is difficult to even compare that type of wood with the other options because there was little descriptive information on the type of wood other than ‘natural’.
 
 When comparing the Stainless Steel rods to the Brass rods, this choice was difficult. They are both 4 mm x 300 mm which is wonderful for our application, they both ship from Amazon prime which means we would not have to worry about delivery time, they both are consistently in stock, and they are both close enough in price that it is negligible. To decide, we first took a look at the strength of each rod.
 
@@ -166,7 +168,7 @@ While debating on which screen to use, our group came up with two options, shown
   \label{Tab:display_brand}
 \end{table}
 
-We were torn between utilizing a physical button oriented user interface and a touch screen oriented interface. As a group, we decided that allowing our end-users the option of a touch screen is more up-to-date with current technology. Not only that, the members of our CS division for this project felt the design and creation of a touch based user interface would be easier to code on the backend and easier to operate on the user’s end. Because of this, we eliminated the choice of any non-touch screens for this project. Next, we discussed whether a capacitive or resistive touch screen would be more appropriate. A general rule of thumb for touch screens are: capacitive touch screens are often more expensive, but offer multi-point touch recognition. Resistive touchscreens are often cheaper, but only allow single-point navigation. We felt resistive touch screens are outdated and decided that adding the extra cost of a capacitive touchscreen for the design would be worth the ease of use and a more professional feel to the finalized product.
+We were torn between utilizing a physical button oriented user interface and a touch screen oriented interface. As a group, we decided that allowing our end-users the option of a touch screen is more up-to-date with current technology. Not only that, the members of our CS division for this project felt the design and creation of a touch based user interface would be easier to code on the backend and easier to operate on the user’s end. Because of this, we eliminated the choice of any non-touch screens for this project. Next, we discussed whether a capacitive or resistive touch screen would be more appropriate. A general rule of thumb for touch screens is: capacitive touch screens are often more expensive, but offer multi-point touch recognition. Resistive touchscreens are often cheaper, but only allow single-point navigation. We felt resistive touch screens are outdated and decided that adding the extra cost of a capacitive touchscreen for the design would be worth the ease of use and a more professional feel to the finalized product.
 
 We also wanted to make sure there was enough room on the screen for the user to easily view the software user interface and be able to navigate the software. Sadly, none of the options offered by the group had a datasheet reliable enough to find the power usage of the screen. Luckily, each screen is designed to be operated by a Raspberry Pi and claims to work well with the device, therefore we can be assured that the current usage is within the limits a Raspberry Pi can offer. This is later discussed in the Batteries section of this paper. Ultimately, we decided to choose the seven-inch display to offer the greatest experience for our end users that fits within our budget.
 
@@ -184,7 +186,9 @@ With almost every electric keyboard there is a trigger on the device for Octave 
   \label{Tab:note_frequency}
 \end{table}
 
-This will be handled in the code, but the user needs to be offered feedback which translates how many octaves the keyboard has been shifted. To achieve this, we will be 3D printing translucent button covers with 4-pin RGB LEDs connected underneath the buttons. These diodes will change color based on which octave button is pressed and how many times allowing the user to have a color-coded representation of their octave changes. This is further discussed in SECTION IDK YET.
+In between the Octave Up and Octave Down buttons we will have a single button to play and pause the MIDI notes already inputted into the DAW. This will operate by simply triggering the opposite of which action the playback is currently performing. When paused this button will play the MIDI data, while playing this button will pause the playback of the MIDI roll.
+
+Below the Play / Pause button will be a Record button. This is used to input MIDI data in real time. After the button is first triggered, it will record all inputs from the keyboard from there after. After the user has recorded what they want, they can press the record button again and the recording will stop and save all MIDI data from the time between the first and second button press.
 
 \subsection{Volume Control}
 
@@ -236,7 +240,7 @@ Considering our user interface is more about producing a new type of melody desi
 
 \subsection{T-Cobbler}
 
-One big misfortune about the Raspberry Pi compared to Arduino is that the Raspberry Pi model we chose is not as easily accessible to hardware prototyping as any of the Arduino boards. On the flip side, we still want to be able to connect many different analog devices such as the octave up and octave down buttons as well and the headphone jacks and hopefully speakers by the end of the project. To combat this, our group decided it would be in our best interest to purchase a Pi T-Cobbler Plus -- GPIO breakout board for prototyping. This device costs less than ten dollars and will allow for easier prototyping by connecting the GPIO pins on the Pi to a breadboard, shown in \textit{Figure \ref{fig:tcobbler}}.
+One big misfortune about the Raspberry Pi compared to Arduino is that the Raspberry Pi model we chose is not as easily accessible to hardware prototyping as any of the Arduino boards. On the flip side, we still want to be able to connect many different analog devices such as the octave up and octave down buttons as well as the headphone jacks and hopefully speakers by the end of the project. To combat this, our group decided it would be in our best interest to purchase a Pi T-Cobbler Plus -- GPIO breakout board for prototyping. This device costs less than ten dollars and will allow for easier prototyping by connecting the GPIO pins on the Pi to a breadboard, shown in \textit{Figure \ref{fig:tcobbler}}.
 
 \begin{figure}[h!]
   \centering
@@ -245,3 +249,5 @@ One big misfortune about the Raspberry Pi compared to Arduino is that the Raspbe
   \label{fig:tcobbler}
 \end{figure}
 \newpage
+
+After prototyping, we simply used the pinout on the Pi to connect the devices.
