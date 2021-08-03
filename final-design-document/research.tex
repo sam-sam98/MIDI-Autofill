@@ -523,7 +523,7 @@ afterwards.
   \caption{Command to generate a bundle file with the information of the model: \url{—save_generator_bundle}}
 \end{figure}
 
-\paragraph{Converting Python Trained Models to TensorFlow.js.} In order to work in a JavaScript
+\paragraph{Converting Python Trained Models to TensorFlow.js.} to work in a JavaScript
 environment, it is required to convert the bundle format or any of the TensorFlow/Keras
 format into TensorFlow.js format. For this, it will be used \url{tensorflowjs_converter}
 command in the following fashion:
@@ -567,7 +567,7 @@ preceded sequence:
   x_t \sim P \left( x_t \vert  x_{t - 1}, ..., x_1 \right)
 \end{equation}
 
-In order to capture these relations and probabilities, we can use a model that store
+To capture these relations and probabilities, we can use a model that store
 probabilities coefficients of each possible sequence. These coefficients can be used to
 calculate the probability of the pitch at time ’t’ using the already known pitch at time
 ’t-1’. If this is done recurrently, we are in presence of a autoregressive model. The
@@ -774,7 +774,7 @@ This step will generate the melody in the format that was parsed the MIDI file f
 training and input. Still it is required to convert it back to MIDI to be able to
 reproduce it.
 
-\paragraph{Reconstructing MIDI File From Generated Melody.} This step is very similar to the one
+\paragraph{Reconstructing MIDI File From Generated Melody.} This step is similar to the one
 already described to parse MIDI into lists to use as data set for TensorFlow model. This
 is simply the reversion of that steps. For this, it is used again the music21 library as
 follows:
@@ -873,7 +873,7 @@ inherently be able to run the MIDI autofill software as well.
 We experimented with several options for a UI-building environment. Our first consideration was
 React, a JavaScript library for app development. One of the appealing features of React was that
 not only do the programs operate on an object-oriented basis, but the functionality of the
-application shell is also very object-oriented. This makes more flexible functionality simpler to
+application shell is also object-oriented. This makes more flexible functionality simpler to
 achieve. For example, the render function allows the programmer to merge HTML and JS elements so
 they can add reactivity to the markup elements without having to repeatedly alter the properties
 in JS code.
@@ -968,7 +968,7 @@ cut what we do not need.
 
 \subparagraph{Pros}
 \begin{itemize}
-  \item Very well documented
+  \item Well documented
   \item Has the best support for Raspberry Pi
 \end{itemize}
 
@@ -1212,7 +1212,7 @@ we need to know is how much we are able to push the music generating AI before w
 below our threshold. This is where the linear benchmarks come in.
 
 The linear benchmarks allow us to figure out what constraints we have to limit ourselves
-to in order to stay below our 5 second threshold. We based these benchmarks around factors
+to to stay below our 5 second threshold. We based these benchmarks around factors
 we speculated would affect the performance the most. For each of these benchmark factors,
 we progressively test higher amounts and graph the results for easy analysis (see
 \autoref{fig:magentaperf}).
@@ -1391,7 +1391,7 @@ This approach was our preference, but we ran into a wall when considering how to
 device to function as a standalone device, while also being able to receive power through
 the USB-C connection. USB gadgets are supposed to be powered through the USB-C port, but
 when not connected, the USB device will operate off of a battery. The standalone operation
-requirement makes this connection mode very difficult. There is another interface for
+requirement makes this connection mode more difficult. There is another interface for
 powering the raspberry PI, which is the 5 volt GPIO pin. This could be connected to a
 battery. But then there is the question of if the Pi can be simultaneously powered by the
 5 volt GPIO port while also being plugged in with USB-C. This may be possible, but there
@@ -1478,7 +1478,7 @@ interface.
 BLE can be used for a wide variety of devices. BLE devices communicate through profiles,
 which specify the BLE  application and the communication specifications. There is a long
 list of standardized BLE profiles, with one such profile being BLE MIDI. While support for
-BLE is very common, support for certain BLE profiles is not, as its up to each BLE
+BLE is common, support for certain BLE profiles is not, as its up to each BLE
 implementation to support whatever profiles are needed by the device. However, BLE MIDI is
 supported by Windows 10, MacOS, Linux, iOS, and Android \autocite{ble-latency}. With BLE
 MIDI being supported by every major operating system, we are confident that we will not
