@@ -44,6 +44,7 @@ writing MIDIs with a MIDI controller. Better timing makes it easier to synchroni
 other tracks that might end up in the same audio file.
 
 \subsection{Music Theory: Melody}
+\label{sec:theory}
 
 One of the biggest issues with creating computer-generated music is that music, like all art
 forms, is highly subjective. There are no universal rules for right or wrong, and yet at the
@@ -876,49 +877,6 @@ application shell is also very object-oriented. This makes more flexible functio
 achieve. For example, the render function allows the programmer to merge HTML and JS elements so
 they can add reactivity to the markup elements without having to repeatedly alter the properties
 in JS code.
-
-\begin{lstlisting}[language=JavaScript, caption={A simple program made to test React during the
-selection process; it focuses on demonstrating how React automatically updates the HTML layer.},
-label=lis:react]
-class ChangeFruit extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = { seconds: 0, fruit: "apple" };
-  }
-
-  // updates params
-  tick() {
-    var fruits = ["apple", "banana", "orange"]
-    this.setState(state => ({
-      seconds: state.seconds + 1,
-      fruit: fruits[state.seconds % 3]
-    }));
-  }
-
-  // sets params to update every second (1000 milliseconds)
-  componentDidMount() {
-    this.interval = setInterval(() => this.tick(), 1000);
-  }
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
-  // markup template
-  render() {
-    return (
-      <div>
-        I like {this.state.fruit}s.
-      </div>
-    );
-  }
-}
-
-ReactDOM.render(
-  <ChangeFruit />,
-  document.getElementById('react-example')
-);
-\end{lstlisting}
 
 However, its major downside is that as a new library, it implements a lot of functions and
 techniques our team are not familiar with in the core functionality of the program. While it would
