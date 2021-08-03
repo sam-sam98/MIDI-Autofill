@@ -90,7 +90,7 @@ function interpretAIResult(noteOutput, durationOutput) {
 module.exports = {
   checkpoints: checkpoints,
   initialize: async () => {
-    // checkpoints[0].model = await tf.loadLayersModel(handler)
+    checkpoints[0].model = await tf.loadLayersModel(handler)
   },
   autofill: async (checkpoint, noteSequence, steps, temperature) => {
     let regions = []
@@ -130,27 +130,11 @@ module.exports = {
     durations = durations.map(convertDuration)
 
     let outputNotes = []
-    let lastEndTime = noteSequence.notes.reduce((accumulator, note) => note.endTime > accumulator ? note.endTime : accumulator, 0)
+    //let lastEndTime = noteSequence.notes.reduce((accumulator, note) => note.endTime > accumulator ? note.endTime : accumulator, 0)
+    let lastEndTime = 0
+
     for (let i = 0; i < steps; i++)
     {
-      let testNotes = [48, 50, 52, 53, 50, 52, 48]
-      let testDurations = [2, 2, 2, 2, 2, 2, 2, 2]
-      let originalTestNotes = [...testNotes]
-      let originalTestDurations = [...testDurations]
-      while (testNotes.length < 32)
-      {
-        testNotes.push(...originalTestNotes)
-        testDurations.push(...originalTestDurations)
-      }
-
-      while (testNotes.length > 32)
-      {
-        testNotes.pop()
-        testDurations.pop()
-      }
-
-      let notes = testNotes
-      let durations = testDurations
       let input = [tf.tensor1d(notes).expandDims(), tf.tensor1d(durations).expandDims()]
       console.log("Input notes:")
       tf.print(input[0])
@@ -169,10 +153,10 @@ module.exports = {
       })
 
       lastEndTime = endTime
+      notes = notes.slice(1)
+      durations = durations.slice(1)
       notes.push(note)
       durations.push(duration)
-      notes.pop()
-      durations.pop()
     }
 
     let totalTime = outputNotes.reduce((accumulator, note) => note.endTime > accumulator ? note.endTime : accumulator, 0)

@@ -167,6 +167,18 @@ async function createWindow() {
           }
         }
         return
+      case 'x':
+        if  (input.type == 'keyUp')
+        {
+          win.webContents.send('volume', 1.0)
+        }
+        return
+      case 'c':
+        if  (input.type == 'keyUp')
+        {
+          win.webContents.send('volume', 0.5)
+        }
+        return
     }
 
     if (pitch != null && status != null) {
