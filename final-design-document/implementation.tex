@@ -114,7 +114,7 @@ Any project involving musicians or their instruments cannot avoid the term ‘fe
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/KeyMechanism.png}
-  \caption{}
+  \caption{Grand Piano Actuation Design}
   \label{fig:key_mechanism}
 \end{figure}
 
@@ -125,7 +125,7 @@ In addition, each performer and their use of the instrument plays a role in dete
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.5\linewidth]{image/Octave.png}
-  \caption{}
+  \caption{One Octave of Keys}
   \label{fig:octave}
 \end{figure}
 
@@ -181,7 +181,7 @@ Before deciding the selection of tension springs, actuator lengths, and the peri
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.7\linewidth]{image/WhiteModel1.png}
-  \caption{}
+  \caption{Natural Key Base Model}
   \label{fig:white_model1}
 \end{figure}
 
@@ -204,18 +204,18 @@ Next we can see the functional aspects of the design. Below the 28.73 mm 20 degr
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/WhiteModel2.png}
-  \caption{}
+  \caption{Natural Key Base Model 2}
   \label{fig:white_model2}
 \end{figure}
 
-In the first iteration, the almost complete circle to the far left is five millimeters in diameter. This will be touched on later in this design section of the document. Above that circle is a divot, in the shape of an upside trapezoid, five millimeters at the base with 45 degree inclines to the top of the key. This divot is used to allow the cover of the keyboard to not only keep help guide the key and keep it in place, but also to once again prevent the user from clearly seeing the electronics hidden inside the full device. Finally, on the far top left of the key is a 3x2x5mm hole designed to hook onto the tension springs that help provide the pull-back of the actuation. Each natural key has the exact same cut-in values as given in \textit{Table \ref{Tab:key_dimensions}}.
+In the first iteration, the almost complete circle to the far left is five millimeters in diameter. This will be touched on later in this design section of the document. Above that circle is a divot, in the shape of an upside trapezoid, five millimeters at the base with 45 degree inclines to the top of the key. This divot is used to allow the cover of the keyboard to not only help guide the key and keep it in place, but also to once again prevent the user from clearly seeing the electronics hidden inside the full device. Finally, on the far top left of the key is a 3x2x5mm hole designed to hook onto the tension springs that help provide the pull-back of the actuation. Each natural key has the exact same cut-in values as given in \textit{Table \ref{Tab:key_dimensions}}.
 
-Next in the first iteration of key designs is the non-natural key, or black key, named after the sharp and flat notes these keys trigger. From a design standpoint, it is helpful that all the non-natural keys share the same structure. To begin, the guiding plane and size of the connecting platform have the same measurements of the natural keys, fifteen millimeter plane and a ten millimeter platform. The divot, the hole beneath the divot, and the extruded cut where the spring attaches all have the same measurements as the natural keys as well. The original design has a playable length of 120.71 mm. Due to the shorter playing length and same guiding plane length, the actuation of the keys has been approximated to be around 15 degrees, compared to the 10 degree actuation of the natural keys. This key does not need any tip as a tip could obstruct any transition the player may have switching from the non-natural keys to the natural keys, instead the tip of the non-natural key has a 15 degree chamfer on all sides to allow the fingers to slide from the elevated top of the non-natural key to the lower natural keys. As a result, the top of the key is thinner than the base, as is expected from the measurements taken in \autoref{tab:key_dimensions}. To gather a better understanding, the base of the key is the section which aligns with the elevation of the natural keys, while the tip elevates ten millimeters above the key. Between the base and the tip is what makes up the key itself.
+Next in the first iteration of key designs is the non-natural key, or black key, named after the sharp and flat notes these keys trigger. From a design standpoint, it is helpful that all the non-natural keys share the same structure. To begin, the guiding plane and size of the connecting platform have the same measurements of the natural keys, a fifteen millimeter plane and a ten millimeter platform. The divot, the hole beneath the divot, and the extruded cut where the spring attaches all have the same measurements as the natural keys as well. The original design has a playable length of 120.71 mm. Due to the shorter playing length and same guiding plane length, the actuation of the keys has been approximated to be around 15 degrees, compared to the 10 degree actuation of the natural keys. This key does not need any tip as a tip could obstruct any transition the player may have switching from the non-natural keys to the natural keys, instead the tip of the non-natural key has a 15 degree chamfer on all sides to allow the fingers to slide from the elevated top of the non-natural key to the lower natural keys. As a result, the top of the key is thinner than the base, as is expected from the measurements taken in \autoref{tab:key_dimensions}. To gather a better understanding, the base of the key is the section which aligns with the elevation of the natural keys, while the tip elevates ten millimeters above the key. Between the base and the tip is what makes up the key itself.
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.7\linewidth]{image/BlackModel.png}
-  \caption{}
+  \caption{Non-Natural Key Base Model}
   \label{fig:black_model}
 \end{figure}
 
@@ -224,7 +224,7 @@ The first iteration of the key rail and base was intended to be a completely 3D 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/BaseModel1.png}
-  \caption{}
+  \caption{First Iteration Keyrail}
   \label{fig:base_model1}
 \end{figure}
 
@@ -233,7 +233,7 @@ To allow an appropriate prototype test, I first chose to simulate the assembly w
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.9\linewidth]{image/AssembledModel.png}
-  \caption{}
+  \caption{First Iteration: One Octave Design}
   \label{fig:assembled_model}
 \end{figure}
 
@@ -251,7 +251,7 @@ This first print was a test to determine the functionality of the keyboard in it
     t-model         & 5.15                     \\ \hline
     Non-natural key & 5                        \\ \hline
   \end{tabular}
-  \caption{}
+  \caption{Hinge Hole Test Measurements}
   \label{Tab:connections}
 \end{table}
 
@@ -260,7 +260,7 @@ The results of the model are shown in \textit{Figure \ref{fig:print1}} below.
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/Print1.png}
-  \caption{}
+  \caption{First Iteration: Test Print}
   \label{fig:print1}
 \end{figure}
 
@@ -269,7 +269,7 @@ At first glance, the model seemed really well produced. The results of the diffe
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.6\linewidth]{image/Print2.png}
-  \caption{}
+  \caption{First Iteration: Offset Hook Connections}
   \label{fig:print2}
 \end{figure}
 
@@ -278,7 +278,7 @@ After toying with the model for some time, a few issues were brought to light. T
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/Print3.png}
-  \caption{}
+  \caption{First Iteration: Non-natural Key Test Print}
   \label{fig:print3}
 \end{figure}
 
@@ -293,7 +293,7 @@ Another issue we discussed is the fact that there were no parameters in place to
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/Print4.png}
-  \caption{}
+  \caption{First Iteration: Keyrail Test Print}
   \label{fig:print4}
 \end{figure}
 
@@ -316,7 +316,7 @@ From the results of Iteration One and Iteration Two we decided to alter the leng
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/BaseModel2.png}
-  \caption{}
+  \caption{First and Third Keyrail Interation Comparison}
   \label{fig:base_model2}
 \end{figure}
 
@@ -325,7 +325,7 @@ The first major change in iteration three compared to that of iteration one is t
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.9\linewidth]{image/BaseModel3.png}
-  \caption{}
+  \caption{Third Iteration: Full Keyrail Model}
   \label{fig:base_model3}
 \end{figure}
 
@@ -334,7 +334,7 @@ Furthermore, discussing the width of the holes for the springs to attach, we hav
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.25\linewidth]{image/Print5.png}
-  \caption{}
+  \caption{Third Iteration: Key, Hook Connection}
   \label{fig:print5}
 \end{figure}
 
@@ -345,7 +345,7 @@ The final major change shown in \textit{Figure \ref{fig:base_model3}} are the od
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/BaseModel4.png}
-  \caption{}
+  \caption{Third Iteration: Half Keyrail Model}
   \label{fig:base_model4}
 \end{figure}
 
@@ -355,7 +355,7 @@ The other change made after observing the print was manually centering the hook 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/KeyModels.png}
-  \caption{}
+  \caption{Third Iteration: Corrected Hook Connections}
   \label{fig:key_models}
 \end{figure}
 
@@ -364,7 +364,7 @@ After testing and reiterating the initial print models, we were finally able to 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/BodyModel1.png}
-  \caption{}
+  \caption{Body Model: 2x1}
   \label{fig:body_model1}
 \end{figure}
 
@@ -373,7 +373,7 @@ For the front left base body print we created the model shown in \textit{Figure 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/BodyModel2.png}
-  \caption{}
+  \caption{Full Keyboard Body Model with Keyrail Placed Correctly}
   \label{fig:body_model2}
 \end{figure}
 
@@ -411,7 +411,7 @@ The full keyboard is about 483 mm wide, 322 mm deep, and 93.89 mm tall. From our
     \centering
     \includegraphics[width=\textwidth]{image/BodyModel8.png}
   \end{subfigure}
-  \caption{}
+  \caption{Individual Body Model Pieces [1x1 - 1x3] and [2x2 - 2x3]}
   \label{fig:body_parts}
 \end{figure}
 
@@ -420,7 +420,7 @@ As can be seen from these figures, each piece has been specially crafted to fit 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.9\linewidth]{image/AssembledBody.png}
-  \caption{}
+  \caption{Full Keyboard Body Model}
   \label{fig:assembled_body}
 \end{figure}
 
@@ -431,7 +431,7 @@ The cover or front panel of this device is 483x196.5 mm. There is absolutely no 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.9\linewidth]{image/DisplayModel.png}
-  \caption{}
+  \caption{Front UI Panel: Keyboard}
   \label{fig:display_model}
 \end{figure}
 
@@ -444,14 +444,14 @@ When all the parts are connected and in place, the intended design of the body c
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/FinalModel1.png}
-  \caption{}
+  \caption{Fully Assembled Keyboard Body}
   \label{fig:final_model1}
 \end{figure}
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/FinalModel2.png}
-  \caption{}
+  \caption{Fully Assembled Keyboard Model}
   \label{fig:final_model2}
 \end{figure}
 \clearpage
@@ -470,7 +470,7 @@ The body itself did not change, but the cover had slight alterations. Below the 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/Keyboard_Photo.jpg}
-  \caption{}
+  \caption{Built and Assembled Live Keyboard}
   \label{fig:keyboard_photo}
 \end{figure}
 
