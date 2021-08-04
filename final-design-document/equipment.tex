@@ -205,6 +205,18 @@ A potentiometer works by using the concept of a voltage divider which is shown i
 
 Most musicians who have worked in the synthetic side of music composition or performance have worked with sliding potentiometers in this manner and therefore gives another reason why we, as a team, were drawn to the idea of using a sliding potentiometer over a rotating potentiometer. We easily could have chosen to use a rotating potentiometer, but these are more often used in amplifiers, guitars, and other types of instruments that are not the keyboard. At the end of the day, it all comes down to user preference and our team prefers this decision. We also chose to gather the pack of ten over a single sliding potentiometer because it was not only an easier option over Amazon, but it also provides the components in case we would like to add analog synthetic effects to our device.
 
+The device we chose is the WMCONGCONG 10 kOhm sliding potentiometer. This device provides 1023 data points over the course of its actuation which is more than enough to reduce these data points into volume markers. We chose this device because of the cheap cost of $14.99 for ten units and the small form factor. It was imperative that the sliding potentiometer fit within the vertical limit of the UI cover for the device. As can be seen in the Keyboard Design section of the document, the slot to the right of the screen which is designed to house this potentiometer is well within our limits and fits aesthetically as well.
+
+We do recognize that the actuating lever for this device is a bit homely, but we were able to design and print a cap for the lever and create a more authentic sliding volume potentiometer feel that many mixers and synthetic instruments use.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.5\linewidth]{image/Potentiometer.png}
+  \caption{WMCONGCONG 10 kOhm sliding potentiometer}
+  \label{fig:potentiometer}
+\end{figure}
+
+
 \subsection{Audio Jack}
 
 The audio jack, also known as the headphone jack or auxiliary jack, is the location where the user can input their headphones to listen to the audio being produced by the Raspberry Pi. There are two major types of audio jacks: mono and stereo. Mono headphone jacks are audio outputs that can only send one audio signal out. This means, if an individual is using headphones, the audio in the right ear will be the exact same audio produced in the left ear. Stereo is the counterpart to mono, and can channel two or more audio signals from a single jack. This means, if all is set up correctly, that the left and right speakers can produce two different signals and create a fuller environment for the listener. This can be further understood in the mechanical drawing shown in \textit{Figure \ref{fig:mono}} and \textit{Figure \ref{fig:stereo}} which are the mono and stereo female drawings respectively.
@@ -251,3 +263,43 @@ One big misfortune about the Raspberry Pi compared to Arduino is that the Raspbe
 \newpage
 
 After prototyping, we simply used the pinout on the Pi to connect the devices.
+
+\subsection{MIDI Translation}
+Before recording or playing the note on the Raspberry Pi, we need a device that will be able to interpret the analog signals from the keyboard and translate the keystrokes into MIDI data. After the data is acquired it will be sent via USB to the Pi as a MIDI input, but which device should we use? After a short discussion, our group felt that Arduino or one of the many arduino clones would be our best choice due to its ease of integration and the familiarity our members have working in C code. With the integrated multiplexers in the PCB our MCU (Microcontroller Unit) only needed six digital I/O pins for data, one input for voltage in, and one input for group. The cheapest board models that met this description are the Arduino Nano, Arduino Micro, and Arduino Nano-Every. Here is a quick comparison chart of the following devices with the specs we took into account.
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+Device            & Arduino Nano & Arduino Micro & Arduino Nano-Every \\ \hline
+Digital I/O       & 22           & 20            & 12                 \\ \hline
+USB data transfer & Yes          & Yes           & Yes                \\ \hline
+Cost              & \$20.70      & \$18.40       & \$11.90            \\ \hline
+\end{tabular}
+\end{table}
+
+Ultimately, every board available on the Arduino website has the specifications we need to be able to execute the project. Our choice ended up coming down to cost and keeping the project within budget as best as possible. Even with the cheapest option, we were able to have enough digital I/O pins with an included 8 analog pins.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\linewidth]{image/Pins.png}
+  \caption{The set of analog pins available through our Arduino}
+  \label{fig:pins}
+\end{figure}
+
+Luckily for us it was necessary to utilize those analog pins for the volume slider since the Raspberry Pi does not have an ADC (analog to digital converter). We also chose this device because it had the smallest form factor of the three. Although each device is relatively small and the size itself would not have impacted the project greatly, we figured every little but counts in a fully portable device.
+
+\subsection{Batteries}
+
+Due to the limited options of batteries that we could reasonably have in our possession during the manufacturing process, one of our CS members felt our best choice was purchasing our device battery from a vape shop. TBy doing this we were able to ensure our device would be in our possession on time, but sadly reduced our variety of options. This endeavor was supported by the rest of the group because vape batteries are used to power heating devices: one of the greater current and watt demanding devices we know of. From the measurements we have of the charging device we purchased, our best option in store were 18650 batteries. These are 2.6 amp hour batteries. 2.6 amp hours is right on the cusp of being able to maintain our 2.5 amp device for about an hour. We used two of these batteries and therefore deduced that we should be able to power our device for around 2 hours on a single charge. This is quite short for a portable device, but it was the best option we were able to possess in our time and charging constraints. These batteries are shown in the figure below.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\linewidth]{image/Batteries.png}
+  \caption{The batteries used to power our device}
+  \label{fig:batteries}
+\end{figure}
+
+\subsection{Printer Filament}
+
+Since we are using an at-home 3D printer, our choices were limited. None of the members in our group felt comfortable changing the specifications of the device and therefore were limited to the settings already established in the printer. Our choices from the very beginning were Sunlu’s PLA and PLA+ options. Considering the entire model was going to be created with this plastic, we did not want to go with the weaker option. The major difference between PLA and PLA+ is that the PLA+ is advertised as a more durable, more reliable printing plastic. Due to this reason, we bought 3 kgs of PLA+ filament: 2 kgs of black filament and 1 kg of white filament to model a keyboard as accurately as possible.
