@@ -949,6 +949,136 @@ seconds.
 The end time of the note is offset by the start time, then uses the same pixel-to-note-value and
 tempo-to-time conversions to determine the duration.
 
+\subsubsection{Programming the Arduino Controller}
+
+Our MIDI keyboard was designed with an intermediary in mind, between the raspberry Pi and
+the physically designed circuit of the keys. This intermediary was determined by the
+number of inputs, affordability, power consumption, as well as an ability for Serial
+communication across USB. Naturally, we did not need a controller with a large number of
+pins as we had reduce that requirement when designing the circuit itself. Thusly, we
+decided upon the Arduino Nano Every to program and test our build. In the course of
+events, we needed to solder more wires onto the controller, but since it would become and
+integrated piece of our project it was a necessary expense. It should be noted that the
+Raspberry Pi will need to be programmed to accommodate the signals and subsequently react
+whenever a new signal is transmitted.
+
+For the Pins and the Serial port itself, only a few small setups needed to take place.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{image/arduinosetups.png}
+  \caption{Setup code for the Arduino pins and serial port.}
+\end{figure}
+
+The arrStatus array holds the on or off status of each individual key. For our 29 key
+keyboard, we needed and array of size 29. The values of Out1 and Out2 hold the digital pin
+of the output, allowing the easy change and modification of which pins are being listened
+to for each part of the program. As for the output pins, they’re only called here and in a
+subsequent function beneath the main loop. If necessary, it’s not terribly difficult to
+change which pins correspond to which Serial values within the circuit. The function in
+question follows bitwise operations to determine the correct response to each given key
+query.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{image/setserialfun.png}
+  \caption{Setting the serial function using bitwise operations.}
+\end{figure}
+
+This allows each pin to correspond to the correct binary value and for the controller to
+easily switch to any key that needs to be listened to at any given moment.
+
+As for the program itself, our query logic follows a loop, and that loop follows a series
+of three possible events. These events were considered and programmed for to accommodate
+for incomplete connections or potential faults within the circuit. For the purposes of the
+program and for the reader’s sake, the first series of buttons(SW1-29) will be called the
+back buttons and the second series of buttons(SW33-61) will be called the forward buttons;
+corresponding to their location on the physical PCB. First, a loop is created to begin
+counting from 0 to 29, utilized to allow for the assignment and signal of the status and
+velocity value of the corresponding key being measured. A delay of 1ms is inserted after
+calling the above set serial function to ensure that the signal is allowed to propagate
+through the circuit and retrieve the correct value of a given key. Then, each of the three
+possible events are checked for to determine what action is to take place.
+
+The first event requires the most calculation and logic to implement correctly. If the
+back button of a particular key is detected as on, then the time in milliseconds is
+measure, corresponding to the time\_1 and time\_2 values below. The state of the status
+array is then updated and a nested loop begins, waiting for the on signal in the front
+button to occur to accurately measure the difference in time.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{image/pinreadingvelocity.png}
+  \caption{First attempt at pin reading code with the velocity calculation.}
+\end{figure}
+
+However, as can be noted, there is an additional if statement within the loop to ensure
+that the controller will not freeze on a faulty key. This is accomplished by taking
+another measure of milliseconds and breaking the loop if the time elapsed exceeds a
+quarter of a second. This is the point at which the minimum value of the calculation is
+all but guaranteed and therefore becomes a moot point to wait any longer for the signal to
+come from the front button of the key. With that check out of the way, the velocity of the
+difference in time is then calculated, initially ascribed the float state and then the on
+signal is generated and sent over the Serial connection.
+
+With that check out of the way, the velocity of the difference in time is then calculated,
+initially ascribed the float state and then the on signal is generated and sent over the
+Serial connection.
+
+The number of the key signaled as well as the velocity found is also sent, completing the
+first potential signal transmitted to the Raspberry Pi. The only thing left is to scan the
+keyboard again and determine if additional keys need to be signaled. This is what’s
+typically known as a chord, when multiple keys are pressed in the same instance to
+generate a wider variety of songs and melody when playing an instrument. This is
+accomplished with another nested loop, this one borrowing the first calculated velocity
+and sending it along the Serial port to the Raspberry Pi as well. As can be noted, the
+setSerialFun is utilized throughout the loop and the status array is updated when the
+correct conditions are met. Once all of that is completed the break; function is called,
+resetting the first loop to the beginning, and completing the first potential event of our
+program. Fortunately, this is most of the work out of the way as there are only so many
+conditions that can be measured for if the back buttons are inexplicably faulty.
+
+The second event is a contingency event, in the case that the first button did not signal
+correctly, but the second button was already pressed. In this case, we cannot reverse time
+and determine the correct velocity of the given keypress. Thusly, we must make an
+assumption and signal the Raspberry pi with a default value that is high enough in
+velocity but not too high as to sound impossible. Thusly, a default value of 80 was
+decided, but other default values can be utilized.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{image/backupfunction.png}
+  \caption{Contigency code for when first button does not signal.}
+\end{figure}
+
+Once again, the nested loop is to check if any other buttons may have been pressed while
+preoccupied with the signaling of the serial port and subsequently signaled in kind,
+updating the status array to reflect which keys are and not pressed at that given moment.
+Once again, this function is only ever called when the back button is inexplicably faulty,
+and the front buttons still signal correctly. However, the point of being an engineer is
+to determine a faulty scenario and create a contingency to mitigate that fault.
+
+The third event is the simplest. Assuming that neither the back nor front buttons are
+signaled as high during their measurement but the status array is found to have noted this
+note as on before this time, then an off signal must be signaled to the Raspberry Pi.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{image/backupfunction.png}
+  \caption{Code to send off event over serial port.}
+\end{figure}
+
+An off signal, the key number, and then an empty value is sent across the Serial
+connection. Then the status array is updated to reflect the new state of the keyboard.
+This is the last event measurable with our current hardware and means of measuring the
+circuit signals. This is also the completed program for our Arduino controller that allows
+us to properly signal and measure the state of the MIDI keyboard. This program can be
+modified and theoretically improved upon to better implement any sized MIDI keyboard
+needed. For simplicity’s sake, a key number and value is the only significant means which
+the Arduino communicates with the Raspberry Pi. This program can be modified to signal in
+the proper MIDI format, but I was far too ignorant of the actual format to attempt to
+write code to implement such a state.
+
 \subsection{Testing}
 
 \subsubsection{DAW}
@@ -1033,3 +1163,6 @@ measuring the percentage of key notes the model can predict from a known case. A
 this is an objective measurement of the model performance, maybe not fully desirable to
 obtain such a grade of regularity on the output, and some stochastic variables can be
 added in order of adding elements of unpredictability in the generation of new melodies.
+
+\subsubsection{Programming the Arduino controller}
+
