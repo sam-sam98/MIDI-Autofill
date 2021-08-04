@@ -404,9 +404,21 @@ application: \url{basic_rnn}, \url{mono_rnn}, \url{lookback_rnn} and \url{attent
 incorporates the possibility of giving a progression of chords as input. Then the model
 generates melody fitting in the scale of that progression. This is typically done in music
 improvisation music execution. This model does not train on MIDI files, but requires the
-standard specific format for sharing sheet music files, MusicXML (see Appendix). This
+standard specific format for sharing sheet music files, MusicXML. This
 model provides three configurations: \textbf{Basic Improv}, \textbf{Attention Improve},
 and \textbf{Chord Pitches Improv}.
+
+MusicXML is a standard format to transfer music data sheets. It is intended to be
+automatically parsed. For this reason, the format is not intuitively good for human
+reading (see \autoref{figure:musicxml}).
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics[width=0.5 \linewidth]{image/fig_JDF29.png}
+  \caption{An example of this format to describe a single whole note middle C in C major key
+    on Treble Clef.}
+  \label{figure:musicxml}
+\end{figure}
 
 \paragraph{Basic Improve} works in the same fashion than Basic MelodyRNN with the addition of
 providing a one-hot encoded vector with 48 triad (major, minor, augmented, diminished for
@@ -420,12 +432,19 @@ output provides a set of three vectors to encode root pitch, absence/presence of
 class, and bass pitch class.
 
 \paragraph{PerformanceRNN}: This model intends to simulate the output of a live music
-performance. The model provides polyphonic output in PolyphonyRNN format (see Appendix)
-with the addition of dynamics and expressing timing. In addition to the parameters present
-in PolyphonyRNN format (similar to MIDI) this model also provides parameters representing
-note on, note off, time shift and velocity. This model slightly scapes the scope of our
-project, but if the implementation is simple enough it could add a nice to have feature
-with almost not significant workload.
+performance. The model provides polyphonic output in PolyphonyRNN format with the addition
+of dynamics and expressing timing. In addition to the parameters present in PolyphonyRNN
+format (similar to MIDI) this model also provides parameters representing note on, note
+off, time shift and velocity. This model slightly scapes the scope of our project, but if
+the implementation is simple enough it could add a nice to have feature with almost not
+significant workload.
+
+\begin{figure}[h!]
+  \centering
+  \caption{Representation of C major chord with duration of one quarter per note in PolyphonyRNN format.}
+  \includegraphics[width=0.3 \linewidth]{image/fig_JDF30.png}
+  \label{figure:polyrnnformat}
+\end{figure}
 
 \paragraph{MusicRNN Python Workflow} Training, Evaluating, Using, and Saving the Model
 Although this library provides already pre-trained models, it is also available the option
@@ -436,9 +455,26 @@ volume of data samples for each of the cited cases. However, this can be a good 
 solution between using an out-of-box solution and developing an entire model from scratch
 using a hi-level library such as TensorFlow.
 
-\paragraph{Training Data Processing.} Having a collection of MIDI files in a directory, the
-first step is to convert them to NoteSequence buffer protocol (see Appendix). This will
-allows the faster and more efficient way to work with data than MIDI files.
+\paragraph{Training Data Processing.} Having a collection of MIDI files in a directory,
+the first step is to convert them to NoteSequence buffer protocol. This will allows the
+faster and more efficient way to work with data than MIDI files.
+
+This protocol created by Google is a language/platform neutral “extensible mechanism”
+(cite Google website https://developers.google.com/protocol-buffers/) for serialization of
+structures data. In simple words, this is an equivalent serialization format as is XML or
+JSON formats. The added value is that is possible to serialize data in one single format
+and Google’s compiler provides the data in the shape of the target language/platform.
+
+\label{figure:protobuf}
+\begin{figure}[h!]
+  \caption{The final compiled serialization is in binary format.}
+  \includegraphics[width=\linewidth]{image/fig_JDF31.png}
+\end{figure}
+
+\begin{figure}[h!]
+  \caption{The final compiled serialization is in binary format.}
+  \includegraphics[width=\linewidth]{image/fig_JDF32.png}
+\end{figure}
 
 \begin{figure}[h!]
   \centering
@@ -553,6 +589,27 @@ analysis of natural language. From this field is that many of these ideas are ap
 music processing and modeling. This section will explain how those ideas were
 developed, and how that can be translated to music melody prediction. Also, we will
 explore TensorFlow API as our framework to develop for this approach.
+
+\paragraph{General Flow for Machine Learning Modeling}
+
+Generating machine learning models can seems a huge task. In a sense it is: the variables
+in place can produce a virtual infinite universe of possible answers where a few are close
+enough to generalize correctly under a specific application. However, some stages are
+commonly followed across the practice of modeling. In this section we will try to capture
+those generic task as a starting point for any machine learning modeling work.
+
+\begin{enumerate}
+  \item Data collection
+  \item Data exploration and pre-processing
+  \item Feature engineering
+  \item Data conversion to framework model input
+  \item Model Design
+  \item Model Training
+  \item Model Evaluation
+  \item Model Readjustment
+  \item Model Serialization
+  \item Model Conversion for Deployment
+\end{enumerate}
 
 \paragraph{Autoregressive Model, RNN and LSTM.} Music is composed for a finite amount of
 combinations that follows structures such as harmony. As already was explained, these is
@@ -1201,8 +1258,16 @@ magenta, sampling each one several times and providing statistics such as the mi
 and mean generation time, as well as the standard deviation.
 
 Our benchmarking program has two benchmarking suites: a generalized one to gauge overall
-performance (see \nameref{appendix:magenta_benchmark}) and a linear suite to find out what
+performance (see \nameref{figure:magenta_benchmark}) and a linear suite to find out what
 factors affect performance the most.
+
+\label{figure:magenta_benchmark}
+\begin{minipage}{\linewidth}
+  \captionof{table}{Magenta Generalized Benchmark Times (in seconds).}
+  \begin{adjustbox}{width=\textwidth}
+    \csvautotabular[respect underscore=true]{raspberry_pi_4_magenta.csv}
+  \end{adjustbox}
+\end{minipage}
 
 In the generalized suite, the MusicRNN model with the provided pretrained checkpoints has
 shown good performance overall when autofilling simple and random melodies, well below the
