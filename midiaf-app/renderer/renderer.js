@@ -1354,6 +1354,7 @@ function enableUI() {
 }
 
 function exitRecord() {
+  var recordEnd = marker.offsetLeft / whole * 4 * 60 / tempo
   // restore live playback without recording
   ipcRenderer.on('keyboard-input', async (_, status, pitch, velocity) => {
     if (pitch + octave * 12 < 128) {
@@ -1362,7 +1363,7 @@ function exitRecord() {
         if (status == 'ON') {
           synth.triggerAttack(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
         } else {
-          synth.triggerRelease(noteValues[pitch + octave * 12], tone.now(), velocity / 127)
+          synth.triggerRelease(noteValues[pitch + octave * 12], Tone.now(), velocity / 127)
         }
       })
     }
@@ -1376,7 +1377,7 @@ function exitRecord() {
       if (startTime < 0) {
         continue
       }
-      var endTime = (pitches[i].off[j] == null) ? measures * 60 / (tempo * 4) : pitches[i].off[j] + recordStart
+      var endTime = (pitches[i].off[j] == null) ? recordEnd : pitches[i].off[j] + recordStart
 
       sequence.push({pitch: i, startTime: startTime, endTime: endTime})
     }
