@@ -21,7 +21,7 @@ Since we want our project to feel as close to a professional MIDI controller as 
       Nidec Copal Electronics         & \$0.54 & 1        & 5.9 mm x 7 mm x 9 mm      \\ \hline
       Panasonic Electronic Components & \$1.31 & 1        & 7.9 mm x 7.8 mm x 17.5 mm \\ \hline
     \end{tabular}}
-  \caption{}
+  \caption{A comparison of costs for our button options.}
   \label{Tab:buttons_data}
 \end{table}
 
@@ -37,14 +37,14 @@ By utilizing the measurement function of Solidworks we know that the minimum dis
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/Dimensions1.png}
-  \caption{}
+  \caption{A close-up on our keys' manufacturing specifications.}
   \label{fig:dimensions1}
 \end{figure}
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/Dimensions2.png}
-  \caption{}
+  \caption{A close-up on our keys' manufacturing specifications.}
   \label{fig:dimensions2}
 \end{figure}
 
@@ -71,7 +71,7 @@ Obviously if the spring is starting at rest any distance traveled from rest woul
       50             & 2          & 4.92               & 54.92        & 100                   & 109.84            & 9.84            \\ \hline
       100            & 2          & 4.92               & 104.92       & 200                   & 209.84            & 4.92            \\ \hline
     \end{tabular}}
-  \caption{}
+  \caption{The tabularized relationship between stretch and tension in a spring.}
   \label{Tab:x_force}
 \end{table}
 
@@ -94,11 +94,11 @@ Since we do not have any members with mechanical engineering experience on our t
       WB Jones      & \$3.08  & 1        & 1 inch         & N/A        & 0.67 lbs/in         & 0.15 lbs      \\ \hline
       WB Jones      & \$2.33  & 1        & 1 inch         & N/A        & 1.38 lbs/in         & .26 lbs       \\ \hline
     \end{tabular}}
-  \caption{}
+  \caption{A comparison of costs for our spring options.}
   \label{Tab:spring_brand}
 \end{table}
 
-Although the WB Jones offers cheaper options, it is more difficult to distinguish which spring would be appropriate as they do not provide a maximum length nor any type of image to distinguish the proportions of the springs. Before coming across any of these options, we made sure each selection was a corrosion resistant tension spring equipped with a hooked end to easily be incorporated to our project. Due to the lack of concrete imagery for the references we ultimately decided to focus on the McMaster-Carr options. Images of those options are as follows: the 30.2 mm spring in \textit{Figure \ref{fig:spring1}}, the 30.6 mm spring in \textit{Figure \ref{fig:spring2}}, and the 31 mm spring in \textit{Figure \ref{fig:spring3}} each provided by McMaster-Carr.
+Although the WB Jones offers cheaper options, it is more difficult to distinguish which spring would be appropriate as they do not provide a maximum length nor any type of image to distinguish the proportions of the springs. Before coming across any of these options, we made sure each selection was a corrosion resistant tension spring equipped with a hooked end to easily be incorporated to our project. Due to the lack of concrete imagery for the references we ultimately decided to focus on the McMaster-Carr options. Images of those options are as follows: the 30.2 mm spring, the 30.6 mm spring, and the 31 mm spring in \textit{Figure \ref{fig:springs}} each provided by McMaster-Carr.
 
 Since we are unaware of the mechanical properties associated with the diameter of the spring wire, the actual feel in the implementation of the pounds per inch or millimeter, or the utilization of a spring in this mechanical system, we are going to decide by approximate parameters and look of each spring. To play it safe, we are choosing to initially purchase the spring which has the least amount of lbs/m. There is no reliable documentation on exactly how much force it takes to compress a piano key and therefore we will be attempting trial and error during the second semester of this project to find the best spring load.
 
@@ -107,25 +107,11 @@ After evaluating the cost and difference of each type of spring, we ended up usi
 \newpage
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=\linewidth]{image/Spring1.png}
-  \caption{}
-  \label{fig:spring1}
-\end{figure}
-
-\newpage
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=\linewidth]{image/Spring2.png}
-  \caption{}
-  \label{fig:spring2}
-\end{figure}
-
-\newpage
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=\linewidth]{image/Spring3.png}
-  \caption{}
-  \label{fig:spring3}
+  \includegraphics[width=0.6\linewidth]{image/Spring1.png}
+  \includegraphics[width=0.6\linewidth]{image/Spring2.png}
+  \includegraphics[width=0.6\linewidth]{image/Spring3.png}
+  \caption{A comparison of our spring options.}
+  \label{fig:springs}
 \end{figure}
 \newpage
 
@@ -142,7 +128,7 @@ As discussed in the \textbf{Prototyping} subsection of \textbf{Implementation}, 
     Amazon & \$5.99  & 2        & 4mm x 300 mm & Stainless Steel \\ \hline
     K\&S   & \$7.14  & 3        & 4mm x 300 mm & Brass           \\ \hline
   \end{tabular}
-  \caption{}
+  \caption{A comparison of material costs for key rail options.}
   \label{Tab:rail_brand}
 \end{table}
 
@@ -164,7 +150,7 @@ While debating on which screen to use, our group came up with two options, shown
     Newsoul & \$84.99 & 1        & 7 inch       \\ \hline
     ElecLab & \$49.90 & 1        & 5 inch       \\ \hline
   \end{tabular}
-  \caption{}
+  \caption{Comparison of display screen options.}
   \label{Tab:display_brand}
 \end{table}
 
@@ -182,7 +168,7 @@ With almost every electric keyboard there is a trigger on the device for Octave 
     \begin{tabular}{l}
       \includegraphics{image/NoteFrequency}
     \end{tabular}}
-  \caption{}
+  \caption{The tabularized relationship between MIDI values and their tonal frequency.}
   \label{Tab:note_frequency}
 \end{table}
 
@@ -197,13 +183,25 @@ Almost immediately upon the start of our discussion, we decided that a sliding p
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/VoltageDiv.png}
-  \caption{}
+  \caption{The voltage divider.}
   \label{fig:voltage_div}
 \end{figure}
 
 A potentiometer works by using the concept of a voltage divider which is shown in \textit{Figure \ref{fig:voltage_div}} from electronicclinic.com. There is a $ V_{in} $ supplied by a source, in our case the Raspberry Pi, which is connected to a variable resistor. That variable resistor is connected to the actuating lever which is seen on the outside of the potentiometer. As the lever slides upwards along the potentiometer, the resistance increases and creates a change in the output voltage, which is connected to the actuating lever as well. By knowing the input voltage and reading the output voltage, the device is able to tell from the equation given in \textit{Figure \ref{fig:voltage_div}} where on the slider the lever is located. By using this value, we will translate that the bottom position of the potentiometer is zero output volume and the top position of the sliding potentiometer is full or 100\% volume.
 
 Most musicians who have worked in the synthetic side of music composition or performance have worked with sliding potentiometers in this manner and therefore gives another reason why we, as a team, were drawn to the idea of using a sliding potentiometer over a rotating potentiometer. We easily could have chosen to use a rotating potentiometer, but these are more often used in amplifiers, guitars, and other types of instruments that are not the keyboard. At the end of the day, it all comes down to user preference and our team prefers this decision. We also chose to gather the pack of ten over a single sliding potentiometer because it was not only an easier option over Amazon, but it also provides the components in case we would like to add analog synthetic effects to our device.
+
+The device we chose is the WMCONGCONG 10 kOhm sliding potentiometer. This device provides 1023 data points over the course of its actuation which is more than enough to reduce these data points into volume markers. We chose this device because of the cheap cost of \$14.99 for ten units and the small form factor. It was imperative that the sliding potentiometer fit within the vertical limit of the UI cover for the device. As can be seen in the Keyboard Design section of the document, the slot to the right of the screen which is designed to house this potentiometer is well within our limits and fits aesthetically as well.
+
+We do recognize that the actuating lever for this device is a bit homely, but we were able to design and print a cap for the lever and create a more authentic sliding volume potentiometer feel that many mixers and synthetic instruments use.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.5\linewidth]{image/Potentiometer.png}
+  \caption{WMCONGCONG 10 kOhm sliding potentiometer.}
+  \label{fig:potentiometer}
+\end{figure}
+
 
 \subsection{Audio Jack}
 
@@ -212,13 +210,13 @@ The audio jack, also known as the headphone jack or auxiliary jack, is the locat
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/Mono.png}
-  \caption{}
+  \caption{The mono jack option.}
   \label{fig:mono}
 \end{figure}
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/Stereo.png}
-  \caption{}
+  \caption{The stereo jack option.}
   \label{fig:stereo}
 \end{figure}
 
@@ -234,7 +232,7 @@ Considering our user interface is more about producing a new type of melody desi
     Switchcraft & \$2.15 & 1        & 10 mm mounting hole & Mono   \\ \hline
     Switchcraft & \$2.25 & 1        & 10 mm mounting hole & Stereo \\ \hline
   \end{tabular}
-  \caption{}
+  \caption{A comparison of costs for our audio jack options.}
   \label{Tab:jack_brand}
 \end{table}
 
@@ -245,9 +243,49 @@ One big misfortune about the Raspberry Pi compared to Arduino is that the Raspbe
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/TCobbler.png}
-  \caption{}
+  \caption{A sample of our T-Cobbler usage in prototyping.}
   \label{fig:tcobbler}
 \end{figure}
 \newpage
 
 After prototyping, we simply used the pinout on the Pi to connect the devices.
+
+\subsection{MIDI Translation}
+Before recording or playing the note on the Raspberry Pi, we need a device that will be able to interpret the analog signals from the keyboard and translate the keystrokes into MIDI data. After the data is acquired it will be sent via USB to the Pi as a MIDI input, but which device should we use? After a short discussion, our group felt that Arduino or one of the many arduino clones would be our best choice due to its ease of integration and the familiarity our members have working in C code. With the integrated multiplexers in the PCB our MCU (Microcontroller Unit) only needed six digital I/O pins for data, one input for voltage in, and one input for group. The cheapest board models that met this description are the Arduino Nano, Arduino Micro, and Arduino Nano-Every. Here is a quick comparison chart of the following devices with the specs we took into account.
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+Device            & Arduino Nano & Arduino Micro & Arduino Nano-Every \\ \hline
+Digital I/O       & 22           & 20            & 12                 \\ \hline
+USB data transfer & Yes          & Yes           & Yes                \\ \hline
+Cost              & \$20.70      & \$18.40       & \$11.90            \\ \hline
+\end{tabular}
+\end{table}
+
+Ultimately, every board available on the Arduino website has the specifications we need to be able to execute the project. Our choice ended up coming down to cost and keeping the project within budget as best as possible. Even with the cheapest option, we were able to have enough digital I/O pins with an included 8 analog pins.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\linewidth]{image/Pins.png}
+  \caption{The set of analog pins available through our Arduino.}
+  \label{fig:pins}
+\end{figure}
+
+Luckily for us it was necessary to utilize those analog pins for the volume slider since the Raspberry Pi does not have an ADC (analog to digital converter). We also chose this device because it had the smallest form factor of the three. Although each device is relatively small and the size itself would not have impacted the project greatly, we figured every little but counts in a fully portable device.
+
+\subsection{Batteries}
+
+Due to the limited options of batteries that we could reasonably have in our possession during the manufacturing process, one of our CS members felt our best choice was purchasing our device battery from a vape shop. TBy doing this we were able to ensure our device would be in our possession on time, but sadly reduced our variety of options. This endeavor was supported by the rest of the group because vape batteries are used to power heating devices: one of the greater current and watt demanding devices we know of. From the measurements we have of the charging device we purchased, our best option in store were 18650 batteries. These are 2.6 amp hour batteries. 2.6 amp hours is right on the cusp of being able to maintain our 2.5 amp device for about an hour. We used two of these batteries and therefore deduced that we should be able to power our device for around 2 hours on a single charge. This is quite short for a portable device, but it was the best option we were able to possess in our time and charging constraints. These batteries are shown in the figure below.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\linewidth]{image/Batteries.png}
+  \caption{The batteries used to power our device.}
+  \label{fig:batteries}
+\end{figure}
+
+\subsection{Printer Filament}
+
+Since we are using an at-home 3D printer, our choices were limited. None of the members in our group felt comfortable changing the specifications of the device and therefore were limited to the settings already established in the printer. Our choices from the very beginning were Sunlu’s PLA and PLA+ options. Considering the entire model was going to be created with this plastic, we did not want to go with the weaker option. The major difference between PLA and PLA+ is that the PLA+ is advertised as a more durable, more reliable printing plastic. Due to this reason, we bought 3 kgs of PLA+ filament: 2 kgs of black filament and 1 kg of white filament to model a keyboard as accurately as possible.

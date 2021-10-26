@@ -1,7 +1,5 @@
 \section{Implementation}
 
-\subsection{Build plan}
-
 \subsection{Development Workflow}
 
 Finding a good development workflow is critical for assuring developer productivity and
@@ -114,7 +112,7 @@ Any project involving musicians or their instruments cannot avoid the term ‘fe
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/KeyMechanism.png}
-  \caption{}
+  \caption{Grand piano actuation design.}
   \label{fig:key_mechanism}
 \end{figure}
 
@@ -125,7 +123,7 @@ In addition, each performer and their use of the instrument plays a role in dete
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.5\linewidth]{image/Octave.png}
-  \caption{}
+  \caption{One octave of keys.}
   \label{fig:octave}
 \end{figure}
 
@@ -181,7 +179,7 @@ Before deciding the selection of tension springs, actuator lengths, and the peri
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.7\linewidth]{image/WhiteModel1.png}
-  \caption{}
+  \caption{Natural key base model.}
   \label{fig:white_model1}
 \end{figure}
 
@@ -204,18 +202,18 @@ Next we can see the functional aspects of the design. Below the 28.73 mm 20 degr
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/WhiteModel2.png}
-  \caption{}
+  \caption{Natural key base model 2.}
   \label{fig:white_model2}
 \end{figure}
 
-In the first iteration, the almost complete circle to the far left is five millimeters in diameter. This will be touched on later in this design section of the document. Above that circle is a divot, in the shape of an upside trapezoid, five millimeters at the base with 45 degree inclines to the top of the key. This divot is used to allow the cover of the keyboard to not only keep help guide the key and keep it in place, but also to once again prevent the user from clearly seeing the electronics hidden inside the full device. Finally, on the far top left of the key is a 3x2x5mm hole designed to hook onto the tension springs that help provide the pull-back of the actuation. Each natural key has the exact same cut-in values as given in \textit{Table \ref{Tab:key_dimensions}}.
+In the first iteration, the almost complete circle to the far left is five millimeters in diameter. This will be touched on later in this design section of the document. Above that circle is a divot, in the shape of an upside trapezoid, five millimeters at the base with 45 degree inclines to the top of the key. This divot is used to allow the cover of the keyboard to not only help guide the key and keep it in place, but also to once again prevent the user from clearly seeing the electronics hidden inside the full device. Finally, on the far top left of the key is a 3x2x5mm hole designed to hook onto the tension springs that help provide the pull-back of the actuation. Each natural key has the exact same cut-in values as given in \textit{Table \ref{Tab:key_dimensions}}.
 
-Next in the first iteration of key designs is the non-natural key, or black key, named after the sharp and flat notes these keys trigger. From a design standpoint, it is helpful that all the non-natural keys share the same structure. To begin, the guiding plane and size of the connecting platform have the same measurements of the natural keys, fifteen millimeter plane and a ten millimeter platform. The divot, the hole beneath the divot, and the extruded cut where the spring attaches all have the same measurements as the natural keys as well. The original design has a playable length of 120.71 mm. Due to the shorter playing length and same guiding plane length, the actuation of the keys has been approximated to be around 15 degrees, compared to the 10 degree actuation of the natural keys. This key does not need any tip as a tip could obstruct any transition the player may have switching from the non-natural keys to the natural keys, instead the tip of the non-natural key has a 15 degree chamfer on all sides to allow the fingers to slide from the elevated top of the non-natural key to the lower natural keys. As a result, the top of the key is thinner than the base, as is expected from the measurements taken in \autoref{tab:key_dimensions}. To gather a better understanding, the base of the key is the section which aligns with the elevation of the natural keys, while the tip elevates ten millimeters above the key. Between the base and the tip is what makes up the key itself.
+Next in the first iteration of key designs is the non-natural key, or black key, named after the sharp and flat notes these keys trigger. From a design standpoint, it is helpful that all the non-natural keys share the same structure. To begin, the guiding plane and size of the connecting platform have the same measurements of the natural keys, a fifteen millimeter plane and a ten millimeter platform. The divot, the hole beneath the divot, and the extruded cut where the spring attaches all have the same measurements as the natural keys as well. The original design has a playable length of 120.71 mm. Due to the shorter playing length and same guiding plane length, the actuation of the keys has been approximated to be around 15 degrees, compared to the 10 degree actuation of the natural keys. This key does not need any tip as a tip could obstruct any transition the player may have switching from the non-natural keys to the natural keys, instead the tip of the non-natural key has a 15 degree chamfer on all sides to allow the fingers to slide from the elevated top of the non-natural key to the lower natural keys. As a result, the top of the key is thinner than the base, as is expected from the measurements taken in \autoref{tab:key_dimensions}. To gather a better understanding, the base of the key is the section which aligns with the elevation of the natural keys, while the tip elevates ten millimeters above the key. Between the base and the tip is what makes up the key itself.
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.7\linewidth]{image/BlackModel.png}
-  \caption{}
+  \caption{Non-natural key base model.}
   \label{fig:black_model}
 \end{figure}
 
@@ -224,7 +222,7 @@ The first iteration of the key rail and base was intended to be a completely 3D 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/BaseModel1.png}
-  \caption{}
+  \caption{First iteration keyrail.}
   \label{fig:base_model1}
 \end{figure}
 
@@ -233,7 +231,7 @@ To allow an appropriate prototype test, I first chose to simulate the assembly w
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.9\linewidth]{image/AssembledModel.png}
-  \caption{}
+  \caption{First iteration: one octave design.}
   \label{fig:assembled_model}
 \end{figure}
 
@@ -251,7 +249,7 @@ This first print was a test to determine the functionality of the keyboard in it
     t-model         & 5.15                     \\ \hline
     Non-natural key & 5                        \\ \hline
   \end{tabular}
-  \caption{}
+  \caption{Hinge hole test measurements.}
   \label{Tab:connections}
 \end{table}
 
@@ -260,7 +258,7 @@ The results of the model are shown in \textit{Figure \ref{fig:print1}} below.
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/Print1.png}
-  \caption{}
+  \caption{First iteration: test print.}
   \label{fig:print1}
 \end{figure}
 
@@ -269,7 +267,7 @@ At first glance, the model seemed really well produced. The results of the diffe
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.6\linewidth]{image/Print2.png}
-  \caption{}
+  \caption{First iteration: offset hook connections.}
   \label{fig:print2}
 \end{figure}
 
@@ -278,7 +276,7 @@ After toying with the model for some time, a few issues were brought to light. T
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/Print3.png}
-  \caption{}
+  \caption{First iteration: non-natural key test print.}
   \label{fig:print3}
 \end{figure}
 
@@ -293,7 +291,7 @@ Another issue we discussed is the fact that there were no parameters in place to
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/Print4.png}
-  \caption{}
+  \caption{First iteration: keyrail test print.}
   \label{fig:print4}
 \end{figure}
 
@@ -316,7 +314,7 @@ From the results of Iteration One and Iteration Two we decided to alter the leng
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/BaseModel2.png}
-  \caption{}
+  \caption{First and third keyrail interation comparison.}
   \label{fig:base_model2}
 \end{figure}
 
@@ -325,7 +323,7 @@ The first major change in iteration three compared to that of iteration one is t
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.9\linewidth]{image/BaseModel3.png}
-  \caption{}
+  \caption{Third iteration: full keyrail model.}
   \label{fig:base_model3}
 \end{figure}
 
@@ -334,7 +332,7 @@ Furthermore, discussing the width of the holes for the springs to attach, we hav
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.25\linewidth]{image/Print5.png}
-  \caption{}
+  \caption{Third iteration: key, hook connection.}
   \label{fig:print5}
 \end{figure}
 
@@ -345,7 +343,7 @@ The final major change shown in \textit{Figure \ref{fig:base_model3}} are the od
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/BaseModel4.png}
-  \caption{}
+  \caption{Third iteration: half keyrail model.}
   \label{fig:base_model4}
 \end{figure}
 
@@ -355,7 +353,7 @@ The other change made after observing the print was manually centering the hook 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/KeyModels.png}
-  \caption{}
+  \caption{Third iteration: corrected hook connections.}
   \label{fig:key_models}
 \end{figure}
 
@@ -364,7 +362,7 @@ After testing and reiterating the initial print models, we were finally able to 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/BodyModel1.png}
-  \caption{}
+  \caption{Body model: 2x1.}
   \label{fig:body_model1}
 \end{figure}
 
@@ -373,7 +371,7 @@ For the front left base body print we created the model shown in \textit{Figure 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/BodyModel2.png}
-  \caption{}
+  \caption{Full keyboard body model with keyrail placed correctly.}
   \label{fig:body_model2}
 \end{figure}
 
@@ -411,7 +409,7 @@ The full keyboard is about 483 mm wide, 322 mm deep, and 93.89 mm tall. From our
     \centering
     \includegraphics[width=\textwidth]{image/BodyModel8.png}
   \end{subfigure}
-  \caption{}
+  \caption{Individual body model pieces [1x1 - 1x3] and [2x2 - 2x3].}
   \label{fig:body_parts}
 \end{figure}
 
@@ -420,7 +418,7 @@ As can be seen from these figures, each piece has been specially crafted to fit 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.9\linewidth]{image/AssembledBody.png}
-  \caption{}
+  \caption{Full keyboard body model.}
   \label{fig:assembled_body}
 \end{figure}
 
@@ -431,7 +429,7 @@ The cover or front panel of this device is 483x196.5 mm. There is absolutely no 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.9\linewidth]{image/DisplayModel.png}
-  \caption{}
+  \caption{Front UI panel: keyboard.}
   \label{fig:display_model}
 \end{figure}
 
@@ -444,14 +442,14 @@ When all the parts are connected and in place, the intended design of the body c
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/FinalModel1.png}
-  \caption{}
+  \caption{Fully assembled keyboard body.}
   \label{fig:final_model1}
 \end{figure}
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/FinalModel2.png}
-  \caption{}
+  \caption{Fully assembled keyboard model.}
   \label{fig:final_model2}
 \end{figure}
 \clearpage
@@ -470,7 +468,7 @@ The body itself did not change, but the cover had slight alterations. Below the 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.8\linewidth]{image/Keyboard_Photo.jpg}
-  \caption{}
+  \caption{Built and assembled live keyboard.}
   \label{fig:keyboard_photo}
 \end{figure}
 
@@ -844,7 +842,7 @@ sequence.
   \includegraphics[width=0.35 \linewidth]{image/MIDIState.png}
   \includegraphics[width=0.35 \linewidth]{image/PositionState.png}
   \includegraphics[width=0.2 \linewidth]{image/RollState.png}
-  \caption{A visual synthesis of the three data representations of the MIDI}
+  \caption{A visual synthesis of the three data representations of the MIDI.}
   \label{fig:states}
 \end{figure}
 
@@ -949,6 +947,136 @@ seconds.
 The end time of the note is offset by the start time, then uses the same pixel-to-note-value and
 tempo-to-time conversions to determine the duration.
 
+\subsubsection{Programming the Arduino Controller}
+
+Our MIDI keyboard was designed with an intermediary in mind, between the raspberry Pi and
+the physically designed circuit of the keys. This intermediary was determined by the
+number of inputs, affordability, power consumption, as well as an ability for Serial
+communication across USB. Naturally, we did not need a controller with a large number of
+pins as we had reduce that requirement when designing the circuit itself. Thusly, we
+decided upon the Arduino Nano Every to program and test our build. In the course of
+events, we needed to solder more wires onto the controller, but since it would become and
+integrated piece of our project it was a necessary expense. It should be noted that the
+Raspberry Pi will need to be programmed to accommodate the signals and subsequently react
+whenever a new signal is transmitted.
+
+For the Pins and the Serial port itself, only a few small setups needed to take place.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{image/arduinosetups.png}
+  \caption{Setup code for the Arduino pins and serial port.}
+\end{figure}
+
+The arrStatus array holds the on or off status of each individual key. For our 29 key
+keyboard, we needed and array of size 29. The values of Out1 and Out2 hold the digital pin
+of the output, allowing the easy change and modification of which pins are being listened
+to for each part of the program. As for the output pins, they’re only called here and in a
+subsequent function beneath the main loop. If necessary, it’s not terribly difficult to
+change which pins correspond to which Serial values within the circuit. The function in
+question follows bitwise operations to determine the correct response to each given key
+query.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{image/setserialfun.png}
+  \caption{Setting the serial function using bitwise operations.}
+\end{figure}
+
+This allows each pin to correspond to the correct binary value and for the controller to
+easily switch to any key that needs to be listened to at any given moment.
+
+As for the program itself, our query logic follows a loop, and that loop follows a series
+of three possible events. These events were considered and programmed for to accommodate
+for incomplete connections or potential faults within the circuit. For the purposes of the
+program and for the reader’s sake, the first series of buttons(SW1-29) will be called the
+back buttons and the second series of buttons(SW33-61) will be called the forward buttons;
+corresponding to their location on the physical PCB. First, a loop is created to begin
+counting from 0 to 29, utilized to allow for the assignment and signal of the status and
+velocity value of the corresponding key being measured. A delay of 1ms is inserted after
+calling the above set serial function to ensure that the signal is allowed to propagate
+through the circuit and retrieve the correct value of a given key. Then, each of the three
+possible events are checked for to determine what action is to take place.
+
+The first event requires the most calculation and logic to implement correctly. If the
+back button of a particular key is detected as on, then the time in milliseconds is
+measure, corresponding to the time\_1 and time\_2 values below. The state of the status
+array is then updated and a nested loop begins, waiting for the on signal in the front
+button to occur to accurately measure the difference in time.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{image/pinreadingvelocity.png}
+  \caption{First attempt at pin reading code with the velocity calculation.}
+\end{figure}
+
+However, as can be noted, there is an additional if statement within the loop to ensure
+that the controller will not freeze on a faulty key. This is accomplished by taking
+another measure of milliseconds and breaking the loop if the time elapsed exceeds a
+quarter of a second. This is the point at which the minimum value of the calculation is
+all but guaranteed and therefore becomes a moot point to wait any longer for the signal to
+come from the front button of the key. With that check out of the way, the velocity of the
+difference in time is then calculated, initially ascribed the float state and then the on
+signal is generated and sent over the Serial connection.
+
+With that check out of the way, the velocity of the difference in time is then calculated,
+initially ascribed the float state and then the on signal is generated and sent over the
+Serial connection.
+
+The number of the key signaled as well as the velocity found is also sent, completing the
+first potential signal transmitted to the Raspberry Pi. The only thing left is to scan the
+keyboard again and determine if additional keys need to be signaled. This is what’s
+typically known as a chord, when multiple keys are pressed in the same instance to
+generate a wider variety of songs and melody when playing an instrument. This is
+accomplished with another nested loop, this one borrowing the first calculated velocity
+and sending it along the Serial port to the Raspberry Pi as well. As can be noted, the
+setSerialFun is utilized throughout the loop and the status array is updated when the
+correct conditions are met. Once all of that is completed the break; function is called,
+resetting the first loop to the beginning, and completing the first potential event of our
+program. Fortunately, this is most of the work out of the way as there are only so many
+conditions that can be measured for if the back buttons are inexplicably faulty.
+
+The second event is a contingency event, in the case that the first button did not signal
+correctly, but the second button was already pressed. In this case, we cannot reverse time
+and determine the correct velocity of the given keypress. Thusly, we must make an
+assumption and signal the Raspberry pi with a default value that is high enough in
+velocity but not too high as to sound impossible. Thusly, a default value of 80 was
+decided, but other default values can be utilized.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{image/backupfunction.png}
+  \caption{Contigency code for when first button does not signal.}
+\end{figure}
+
+Once again, the nested loop is to check if any other buttons may have been pressed while
+preoccupied with the signaling of the serial port and subsequently signaled in kind,
+updating the status array to reflect which keys are and not pressed at that given moment.
+Once again, this function is only ever called when the back button is inexplicably faulty,
+and the front buttons still signal correctly. However, the point of being an engineer is
+to determine a faulty scenario and create a contingency to mitigate that fault.
+
+The third event is the simplest. Assuming that neither the back nor front buttons are
+signaled as high during their measurement but the status array is found to have noted this
+note as on before this time, then an off signal must be signaled to the Raspberry Pi.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{image/backupfunction.png}
+  \caption{Code to send off event over serial port.}
+\end{figure}
+
+An off signal, the key number, and then an empty value is sent across the Serial
+connection. Then the status array is updated to reflect the new state of the keyboard.
+This is the last event measurable with our current hardware and means of measuring the
+circuit signals. This is also the completed program for our Arduino controller that allows
+us to properly signal and measure the state of the MIDI keyboard. This program can be
+modified and theoretically improved upon to better implement any sized MIDI keyboard
+needed. For simplicity’s sake, a key number and value is the only significant means which
+the Arduino communicates with the Raspberry Pi. This program can be modified to signal in
+the proper MIDI format, but I was far too ignorant of the actual format to attempt to
+write code to implement such a state.
+
 \subsection{Testing}
 
 \subsubsection{DAW}
@@ -1020,7 +1148,7 @@ scroller.
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{image/FinalUI.png}
-  \caption{Our final UI layout, once again displaying the \textit{Twinkle, Twinkle, Little Star} MIDI}
+  \caption{Our final UI layout, once again displaying the \textit{Twinkle, Twinkle, Little Star} MIDI.}
   \label{fig:soundtrap}
 \end{figure}
 
@@ -1033,3 +1161,5 @@ measuring the percentage of key notes the model can predict from a known case. A
 this is an objective measurement of the model performance, maybe not fully desirable to
 obtain such a grade of regularity on the output, and some stochastic variables can be
 added in order of adding elements of unpredictability in the generation of new melodies.
+
+\subsubsection{Programming the Arduino controller}
